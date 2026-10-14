@@ -1,0 +1,64 @@
+{
+  "title": "Launch of Tandem, a paid AI meal-planning app",
+  "subject": "Tandem (the meal-planning app) and its launch",
+  "simulation_requirement": "Predict how home cooks, nutrition professionals and tech media react during the first 48 hours after Tandem announces its launch at 12 EUR/month with a 7-day trial, which objections spread, and whether the pricing or the privacy policy becomes the main controversy.",
+  "settings": {
+    "platforms": ["twitter", "reddit"],
+    "language": "English",
+    "total_hours": 48,
+    "minutes_per_round": 60,
+    "start_hour": 9,
+    "persona_words": 300
+  },
+  "ontology": {
+    "entity_types": [
+      {"name": "Startup", "kind": "group", "description": "The company launching the product and its official account", "attributes": [{"name": "product", "description": "Product being launched"}]},
+      {"name": "Competitor", "kind": "group", "description": "Established companies offering similar apps", "attributes": []},
+      {"name": "MediaOutlet", "kind": "group", "description": "Tech or food media publishing news and reviews", "attributes": []},
+      {"name": "Nutritionist", "kind": "individual", "description": "Dietitians and nutrition professionals who comment on diet tools", "attributes": [{"name": "specialty", "description": "Clinical, sports, family"}]},
+      {"name": "FoodInfluencer", "kind": "individual", "description": "Creators with a cooking audience who review food products", "attributes": [{"name": "audience_size", "description": "Approximate followers"}]},
+      {"name": "BusyParent", "kind": "individual", "description": "Parents cooking for a family on weeknights, price sensitive", "attributes": []},
+      {"name": "FitnessEnthusiast", "kind": "individual", "description": "People tracking macros and training", "attributes": []},
+      {"name": "PrivacyAdvocate", "kind": "individual", "description": "People who scrutinize data collection and terms of service", "attributes": []},
+      {"name": "Person", "kind": "individual", "description": "Any individual not covered by a more specific type", "attributes": []},
+      {"name": "Organization", "kind": "group", "description": "Any organization not covered by a more specific type", "attributes": []}
+    ],
+    "edge_types": [
+      {"name": "COMPETES_WITH", "description": "Commercial competition", "source_targets": [{"source": "Competitor", "target": "Startup"}]},
+      {"name": "REPORTS_ON", "description": "Media coverage", "source_targets": [{"source": "MediaOutlet", "target": "Startup"}]},
+      {"name": "PARTNERS_WITH", "description": "Paid or informal partnership", "source_targets": [{"source": "FoodInfluencer", "target": "Startup"}]},
+      {"name": "CRITICIZES", "description": "Public criticism", "source_targets": [{"source": "PrivacyAdvocate", "target": "Startup"}]},
+      {"name": "FOLLOWS", "description": "Audience relationship", "source_targets": [{"source": "Person", "target": "FoodInfluencer"}]},
+      {"name": "ADVISES", "description": "Professional advice relationship", "source_targets": [{"source": "Nutritionist", "target": "Startup"}]}
+    ]
+  },
+  "entities": [
+    {"id": "tandem", "name": "Tandem", "type": "Startup", "summary": "Seed-stage startup launching an AI app that plans a week of meals from what is in your fridge, generates the shopping list and adapts to diets. 12 EUR/month after a 7-day trial; the app needs a photo of your fridge and access to purchase history.", "facts": ["Raised 2M EUR seed in 2026", "Team of 9 based in Lyon", "Privacy policy allows sharing anonymised purchase data with retail partners"]},
+    {"id": "mealmate", "name": "MealMate", "type": "Competitor", "summary": "Popular free meal-planning app with ads and a 4 EUR premium tier."},
+    {"id": "techwire", "name": "TechWire", "type": "MediaOutlet", "summary": "Tech news site covering European startups, likes launch scoops and funding news."},
+    {"id": "kitchenjournal", "name": "The Kitchen Journal", "type": "MediaOutlet", "summary": "Food magazine with recipe content and product reviews."},
+    {"id": "dr_amara", "name": "Amara Diallo", "type": "Nutritionist", "summary": "Registered dietitian, skeptical of apps that make health claims without clinical input."},
+    {"id": "chef_luca", "name": "Luca Ferri", "type": "FoodInfluencer", "summary": "Home-cooking creator (300k followers) who got early access to Tandem.", "attributes": {"audience_size": "300k"}},
+    {"id": "parents", "name": "Busy parent", "type": "BusyParent", "summary": "Parents of young kids who cook most weeknights and track grocery spending.", "count": 6, "diversity": "mix of single and two-parent households, different budgets and countries, at least two very price sensitive"},
+    {"id": "fitness", "name": "Macro tracker", "type": "FitnessEnthusiast", "summary": "Gym-goers who track protein and calories daily and already use tracking apps.", "count": 4},
+    {"id": "privacy", "name": "Privacy-minded user", "type": "PrivacyAdvocate", "summary": "Tech-savvy users who read privacy policies and warn others about data sharing.", "count": 3},
+    {"id": "general", "name": "Curious general user", "type": "Person", "summary": "People who stumble on the launch in their feed with no particular stake.", "count": 4}
+  ],
+  "relations": [
+    {"source": "mealmate", "target": "tandem", "type": "COMPETES_WITH", "fact": "MealMate is the market leader Tandem wants to displace"},
+    {"source": "techwire", "target": "tandem", "type": "REPORTS_ON", "fact": "TechWire covered Tandem's seed round"},
+    {"source": "chef_luca", "target": "tandem", "type": "PARTNERS_WITH", "fact": "Luca received free early access"},
+    {"source": "general", "target": "chef_luca", "type": "FOLLOWS", "fact": "Some general users follow Luca"}
+  ],
+  "initial_posts": [
+    {"poster": "tandem", "content": "Meet Tandem 🍳 Snap your fridge, get a week of meals and a shopping list that adapts to your diet. 7 days free, then 12€/month. Launching today!"},
+    {"poster": "chef_luca", "content": "Been testing @tandem for 2 weeks. It saved me 3 grocery runs and the recipes are actually good. Not perfect with leftovers yet. Code LUCA20 for 20% off."}
+  ],
+  "scheduled_events": [
+    {"at_hour": 20, "poster": null, "label": "privacy story", "content": "TechWire: Tandem's privacy policy lets it share 'anonymised' purchase data with retail partners, users discover."}
+  ],
+  "probes": [
+    {"key": "try_intent", "question": "How likely are you to start the free trial of Tandem this week?", "min": 0, "max": 10},
+    {"key": "price_ok", "question": "How acceptable is 12 EUR/month to you?", "min": 0, "max": 10}
+  ]
+}

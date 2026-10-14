@@ -1,0 +1,12 @@
+{
+  "name": "cohorte",
+  "owner": { "name": "yeubridev" },
+  "description": "Cohorte: simulate how a cohort of AI personas reacts to your project, then adapt it.",
+  "plugins": [
+    {
+      "name": "cohorte",
+      "source": ".",
+      "description": "Swarm-intelligence rehearsal of reactions to your project (MiroFish-style multi-agent social simulation)."
+    }
+  ]
+}
