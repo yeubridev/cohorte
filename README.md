@@ -15,168 +15,249 @@
 </p>
 
 <p>
+  <a href="#try-it-in-60-seconds-free-offline"><b>Quickstart</b></a> ·
   <a href="#install"><b>Install</b></a> ·
-  <a href="#use-it"><b>Use it</b></a> ·
-  <a href="#from-a-dozen-robots-to-10000"><b>Scale</b></a> ·
-  <a href="#how-it-maps-to-mirofish"><b>MiroFish mapping</b></a> ·
-  <a href="skills/cohorte/SKILL.md"><b>Skill</b></a>
+  <a href="#use-it"><b>Use cases</b></a> ·
+  <a href="#real-output-10000-robots-react-to-a-launch"><b>Real output</b></a> ·
+  <a href="#how-it-works"><b>How it works</b></a> ·
+  <a href="#cost-and-speed"><b>Cost</b></a> ·
+  <a href="#faq"><b>FAQ</b></a>
 </p>
 
 </div>
 
 # Cohorte
 
-**Rehearse your project's reception with a cohort of AI robots, then adapt it before real people see it.**
+**Rehearse your project's reception with a cohort of AI robots, then fix what they hate before real people see it.**
 
-Cohorte is a Claude skill that recreates [MiroFish](https://github.com/666ghj/MiroFish), the swarm-intelligence
-prediction engine, for Claude Code. Point it at your project (a launch post, a landing page, a pricing change, a
-feature, a policy, a story). It builds a small world around it and generates a cohort of personas ("robots"):
-target users, skeptics, media, creators, competitors, your own company account. They then live on simulated
-Twitter-like and Reddit-like platforms for a few simulated days. They read their feeds, post, like, repost, quote,
-comment, follow, search and argue.
-You get:
+You're about to ship a launch post, a pricing change, a new feature or a policy. You can guess how people will
+react, wait for the backlash, or **rehearse it first**. Cohorte is a Claude Code skill that recreates
+[MiroFish](https://github.com/666ghj/MiroFish), the swarm-intelligence prediction engine. Claude reads your
+project and builds a small world around it: target users, skeptics, media, creators, competitors and your own
+company account. Then it lets **a dozen to 10,000+ persona "robots"** live on simulated Twitter- and Reddit-like
+platforms for a few simulated days. They read their feeds, post, like, repost, quote, comment, follow, argue and
+change their minds.
 
-- a **prediction report** grounded in what the robots actually did and privately thought, with quotes;
-- **metrics**: sentiment per segment over time, custom probes ("how likely are you to try it this week? 0-10"),
-  top posts, opinion shifts;
-- **interviews**: ask any robot why it did what it did, in character;
-- **A/B re-tests**: change your copy, price or policy and replay the *same* cohort to compare.
+| You get | What it looks like |
+|---|---|
+| 🔮 **A prediction report** | What happened, which group reacted how and why, quoted word for word from the robots, plus a *What to change* table |
+| 📊 **Metrics per segment** | Sentiment over time, your own probes ("how likely are you to try it this week? 0–10"), top posts, opinion shifts |
+| 🎙️ **Interviews** | Ask any robot, in character, why it did what it did and what would change its mind |
+| 🔁 **A/B re-tests** | Change the copy, price or policy and replay the *same* cohort, then compare |
 
+## Try it in 60 seconds (free, offline)
+
+The `mock` backend runs the whole pipeline with fake answers, so you can see the mechanics before spending a cent:
+
+```bash
+git clone https://github.com/yeubridev/cohorte && cd cohorte
+C="python3 skills/cohorte/scripts/cohorte.py"
+$C init demo --world skills/cohorte/assets/world.example.json --backend mock
+$C setup demo && $C run demo
+$C stats demo && $C timeline demo
 ```
-your project ──► seed.md + world.json ──► personas & config ──► simulation ──► report ──► interviews
-  (Claude reads it)    (stage 1, Claude)       (stage 2, engine)    (stage 3)    (stage 4)   (stage 5)
-                                                                        ▲                         │
-                                                                        └──── fork + compare ◄────┘
-                                                                             (adapt and re-test)
-```
 
-## From a dozen robots to 10,000+
-
-Robots come in two tiers:
-
-- **LLM agents** are named actors (your company, media, experts) plus a few *delegates* per crowd. Each one has a
-  full persona and makes its own LLM call every time it is online. These are the voices you interview.
-- **Crowd members** fill big segments (`"count": 4000`). Claude first designs the segment's archetypes, such as
-  "single parent on a tight budget" or "policy-reading privacy hardliner". Members are then sampled from those
-  archetypes as individual agents, each with its own name, follows, feed, opinion, likes, comments and posts.
-  Each round costs **one LLM call per segment**, not one per member. That call returns reaction probabilities and
-  texts in the archetype's voice, and each member samples its own actions from them. This is the "LLM archetypes"
-  approach that large-population simulators use.
-
-Measured results:
-
-| Run | Agents | LLM calls | Engine time | Cost |
-|---|---|---|---|---|
-| Mock backend, 24 simulated hours | 10,000 (18 LLM + 9,982 crowd) | 353 instead of ~32,000 | ~29 s | free |
-| Claude Haiku 5.5 via `claude -p`, 3 evening hours | 10,000 (13 LLM + 9,987 crowd) | 88 (setup included) | 2.5 min wall | $0.13 |
-| Estimate, 24 h, 10,000 agents | Haiku 5.5 ≈ $0.35 · Opus 5.5 ≈ $14 | ≈ 300 | | one call per agent turn: ≈ $13 / ≈ $520 |
-
-The engine itself was also made faster. Feeds are now ranked from a per-round candidate pool with cached
-keywords, and state is saved compactly. A 2,000-agent run went from 68 s to 17 s of engine time.
-
-## What the robots look like
-
-From the bundled fictional example (an AI meal-planning app launching at 12 €/month), 10 agents, 4 simulated
-evening hours on Claude Haiku 5.5, about $0.06:
-
-> "Thank you for reading the fine print for us... A free trial always ends, so I would like to know plainly: is
-> the card charged on its own after 7 days, and how do they handle a family's grocery and purchase data?"
-> — @dimitra_kostopoulou, retired pharmacy technician, Twitter #9
-
-> "Two weeks and a promo code is a personal experience, not a trial. 'Saved me 3 grocery runs' is a fine result
-> for one household. It tells me nothing about diet adaptations for diabetes, CKD or pregnancy."
-> — @amara_diallo, dietitian, Twitter #12
-
-Interviewed afterwards ("what would make you start the free trial tonight?"), the privacy-minded agent listed
-seven concrete conditions: a separate opt-in for partner data sharing, retention periods, a deletion path, and
-others. Agents raised the auto-renewal and data-sharing objections on their own, before the scripted privacy news
-item was injected. Those objections are the kind of thing you fix before launch.
+For real predictions, install the skill (below) and ask Claude in plain words. Claude frames the question, builds
+the world from your repo, shows you the cast and the **cost estimate before anything runs**, simulates, writes the
+report and helps you adapt.
 
 ## Install
 
-**As a Claude Code plugin** (recommended):
+**Claude Code plugin** (recommended):
 ```
 /plugin marketplace add yeubridev/cohorte
 /plugin install cohorte@cohorte
 ```
 
-**As a plain skill**: copy `skills/cohorte/` to `~/.claude/skills/cohorte/` (all projects) or to
-`<your-project>/.claude/skills/cohorte/` (one project).
+**Plain skill**: copy `skills/cohorte/` to `~/.claude/skills/cohorte/` (all projects) or
+`<project>/.claude/skills/cohorte/` (one project). **claude.ai**: zip `skills/cohorte` and upload it as a skill
+(needs code execution).
 
-**claude.ai**: zip the `skills/cohorte` folder and upload it as a skill. It needs code execution. Without network
-access from the sandbox, use the `manual` backend: Claude answers each robot's prompt itself, which is only
-practical for small runs.
+Python 3.9+, standard library only. Pick one LLM backend:
 
-Requirements: Python 3.9+, no mandatory dependencies. One LLM backend:
-
-| Backend | What it needs | Notes |
+| Backend | Needs | Best for |
 |---|---|---|
-| `anthropic` | `pip install anthropic` + `ANTHROPIC_API_KEY` (or `ant auth login`) | fastest, parallel, prompt caching |
-| `claude-cli` | the `claude` command (your Claude Code login) | no API key; ~10-30 s per call |
-| `manual` | nothing | Claude answers pending prompts itself; tiny runs only |
-| `mock` | nothing | offline fake data to try the mechanics |
+| `claude-cli` | the `claude` command (your Claude Code login) | no API key; fine up to ~10,000 agents for a few hours |
+| `anthropic` | `pip install anthropic` + `ANTHROPIC_API_KEY` | fastest: parallel calls, prompt caching |
+| `manual` | nothing | Claude answers each robot's prompt itself; tiny runs |
+| `mock` | nothing | offline dry runs and tests |
 
-The engine defaults to `claude-opus-5-5`. Robots make hundreds of calls, so the skill shows you a cost estimate for
-that model and for `haiku` (Claude Haiku 5.5, much cheaper) and lets you choose before anything runs.
+`python3 skills/cohorte/scripts/cohorte.py doctor` tells you which backends work on your machine.
 
 ## Use it
 
-In Claude Code, inside your project, ask in plain words:
+Ask Claude inside your project:
 
-- "Use cohorte to test how freelance designers and agencies would react to our launch post in `marketing/launch.md`."
-- "Simulate the reaction to moving from 9 €/month to 12 €/month for existing users. Which segments churn and why?"
-- "Run the same cohort on version B of the landing headline and compare."
-- "Interview the three most negative robots about what would change their mind."
-- "Simulate 10,000 French parents and 2,000 privacy advocates reacting to the pricing page."
+- *"Use cohorte to test how freelance designers and agencies react to our launch post in `marketing/launch.md`."*
+- *"We're moving from 9 € to 12 €/month for existing users. Which segments churn, and why?"*
+- *"Run the same cohort on version B of the headline and compare."*
+- *"Simulate 10,000 French parents and 2,000 privacy advocates reacting to the pricing page."*
+- *"Interview the three most negative robots about what would change their mind."*
 
-Claude frames the prediction question, reads your project to write the seed and cast, shows you the roster and
-the cost, runs the simulation, writes the report (`.cohorte/sims/<name>/report.md`) and helps you adapt and re-test.
+| Scenario | Typical cast | Probes / what-if events |
+|---|---|---|
+| 🚀 Product launch | target segments, skeptics, 2 media, creators, competitor, your company | try intent, price acceptance · competitor reply at 24 h |
+| 💶 Pricing change | loyal, price-sensitive and power users, prospects, competitor | churn intent, fairness · your FAQ clarification |
+| 📰 Landing page / message A/B | cold-audience crowds, a few experts | click or try intent · `fork` with variant copy |
+| 🔒 Terms of service / feature removal | power users, moderators, privacy advocates, media | trust, churn · official apology post |
+| 🧑‍💻 Open-source or developer tool launch | maintainers, enterprise devs, hobbyists, category skeptics | adoption, star intent |
+| 🏢 Internal announcement | departments as crowds, managers, representatives | support, attrition risk |
+| 📖 Story or ending | characters, fan communities | per-character probes |
 
-You can also drive the engine yourself:
+## Real output: 10,000 robots react to a launch
+
+This is the bundled fictional example: *Tandem*, an AI meal planner launching at 12 €/month with a 7-day trial
+and a vague data-sharing clause. The run had 10,000 agents (13 with their own LLM turns and 9,987 crowd members)
+and covered 3 simulated evening hours on Claude Haiku 5.5 through `claude -p`. It took **88 LLM calls,
+2.5 minutes and $0.13**.
+
+Claude designed the crowd archetypes. The table shows a few of them, with their latest mean answers:
+
+| Archetype | Mood (−1…+1) | Try the trial (0–10) | Price OK (0–10) |
+|---|---|---|---|
+| Time-starved dual-income planner | **+0.34** | **5.7** | **6.3** |
+| Single parent on a tight budget | −0.25 | 2.4 | 2.5 |
+| Frugal two-parent household counting every euro | −0.37 | 2.5 | 3.2 |
+| Privacy-minded tech-aware parent | −0.28 | 1.5 | 3.7 |
+| Policy-reading privacy hardliner | −0.62 | 1.3 | 3.2 |
+
+The crowd's comments under the launch post raised the same objections as the LLM agents, in many voices:
+
+> "12 a month is 144 a year. is the trial card free or do they bill you on day 8?" — u/bruno_w5296
+>
+> "Snap your fridge means photos of your home interior. Where are they processed and for how long?" — u/leo_f4023
+>
+> "finally something for the 6pm what's for dinner panic 🍴 signing up today" — u/lea_b6228
+
+In interviews, an LLM agent (a privacy consultant) listed seven conditions for trying it: a separate
+opt-in for partner data sharing, a stated retention period, a working deletion path, and four more.
+
+**What the report would tell Tandem:** the price is acceptable to time-starved households but not to budget ones,
+the hidden auto-renewal and the undefined "partners" clause are the real blockers, and both can be fixed in the
+copy. The next step is to `fork` the run with a rewritten launch post and `compare`.
+
+## How it works
+
+```mermaid
+flowchart LR
+    A[Your project<br/>README, landing page, pricing] -->|Claude reads it| B[seed.md + world.json<br/>actors, crowds, probes]
+    B -->|setup| C[Personas, archetypes<br/>time / event / activity config]
+    C -->|run| D[Simulated Twitter + Reddit<br/>rounds of simulated time]
+    D --> E[stats · timeline · search<br/>thread · agent]
+    E -->|Claude as ReportAgent| F[Prediction report<br/>+ what to change]
+    D --> G[Interviews in character]
+    F -->|fork + edit| H[Variant B]
+    H -->|run + compare| F
+```
+
+There are **two tiers of robots**:
+
+- **LLM agents** are named actors, plus 3 delegates per crowd. Each has a full persona and makes its own LLM call
+  every time it is online. They search, quote, reply, remember what happened and get notified when people react
+  to them. These are the voices you interview.
+- **Crowd members** fill big segments. Claude designs about 6 archetypes per segment, and members are sampled
+  from them as individual agents with their own name, follows, feed, opinion, likes, comments and posts. Each
+  round costs **one LLM call per segment**, not one per member. That call returns reaction probabilities and texts
+  in each archetype's voice. Every member then samples its own actions: it likes authors it agrees with and
+  downvotes the ones it doesn't, and its opinion drifts by its own susceptibility.
+
+Each round also does the following:
+- Agents come online by time of day and their own activity.
+- Feeds rank posts by recency, popularity, relevance, follows, echo chamber and virality.
+- God's-eye events, such as a competitor reply or a news leak, can be injected at any simulated hour.
+- Every agent privately records a thought, a sentiment and your probe answers. The report uses these to explain
+  *why* people behaved as they did.
+
+## The adapt loop
 
 ```bash
-COHORTE="python3 skills/cohorte/scripts/cohorte.py"
-$COHORTE doctor
-$COHORTE init demo --world skills/cohorte/assets/world.example.json --backend mock   # or claude-cli / anthropic
-$COHORTE setup demo && $COHORTE show demo && $COHORTE estimate demo --model haiku
-$COHORTE run demo
-$COHORTE stats demo && $COHORTE timeline demo && $COHORTE search demo privacy --thoughts
-$COHORTE interview demo -q "Would you pay 12 € a month? Why?" --type BusyParent --sample 3
-$COHORTE fork demo demo-b --posts variant_posts.json --replace-posts && $COHORTE run demo-b
-$COHORTE compare demo demo-b
+C="python3 skills/cohorte/scripts/cohorte.py"
+$C fork launch launch-v2 --posts v2_posts.json --replace-posts   # same robots, same schedule, new copy
+$C run launch-v2
+$C compare launch launch-v2      # sentiment, probes and actions side by side, per segment
+```
+
+Forks keep the exact same robots and random activation schedule, so differences come from your change (plus model
+noise). Claude tells you which deltas are large enough to act on.
+
+## Cost and speed
+
+| Run | LLM calls | Cost |
+|---|---|---|
+| 10 agents × 4 simulated hours (Haiku 5.5, `claude -p`) | 67 | ≈ $0.06 |
+| 10,000 agents × 3 simulated hours (Haiku 5.5, `claude -p`) | 88 | $0.13, 2.5 min |
+| 10,000 agents × 24 simulated hours, estimate | ≈ 300 | Haiku 5.5 ≈ $0.35 · Opus 5.5 ≈ $14 |
+| Same run with one LLM call per agent turn | ≈ 32,000 | Haiku ≈ $13 · Opus ≈ $520 |
+
+- `estimate` gives the exact number of agent turns before you run, because activation is seeded.
+- Runs are resumable: every round is saved and LLM answers are cached, so a crash never costs twice.
+- The engine handles 10,000 agents in about 1 s per simulated round. The rest of the time is LLM calls.
+
+## Command cheat sheet
+
+| Stage | Commands |
+|---|---|
+| Build | `doctor` · `validate world.json` · `init` · `setup` · `show [--full]` · `estimate [--model haiku]` |
+| Simulate | `run [--max-rounds N]` · `inject --at-hour 30 --content "…"` · `status` |
+| Observe | `stats` · `timeline [--bucket 6]` · `search <words> [--thoughts]` · `thread <post>` · `agent <id or @name>` · `export` |
+| Talk | `interview -q "…" (--agents … \| --type T --sample N) [--followup]` |
+| Adapt | `fork` · `compare` · `llm --backend … --model …` |
+
+## FAQ
+
+**Are the predictions accurate?** They're a rehearsal, not a measurement. LLM robots are articulate, more
+reasonable and more alike than real crowds, and they only know what the seed says. They're good at surfacing
+objections, comparing variants and preparing answers before real users and press do it for you. For big decisions,
+validate with real people.
+
+**Which model should I use?** The engine defaults to Claude Opus 5.5. Claude Haiku 5.5 is around 40× cheaper and
+works well for crowds. The skill shows both estimates and lets you choose.
+
+**Does it work in other languages?** Yes: set `"language": "French"` (or any other language) and the robots post
+in it.
+
+**What leaves my machine?** The seed and personas are sent to the model provider you choose. Leave secrets out.
+
+**Can I use real people or brands?** Prefer archetypes and fictional individuals. Real organisations can appear,
+but their simulated statements must never be presented as real.
+
+## Repository layout
+
+```
+skills/cohorte/
+├── SKILL.md                 # what Claude follows: frame → world → setup → run → report → interview → adapt
+├── scripts/cohorte.py       # CLI engine (stdlib only)
+├── scripts/cohorte_engine/  # world, personas, platforms, crowd tier, simulation, analysis, LLM backends
+├── references/              # world-building guide, report method, engine reference
+└── assets/world.example.json
+assets/brand/                # logo, banners, social preview (+ generator)
+tests/                       # offline tests (mock and manual backends, 6,000-agent crowd test)
 ```
 
 ## How it maps to MiroFish
 
 | MiroFish | Cohorte |
 |---|---|
-| Ontology generation + Zep GraphRAG from seed documents | Claude writes `world.json` (same ontology rules: speaking actors only, ~10 types with `Person`/`Organization` fallbacks) and `seed.md` |
-| OASIS profile generator (individual vs institutional personas) | `setup`: same persona structure, plus crowd archetypes expanded into distinct individuals |
-| Simulation config generator (time / events / per-agent activity, LLM + rule fallbacks) | `setup`: same fields, batching, guards and kick-off post assignment |
-| OASIS Twitter + Reddit environments, time-of-day agent activation | `run`: built-in platforms with the same action sets, feed ranking (recency, popularity, relevance, echo chamber, virality), notifications and memory, seeded activation |
-| ReportAgent (ReACT with insight_forge, panorama_search, quick_search, interview_agents) | Claude follows the same method with `stats`, `timeline`, `search`, `thread`, `agent`, `interview` |
+| Ontology + Zep GraphRAG from seed documents | Claude writes `world.json` (same ontology rules: speaking actors only, ~10 types with `Person`/`Organization` fallbacks) and `seed.md` |
+| OASIS profile generator | `setup`: same persona structure, plus crowd archetypes |
+| Simulation config generator (time, events, activity) | `setup`: same fields, guards and kick-off post assignment |
+| OASIS Twitter + Reddit, time-of-day activation | `run`: same action sets, feed ranking, notifications, memory, seeded activation |
+| ReportAgent (insight_forge, panorama_search, quick_search, interview_agents) | Claude with `stats`, `timeline`, `search`, `thread`, `agent`, `interview` |
 | Chat with any agent | `interview [--followup]` |
-| – | private `thought` / `sentiment` / `probes` per turn, `inject` god's-eye events, `fork` + `compare` |
+| – | crowd tier for 10,000+ agents, private thoughts and probes, `inject`, `fork` + `compare` |
 
 Details: [`skills/cohorte/references/engine.md`](skills/cohorte/references/engine.md).
-
-## Limits
-
-The robots are language-model personas. They are articulate, often more reasonable and more alike than real
-crowds, and they only know what the seed tells them. Use Cohorte to find objections, compare variants and prepare
-answers. It does not replace talking to real users. Treat small differences between runs as noise.
 
 ## Brand
 
 The logo is a ring of robots around one voice: grey for indifferent, teal for positive and coral for negative.
-Files are in [`assets/brand/`](assets/brand): light and dark banners and logos, plus
-`social-preview.png` (1280×640) for the repository's social preview. Regenerate them with
-`python3 assets/brand/generate.py assets/brand`.
+The files are in [`assets/brand/`](assets/brand): light and dark banners and logos, plus `social-preview.png` for
+the repository's social preview. Regenerate them with `python3 assets/brand/generate.py assets/brand`.
 
 ## Development
 
 ```bash
-python3 -m unittest discover -s tests      # offline, uses the mock and manual backends
+python3 -m unittest discover -s tests      # offline, mock + manual backends
 claude plugin validate .                   # marketplace + plugin manifests
 ```
 
