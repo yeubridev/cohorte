@@ -14,6 +14,7 @@ import json
 import math
 from typing import Any, Dict, List, Optional
 
+from . import crowd
 from . import prompts as P
 from .llm import LLMClient, LLMRequest
 from .util import (
@@ -66,7 +67,7 @@ def _world_context(world: Dict[str, Any], seed: str, limit: int = 6000) -> str:
     by_type: Dict[str, List[Dict[str, Any]]] = {}
     for e in world["entities"]:
         by_type.setdefault(e["type"], []).append(e)
-    lines = [f"## Simulation requirement\n{world['simulation_requirement']}", "", f"## Entities"]
+    lines = [f"## Simulation requirement\n{world['simulation_requirement']}", "", "## Entities"]
     for etype, ents in by_type.items():
         lines.append(f"### {etype} ({sum(e['count'] for e in ents)} agents)")
         for e in ents[:8]:
@@ -83,28 +84,43 @@ def _world_context(world: Dict[str, Any], seed: str, limit: int = 6000) -> str:
 # 1. Crowds
 # --------------------------------------------------------------------------- #
 
+def _tiers(ent: Dict[str, Any]) -> None:
+    """Worlds validated by older versions have no tier fields: every member is an LLM agent."""
+    ent.setdefault("tier", "llm")
+    ent.setdefault("llm_members", ent["count"])
+
+
 def _expand_entities(sim: Sim, llm: LLMClient, world: Dict[str, Any], seed: str) -> List[Dict[str, Any]]:
     settings = world["settings"]
     crowd_reqs = []
     for ent in world["entities"]:
-        if ent["count"] > 1:
+        _tiers(ent)
+        if ent["llm_members"] > 1 or (ent["tier"] == "crowd" and ent["llm_members"] > 0):
             crowd_reqs.append(LLMRequest(
                 id=f"crowd:{ent['id']}", kind="crowd", system=[P.PERSONA_SYSTEM], effort="medium",
                 max_tokens=8000,
                 user=P.CROWD_SKETCH_PROMPT.format(
-                    count=ent["count"], name=ent["name"], entity_type=ent["type"],
+                    count=ent["llm_members"], name=ent["name"], entity_type=ent["type"],
                     summary=ent.get("summary") or "(none)",
                     diversity=ent.get("diversity") or "realistic variety",
                     context=_entity_context(world, seed, ent),
                 ) + "\n" + P.language_rule(settings["language"]),
-                meta={"count": ent["count"], "name": ent["name"]},
+                meta={"count": ent["llm_members"], "name": ent["name"]},
             ))
+        if ent["tier"] == "crowd":
+            n_arch = max(2, min(int(settings.get("archetypes_per_crowd", 6)), ent["count"] // 20 or 2))
+            crowd_reqs.append(crowd.archetype_request(world, ent, n_arch, _entity_context(world, seed, ent)))
     if crowd_reqs:
-        _progress(f"expanding {len(crowd_reqs)} crowd archetype(s) into individuals")
+        _progress(f"expanding {len(crowd_reqs)} crowd sketch / archetype request(s)")
     results = llm.run_batch(crowd_reqs, label="crowd expansion")
 
     members: List[Dict[str, Any]] = []
     for ent in world["entities"]:
+        if ent["tier"] == "crowd":
+            n_arch = max(2, min(int(settings.get("archetypes_per_crowd", 6)), ent["count"] // 20 or 2))
+            ent["_archetypes"] = crowd.parse_archetypes(results.get(f"archetypes:{ent['id']}"), ent, n_arch)
+        if ent["llm_members"] == 0:
+            continue
         if ent["count"] == 1:
             members.append({"entity": ent, "name": ent["name"], "sketch": None})
             continue
@@ -116,8 +132,8 @@ def _expand_entities(sim: Sim, llm: LLMClient, world: Dict[str, Any], seed: str)
                 people = data.get("people", data) if isinstance(data, dict) else data
             except ValueError:
                 people = []
-        people = [p for p in people if isinstance(p, dict) and p.get("name")][: ent["count"]]
-        while len(people) < ent["count"]:
+        people = [p for p in people if isinstance(p, dict) and p.get("name")][: ent["llm_members"]]
+        while len(people) < ent["llm_members"]:
             people.append({"name": f"{ent['name']} #{len(people) + 1}", "angle": ""})
         for p in people:
             members.append({"entity": ent, "name": coerce_str(p["name"]), "sketch": p})
@@ -386,7 +402,13 @@ def _assign_posters(posts, profiles, agent_cfgs) -> None:
     """MiroFish _assign_initial_post_agents: exact type, then aliases, then most influential agent."""
     by_type: Dict[str, List[int]] = {}
     for p in profiles:
-        by_type.setdefault(p["entity_type"].lower(), []).append(p["agent_id"])
+        if p.get("tier") != "crowd":
+            by_type.setdefault(p["entity_type"].lower(), []).append(p["agent_id"])
+    for p in profiles:
+        if p.get("tier") == "crowd" and p["entity_type"].lower() not in by_type:
+            by_type.setdefault(p["entity_type"].lower() + "#crowd", []).append(p["agent_id"])
+    for key in [k for k in by_type if k.endswith("#crowd")]:
+        by_type[key[:-6]] = by_type.pop(key)
     influence = {c["agent_id"]: c["influence_weight"] for c in agent_cfgs}
     used: Dict[str, int] = {}
 
@@ -488,14 +510,22 @@ def _follow_graph(world, profiles, agent_cfgs, seed_val) -> Dict[int, List[int]]
     for p in profiles:
         by_entity.setdefault(p["entity_id"], []).append(p["agent_id"])
     follows: Dict[int, set] = {p["agent_id"]: set() for p in profiles}
-    for rel in world.get("relations", []):
-        for a in by_entity.get(rel["source"], []):
-            for b in by_entity.get(rel["target"], []):
-                if a != b:
-                    follows[a].add(b)
-                    follows[b].add(a)
+    for i, rel in enumerate(world.get("relations", [])):
+        src, tgt = by_entity.get(rel["source"], []), by_entity.get(rel["target"], [])
+        if len(src) * len(tgt) <= 2500:
+            pairs = [(a, b) for a in src for b in tgt]
+        else:  # big crowds: sample a few ties per member instead of a complete bipartite graph
+            pairs = []
+            for a in src:
+                pairs += [(a, b) for b in rng_for(seed_val, "rel", i, "s", a).sample(tgt, min(len(tgt), 5))]
+            for b in tgt:
+                pairs += [(a, b) for a in rng_for(seed_val, "rel", i, "t", b).sample(src, min(len(src), 2))]
+        for a, b in pairs:
+            if a != b:
+                follows[a].add(b)
+                follows[b].add(a)
     influence = {c["agent_id"]: c["influence_weight"] for c in agent_cfgs}
-    top = sorted(influence, key=lambda k: -influence[k])[: max(3, len(profiles) // 5)]
+    top = sorted(influence, key=lambda k: -influence[k])[: min(25, max(3, len(profiles) // 5))]
     for p in profiles:
         rng = rng_for(seed_val, "follow", p["agent_id"])
         for t in top:
@@ -524,7 +554,9 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
 
     members = _expand_entities(sim, llm, world, seed)
     profiles = _build_profiles(sim, llm, world, seed, members)
-    n = len(profiles)
+    for p in profiles:
+        p["tier"] = "llm"
+    n = len(profiles)  # LLM agents: they bound how many agents are activated per round
 
     _progress("generating time configuration")
     time_req = LLMRequest(
@@ -548,6 +580,30 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
     time_config = _parse_time_config(raw_time, n, settings)
 
     agent_cfgs = _agent_configs(llm, world, profiles, time_config["timezone"])
+    for c in agent_cfgs:
+        c["tier"] = "llm"
+
+    # crowd tier: members sampled from each segment's archetypes (no per-member LLM call)
+    archetypes: Dict[str, Dict[str, Any]] = {}
+    segments: Dict[str, Dict[str, Any]] = {}
+    used = {p["username"] for p in profiles}
+    for ent in world["entities"]:
+        if ent.get("tier") != "crowd":
+            continue
+        n_crowd = ent["count"] - ent["llm_members"]
+        cp, cc = crowd.make_members(ent, ent["_archetypes"], n_crowd, len(profiles), settings["seed"], used)
+        profiles.extend(cp)
+        agent_cfgs.extend(cc)
+        segments[ent["id"]] = {"name": ent["name"], "type": ent["type"], "summary": ent.get("summary", "")}
+        for a in ent["_archetypes"]:
+            archetypes[f"{ent['id']}:{a['id']}"] = {**a, "entity_id": ent["id"]}
+        # delegates belong to the segment too: tag them with the closest archetype by mood
+        for p, c in zip(profiles, agent_cfgs):
+            if p["entity_id"] == ent["id"] and p["tier"] == "llm":
+                best = min(ent["_archetypes"], key=lambda a: abs(a["sentiment_mean"] - c["sentiment_bias"]))
+                p["archetype"], p["archetype_label"] = f"{ent['id']}:{best['id']}", best["label"]
+        _progress(f"crowd '{ent['name']}': {n_crowd} members in {len(ent['_archetypes'])} archetypes "
+                  f"+ {ent['llm_members']} LLM delegates")
     event_config = _event_config(llm, world, seed, profiles, agent_cfgs)
 
     follows = _follow_graph(world, profiles, agent_cfgs, settings["seed"])
@@ -569,6 +625,13 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
         "agent_configs": agent_cfgs,
         "platform_configs": {p: dict(PLATFORM_DEFAULTS[p]) for p in settings["platforms"]},
         "probes": world.get("probes", []),
+        "crowd": {
+            "archetypes": archetypes,
+            "segments": segments,
+            "hourly_rate": float(settings.get("crowd_hourly_rate", 0.15)),
+            "feed_size": crowd.FEED_SIZE,
+            "max_actions": 3,
+        },
         "turn": {
             "max_actions": int(settings["max_actions_per_turn"]),
             "memory_size": int(settings["memory_size"]),
@@ -577,11 +640,14 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
             "max_tokens": 4000,
         },
     }
-    write_json(sim.path("agents.json"), profiles)
-    write_json(sim.path("config.json"), config)
+    write_json(sim.path("agents.json"), profiles, compact=len(profiles) > 500)
+    write_json(sim.path("config.json"), config, compact=len(profiles) > 500)
     meta = sim.meta()
     meta["status"] = "ready"
     sim.save_meta(meta)
-    _progress(f"done: {n} agents, {time_config['total_rounds']} rounds "
+    for ent in world["entities"]:
+        ent.pop("_archetypes", None)
+    _progress(f"done: {len(profiles)} agents ({n} with their own LLM turns, {len(profiles) - n} crowd), "
+              f"{time_config['total_rounds']} rounds "
               f"({time_config['total_simulation_hours']}h, {time_config['minutes_per_round']} min/round)")
     return config

@@ -12,8 +12,10 @@ Each round = `minutes_per_round` simulated minutes. Per platform and round:
 from __future__ import annotations
 
 import os
+from collections import Counter
 from typing import Any, Dict, List, Optional, Tuple
 
+from . import crowd as C
 from . import prompts as P
 from .llm import LLMClient, LLMRequest
 from .platform import INFO_ACTIONS, PLATFORM_ACTIONS, Platform
@@ -59,7 +61,7 @@ def select_active(config: Dict[str, Any], hour: int, rng) -> List[int]:
     target = int(rng.uniform(tc["agents_per_hour_min"], tc["agents_per_hour_max"]) * activity_multiplier(tc, hour))
     candidates = [
         c["agent_id"] for c in config["agent_configs"]
-        if hour in c["active_hours"] and rng.random() < c["activity_level"]
+        if c.get("tier") != "crowd" and hour in c["active_hours"] and rng.random() < c["activity_level"]
     ]
     return sorted(rng.sample(candidates, min(target, len(candidates)))) if candidates else []
 
@@ -273,7 +275,7 @@ def save_state(sim: Sim, state: Dict[str, Any]) -> None:
     data = {k: v for k, v in state.items() if k != "objects"}
     data["platforms"] = {name: plat.to_dict() for name, plat in state["objects"].items()}
     data["updated_at"] = now_iso()
-    write_json(sim.path("state.json"), data)
+    write_json(sim.path("state.json"), data, compact=True)
 
 
 def _profiles_with_config(config, profiles):
@@ -324,6 +326,8 @@ def run_simulation(sim: Sim, llm: LLMClient, max_rounds: Optional[int] = None,
         end = min(end, start + max_rounds)
     _truncate_turns(sim, start)
     builder = TurnBuilder(config, profiles)
+    crowd_cfgs = [c for c in config["agent_configs"] if c.get("tier") == "crowd"]
+    crowd_by_id = {c["agent_id"]: c for c in crowd_cfgs}
     turn_cfg = config["turn"]
     seed = config["seed"]
     meta = sim.meta()
@@ -360,14 +364,19 @@ def run_simulation(sim: Sim, llm: LLMClient, max_rounds: Optional[int] = None,
                                                 prof_by_id, ev.get("label", "")))
             state["injected"].append(key)
 
-        # 2-3. activation + first decision
+        # 2-3. activation + first decision (LLM agents: one call each; crowd: one call per segment)
         pending: List[Tuple[str, int, LLMRequest, str, List[int]]] = []
+        crowd_rounds = []
         for name, plat in plats.items():
             active = select_active(config, clk[1], rng_for(seed, name, r, "active"))
             for aid in active:
                 user, feed_ids = builder.observation(aid, plat, r, rng_for(seed, name, r, aid, "feed"))
                 pending.append((name, aid, builder.request(aid, plat, r, user), user, feed_ids))
-        responses = llm.run_batch([p[2] for p in pending], label=f"round {r + 1}")
+            if crowd_cfgs:
+                crowd_rounds.append(_prepare_crowd(name, plat, r, clk, clock_txt, config, crowd_cfgs, builder,
+                                                   state, seed))
+        crowd_reqs = [req for cr in crowd_rounds for req in cr["requests"]]
+        responses = llm.run_batch([p[2] for p in pending] + crowd_reqs, label=f"round {r + 1}")
 
         decisions: Dict[Tuple[str, int], Dict[str, Any]] = {}
         followups: List[Tuple[str, int, LLMRequest]] = []
@@ -427,6 +436,14 @@ def run_simulation(sim: Sim, llm: LLMClient, max_rounds: Optional[int] = None,
             summary[name][0] += 1
             summary[name][1] += sum(1 for a in applied if a["ok"] and a["type"] != "DO_NOTHING")
 
+        for cr in crowd_rounds:
+            n_on, n_act = _apply_crowd(cr, responses, r, clk, clock_txt, config, crowd_by_id, prof_by_id, state,
+                                       seed, records)
+            summary[cr["platform"]][0] += n_on
+            summary[cr["platform"]][1] += n_act
+        for plat in plats.values():
+            plat.flush_crowd_notifications(clock_txt)
+
         state["round"] = r + 1
         save_state(sim, state)
         append_jsonl(sim.path("turns.jsonl"), records)
@@ -460,3 +477,90 @@ def inject_event(sim: Sim, content: str, at_hour: Optional[float], at_round: Opt
     config["event_config"].setdefault("scheduled_events", []).append(ev)
     write_json(sim.path("config.json"), config)
     return {**ev, "round": r}
+
+
+# --------------------------------------------------------------------------- #
+# Crowd tier per round
+# --------------------------------------------------------------------------- #
+
+def _prepare_crowd(name, plat: Platform, r, clk, clock_txt, config, crowd_cfgs, builder: TurnBuilder, state, seed):
+    """Activate crowd members, build their feeds and one LLM request per segment with online members."""
+    tc = config["time_config"]
+    cc = config["crowd"]
+    rate = cc.get("hourly_rate", 0.15) * tc["minutes_per_round"] / 60
+    active = C.crowd_active(crowd_cfgs, clk[1], activity_multiplier(tc, clk[1]), rate,
+                            rng_for(seed, name, r, "crowd-active"))
+    cfg_by_id = {c["agent_id"]: c for c in crowd_cfgs}
+    feeds: Dict[int, List[int]] = {}
+    by_segment: Dict[str, Dict[str, List[int]]] = {}
+    exposures: Dict[str, Counter] = {}
+    for aid in active:
+        c = cfg_by_id[aid]
+        feeds[aid] = plat.feed(aid, r, cc.get("feed_size", C.FEED_SIZE), builder.interest(aid),
+                               rng_for(seed, name, r, aid, "feed"))
+        seg = c["entity_id"]
+        by_segment.setdefault(seg, {}).setdefault(c["archetype"].split(":", 1)[1], []).append(aid)
+        exposures.setdefault(seg, Counter()).update(feeds[aid])
+    memory = state.setdefault("crowd_memory", {}).setdefault(name, {})
+    requests, segments = [], []
+    for seg, online in sorted(by_segment.items()):
+        arch_meta = {k.split(":", 1)[1]: v for k, v in cc["archetypes"].items() if v["entity_id"] == seg}
+        moods = {}
+        for arch_id, members in online.items():
+            vals = [plat.sentiment.get(a, cfg_by_id[a]["sentiment_bias"]) for a in members]
+            moods[arch_id] = sum(vals) / len(vals)
+        history = {a: memory.get(f"{seg}:{a}", []) for a in online}
+        render = lambda pid, extra: plat.render_post(pid, r, tc["minutes_per_round"], -1,  # noqa: E731
+                                                     2 if plat.name == "reddit" else 0, extra)
+        req, post_ids = C.segment_request(plat, {"id": seg, **cc["segments"][seg]}, arch_meta, online,
+                                          exposures[seg], r, clock_txt, config, render, moods, history)
+        requests.append(req)
+        segments.append({"segment": seg, "online": online, "request": req, "moods": moods})
+    return {"platform": name, "plat": plat, "feeds": feeds, "segments": segments, "requests": requests}
+
+
+def _apply_crowd(cr, responses, r, clk, clock_txt, config, crowd_by_id, prof_by_id, state, seed, records):
+    plat: Platform = cr["plat"]
+    probes = config.get("probes", [])
+    max_actions = config["crowd"].get("max_actions", 3)
+    memory = state.setdefault("crowd_memory", {}).setdefault(cr["platform"], {})
+    n_online = n_actions = 0
+    for seg in cr["segments"]:
+        decisions = C.parse_segment(responses.get(seg["request"].id), list(seg["online"]), probes)
+        for arch_id, members in seg["online"].items():
+            d = decisions[arch_id]
+            texts = {"comments": {pid: list(t) for pid, t in d["comments"].items()}, "posts": list(d["posts"])}
+            key = f"{seg['segment']}:{arch_id}"
+            if d["thought"]:
+                memory.setdefault(key, []).append(f"{clock_txt}: {d['thought']}")
+                memory[key] = memory[key][-3:]
+            records.append({
+                "round": r, "day": clk[0], "hour": clk[1], "platform": cr["platform"], "source": "crowd_summary",
+                "segment": seg["segment"], "archetype": key,
+                "label": config["crowd"]["archetypes"][key]["label"],
+                "entity_type": config["crowd"]["segments"][seg["segment"]]["type"],
+                "online": len(members), "thought": d["thought"], "sentiment": d["sentiment"], "probes": d["probes"],
+                "mood_before": round(seg["moods"][arch_id], 3), "ok": d["ok"],
+            })
+            for aid in sorted(members):
+                cfg = crowd_by_id[aid]
+                feed = cr["feeds"][aid]
+                rng = rng_for(seed, cr["platform"], r, aid, "crowd-act")
+                actions, sentiment, probe_vals = C.sample_member(aid, cfg, feed, plat, d, texts, probes,
+                                                                 max_actions, rng)
+                plat.mark_seen(aid, feed)
+                applied = [plat.apply(aid, a, r, clock_txt) for a in actions]
+                if sentiment is not None:
+                    plat.sentiment[aid] = sentiment
+                prof = prof_by_id[aid]
+                records.append({
+                    "round": r, "day": clk[0], "hour": clk[1], "platform": cr["platform"], "source": "crowd",
+                    "agent_id": aid, "agent_name": prof["name"], "username": prof["username"],
+                    "entity_type": prof["entity_type"], "archetype": key, "thought": "",
+                    "sentiment": sentiment, "probes": probe_vals,
+                    "actions": [{k: v for k, v in a.items() if k != "args" or a["type"] in
+                                 ("CREATE_POST", "QUOTE_POST", "CREATE_COMMENT")} for a in applied],
+                })
+                n_online += 1
+                n_actions += sum(1 for a in applied if a["ok"] and a["type"] != "DO_NOTHING")
+    return n_online, n_actions

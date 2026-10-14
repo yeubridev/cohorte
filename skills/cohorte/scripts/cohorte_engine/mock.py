@@ -88,6 +88,30 @@ def mock_response(req) -> str:
             "probes": {k: rng.randint(0, 10) for k in m.get("probes", [])},
             "actions": actions or [{"type": "DO_NOTHING"}],
         })
+    if kind == "archetypes":
+        n = m.get("n", 3)
+        return json.dumps({"archetypes": [{
+            "id": f"a{i + 1}", "label": f"{m.get('name')} type {i + 1}", "share": 1 / n,
+            "description": f"mock archetype {i + 1}", "voice": "short and casual", "interests": ["pricing", "privacy"],
+            "professions": ["designer", "nurse"], "countries": ["France", "Spain"], "age_min": 20, "age_max": 60,
+            "female_share": 0.5, "sentiment_mean": round(rng.uniform(-0.6, 0.6), 2), "sentiment_spread": 0.3,
+            "activity": round(rng.uniform(0.2, 0.8), 2), "susceptibility": 0.3,
+            "stance": rng.choice(["supportive", "opposing", "neutral"])} for i in range(n)]})
+    if kind == "crowd_turn":
+        out = {}
+        for arch in m.get("archetypes", []):
+            posts = m.get("posts", [])
+            out[arch] = {
+                "thought": f"mock collective thought of {arch}",
+                "sentiment": round(rng.uniform(-1, 1), 2),
+                "probes": {k: rng.randint(0, 10) for k in m.get("probes", [])},
+                "reactions": {str(pid): {k: round(rng.uniform(0, 0.3), 2) for k in m.get("keys", ["like"])}
+                              for pid in posts},
+                "comments": {str(pid): [f"mock {arch} reply {j} to {pid}" for j in range(2)] for pid in posts[:3]},
+                "new_post_rate": 0.05,
+                "posts": [f"mock {arch} post {j}: {m.get('subject')} looks {rng.choice(MOODS)}" for j in range(2)],
+            }
+        return json.dumps({"archetypes": out})
     if kind == "interview":
         return f"(mock answer from {m.get('name')}) I found {m.get('subject')} {rng.choice(MOODS)}."
     return "{}"

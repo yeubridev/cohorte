@@ -9,7 +9,6 @@ MiroFish ReportAgent tools  ->  cohorte commands
 
 from __future__ import annotations
 
-import math
 import os
 import statistics
 from collections import Counter, defaultdict
@@ -19,7 +18,8 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple
 from . import prompts as P
 from .llm import LLMClient, LLMRequest, price_for, resolve_model
 from .platform import Platform
-from .simulation import TurnBuilder, clock_for, load_state, select_active
+from .crowd import crowd_active
+from .simulation import TurnBuilder, activity_multiplier, clock_for, load_state, select_active
 from .util import CohorteError, append_jsonl, fmt_clock, keywords, read_json, read_jsonl, rng_for, truncate
 from .world import Sim
 
@@ -44,7 +44,10 @@ class Run:
         self.tc = self.config["time_config"]
 
     def agent_turns(self, platform: Optional[str] = None) -> List[dict]:
-        return [t for t in self.turns if t["source"] == "agent" and (not platform or t["platform"] == platform)]
+        return [t for t in self.turns if t["source"] in ("agent", "crowd") and (not platform or t["platform"] == platform)]
+
+    def crowd_summaries(self, platform: Optional[str] = None) -> List[dict]:
+        return [t for t in self.turns if t["source"] == "crowd_summary" and (not platform or t["platform"] == platform)]
 
     def clock(self, round_no: int) -> str:
         return fmt_clock(*clock_for(self.tc, round_no))
@@ -196,13 +199,25 @@ def show(sim: Sim, full: bool = False) -> str:
                f"{tc['total_rounds']} rounds · starts {tc['start_hour']:02d}:00 · {tc['agents_per_hour_min']}-"
                f"{tc['agents_per_hour_max']} agents online per round (before time-of-day multipliers) · "
                f"peak {tc['peak_hours']} · timezone {tc.get('timezone')}\n")
+    llm_profiles = [p for p in profiles if p.get("tier") != "crowd"]
+    n_crowd = len(profiles) - len(llm_profiles)
+    out.append(f"**Population:** {len(profiles)} agents · {len(llm_profiles)} with their own LLM turns · "
+               f"{n_crowd} crowd members (one LLM call per segment and round)\n")
     rows = []
-    for p in profiles:
+    for p in llm_profiles:
         c = cfgs[p["agent_id"]]
         rows.append([p["agent_id"], p["name"], "@" + p["username"], p["entity_type"], c["stance"],
                      f"{c['sentiment_bias']:+.1f}", c["activity_level"], c["influence_weight"],
                      truncate(p["bio"], 70 if not full else 400)])
-    out.append("## Agents\n" + _table(["id", "name", "handle", "type", "stance", "bias", "activity", "influence", "bio"], rows))
+    out.append("## LLM agents\n" + _table(["id", "name", "handle", "type", "stance", "bias", "activity", "influence", "bio"], rows))
+    archetypes = (cfg.get("crowd") or {}).get("archetypes", {})
+    if archetypes:
+        members = Counter(c["archetype"] for c in cfg["agent_configs"] if c.get("tier") == "crowd")
+        rows = [[key, a["label"], members.get(key, 0), f"{a['sentiment_mean']:+.2f}", a["activity"],
+                 a["susceptibility"], a["stance"], truncate(a["description"], 90 if not full else 400)]
+                for key, a in archetypes.items()]
+        out.append("\n## Crowd archetypes\n" + _table(
+            ["archetype", "label", "members", "mood", "activity", "susceptibility", "stance", "description"], rows))
     out.append("\n## Kick-off posts")
     for post in ev.get("initial_posts", []):
         who = profiles[post["poster_agent_id"]]["name"] if post.get("poster_agent_id") is not None else "NEWS"
@@ -224,7 +239,7 @@ def show(sim: Sim, full: bool = False) -> str:
             out.append(f"- `{p['key']}` ({p['min']}-{p['max']}): {p['question']}")
     if full:
         out.append("\n## Personas")
-        for p in profiles:
+        for p in llm_profiles:
             out.append(f"\n### {p['agent_id']}. {p['name']} (@{p['username']}, {p['entity_type']})\n{p['persona']}")
     return "\n".join(out)
 
@@ -234,9 +249,11 @@ def stats(sim: Sim, platform: Optional[str] = None) -> str:
     m = metrics(run)
     turns = run.agent_turns(platform)
     subject = run.config["subject"]
+    n_crowd = sum(1 for p in run.profiles if p.get("tier") == "crowd")
     out = [f"# Stats — {run.config['title']}",
-           f"rounds {m['rounds_done']}/{m['rounds_total']} · agents {m['agents']} · agent turns {len(turns)} · "
-           f"idle share {_fmt(m['idle_share'], False)} · parse errors {m['parse_errors']}", ""]
+           f"rounds {m['rounds_done']}/{m['rounds_total']} · agents {m['agents']} ({m['agents'] - n_crowd} LLM, "
+           f"{n_crowd} crowd) · agent turns {len(turns)} · idle share {_fmt(m['idle_share'], False)} · "
+           f"parse errors {m['parse_errors']}", ""]
 
     rows = []
     for name, plat in run.plats.items():
@@ -279,6 +296,24 @@ def stats(sim: Sim, platform: Optional[str] = None) -> str:
             for etype, vals in sorted(per_type.items()):
                 rows.append(["", etype, "", _fmt(_mean(vals), False)])
         out.append(_table(["probe", "segment", "first mean", "latest mean"], rows))
+
+    archetypes = (run.config.get("crowd") or {}).get("archetypes", {})
+    if archetypes:
+        by_arch: Dict[str, List[int]] = defaultdict(list)
+        for aid in latest:
+            arch = run.by_id[aid].get("archetype")
+            if arch and run.by_id[aid].get("tier") == "crowd":
+                by_arch[arch].append(aid)
+        probe_latest = _latest_by_agent(turns, "probes")
+        rows = []
+        for key, a in archetypes.items():
+            ids = by_arch.get(key, [])
+            probe_txt = ", ".join(f"{p['key']} {_fmt(_mean(probe_latest.get(i, {}).get(p['key']) for i in ids), False)}"
+                                  for p in run.config.get("probes", []))
+            rows.append([key, a["label"], len(ids), f"{a['sentiment_mean']:+.2f}", _fmt(_mean(latest[i] for i in ids)),
+                         probe_txt])
+        out.append("\n## Crowd archetypes (members who reported; initial mood → latest mean)\n" + _table(
+            ["archetype", "label", "members", "initial", "latest", "probes"], rows))
 
     # trajectory by 6h bucket
     bucket_rounds = max(1, int(6 * 60 / run.tc["minutes_per_round"]))
@@ -334,7 +369,7 @@ def timeline(sim: Sim, bucket_hours: float = 6, platform: Optional[str] = None) 
     out = [f"# Timeline — {run.config['title']} ({bucket_hours:g}h buckets)"]
     for b in sorted(by_bucket):
         ts = by_bucket[b]
-        agent_ts = [t for t in ts if t["source"] == "agent"]
+        agent_ts = [t for t in ts if t["source"] in ("agent", "crowd")]
         c = Counter(a["type"] for t in agent_ts for a in t["actions"] if a.get("ok", True))
         out.append(f"\n## {run.clock(b * bucket)} → {run.clock((b + 1) * bucket)}")
         out.append(f"online turns {len(agent_ts)} · posts {c['CREATE_POST'] + c['QUOTE_POST']} · comments "
@@ -364,12 +399,14 @@ def timeline(sim: Sim, bucket_hours: float = 6, platform: Optional[str] = None) 
             verb = {"CREATE_POST": "posted", "QUOTE_POST": "quoted", "CREATE_COMMENT": "commented"}[a["type"]]
             out.append(f"- [{t['platform']} {where}] @{t['username']} ({t['entity_type']}) {verb}: "
                        f"\"{truncate(a['args'].get('content', ''), 180)}\" (engagement {eng:g})")
-        thoughts = [t for t in agent_ts if t.get("thought") and t.get("sentiment") is not None]
+        thoughts = [t for t in ts if t.get("thought") and t.get("sentiment") is not None
+                    and t["source"] in ("agent", "crowd_summary")]
         if thoughts:
             lo = min(thoughts, key=lambda t: t["sentiment"])
             hi = max(thoughts, key=lambda t: t["sentiment"])
             for t in {id(lo): lo, id(hi): hi}.values():
-                out.append(f"- _private thought_ {t['agent_name']} ({t['entity_type']}, {t['sentiment']:+.2f}): "
+                who = t.get("agent_name") or f"crowd '{t.get('label')}' ({t.get('online')} online)"
+                out.append(f"- _private thought_ {who} ({t['entity_type']}, {t['sentiment']:+.2f}): "
                            f"\"{truncate(t['thought'], 160)}\"")
     return "\n".join(out)
 
@@ -405,6 +442,13 @@ def search(sim: Sim, query: str, limit: int = 15, thoughts: bool = False, platfo
                                 f"{plat.handle(c['author'])} ({run.by_id[c['author']]['entity_type']}) ▲{len(c['likes'])}: "
                                 f"\"{truncate(c['content'], 260)}\""))
     if thoughts:
+        for t in run.crowd_summaries(platform):
+            if t.get("thought"):
+                s = score(t["thought"], 0)
+                if s:
+                    docs.append((s - 0.01, f"[crowd thought · {t['platform']} {run.clock(t['round'])}] '{t['label']}' "
+                                           f"({t['entity_type']}, {t['online']} online, mood {_fmt(t.get('sentiment'))}): "
+                                           f"\"{truncate(t['thought'], 260)}\""))
         for t in run.agent_turns(platform):
             if t.get("thought"):
                 s = score(t["thought"], 0)
@@ -426,6 +470,8 @@ def agent(sim: Sim, ref: str) -> str:
     out = [f"# {p['name']} (@{p['username']}) — agent #{aid}",
            f"{p['entity_type']} ({p['kind']}) · {p.get('age')} · {p.get('gender')} · {p.get('mbti')} · "
            f"{p.get('profession')} · {p.get('country')}",
+           (f"crowd member of '{p.get('archetype_label')}' ({p.get('archetype')}) · " if p.get("tier") == "crowd"
+            else "LLM agent · ") +
            f"stance {c['stance']} · bias {c['sentiment_bias']:+.1f} · activity {c['activity_level']} · "
            f"influence {c['influence_weight']} · active hours {c['active_hours']}",
            f"\n**Bio:** {p['bio']}\n\n**Persona:** {p['persona']}"]
@@ -468,17 +514,19 @@ def thread(sim: Sim, post_id: int, platform: Optional[str] = None) -> str:
     p = plat.posts[post_id]
     out = [plat.render_post(post_id, run.state["round"], run.tc["minutes_per_round"], -1, 0)]
     out.append(f"posted {p['clock']}")
-    if p["likes"]:
-        out.append("liked by: " + ", ".join(f"{run.by_id[a]['name']} ({run.by_id[a]['entity_type']})" for a in p["likes"]))
-    if p["dislikes"]:
-        out.append("downvoted by: " + ", ".join(run.by_id[a]["name"] for a in p["dislikes"]))
-    if p["reposted_by"]:
-        out.append("reposted by: " + ", ".join(run.by_id[a]["name"] for a in p["reposted_by"]))
+    for label, ids in (("liked by", p["likes"]), ("downvoted by", p["dislikes"]), ("reposted by", p["reposted_by"])):
+        if not ids:
+            continue
+        named = [a for a in sorted(ids) if run.by_id[a].get("tier") != "crowd"]
+        by_type = Counter(run.by_id[a]["entity_type"] for a in ids if run.by_id[a].get("tier") == "crowd")
+        parts = [f"{run.by_id[a]['name']} ({run.by_id[a]['entity_type']})" for a in named]
+        parts += [f"{n} crowd {t}" for t, n in by_type.most_common()]
+        out.append(f"{label} ({len(ids)}): " + ", ".join(parts))
     for q in plat.posts.values():
         if q["kind"] == "quote" and q["ref"] == post_id:
             out.append(f"- quote [post #{q['id']}] {plat.handle(q['author'])} {q['clock']}: \"{q['content']}\" "
                        f"(eng {plat.engagement(q):g})")
-    for cid in p["comments"]:
+    for cid in sorted(p["comments"], key=lambda c: -len(plat.comments[c]["likes"]))[:40]:
         c = plat.comments[cid]
         out.append(f"- [comment #{cid}] {plat.handle(c['author'])} ({run.by_id[c['author']]['entity_type']}) "
                    f"{c['clock']} ▲{len(c['likes'])} ▼{len(c['dislikes'])}: \"{c['content']}\"")
@@ -599,12 +647,21 @@ def estimate(sim: Sim, model: Optional[str] = None) -> str:
     inp, out, cache_read = price_for(model)
     tc = cfg["time_config"]
     st = read_json(sim.path("state.json"), default={"round": 0})
-    turns = 0
+    crowd_cfgs = [c for c in cfg["agent_configs"] if c.get("tier") == "crowd"]
+    rate = (cfg.get("crowd") or {}).get("hourly_rate", 0.15) * tc["minutes_per_round"] / 60
+    turns = crowd_turns = crowd_calls = 0
     for r in range(st["round"], tc["total_rounds"]):
         hour = clock_for(tc, r)[1]
         for plat in cfg["platforms"]:
             turns += len(select_active(cfg, hour, rng_for(cfg["seed"], plat, r, "active")))
-    persona_tokens = _mean(len(p["persona"]) + len(p["bio"]) for p in profiles) or 1500
+            if crowd_cfgs:
+                active = crowd_active(crowd_cfgs, hour, activity_multiplier(tc, hour), rate,
+                                      rng_for(cfg["seed"], plat, r, "crowd-active"))
+                crowd_turns += len(active)
+                by_id = {c["agent_id"]: c["entity_id"] for c in crowd_cfgs}
+                crowd_calls += len({by_id[a] for a in active})
+    llm_profiles = [p for p in profiles if p.get("tier") != "crowd"] or profiles
+    persona_tokens = _mean(len(p["persona"]) + len(p["bio"]) for p in llm_profiles) or 1500
     sys_tokens = int(persona_tokens / 3.5) + 900
     feed = cfg["turn"]["feed_size"]
     feed_n = max(feed.values()) if isinstance(feed, dict) else int(feed)
@@ -614,13 +671,24 @@ def estimate(sim: Sim, model: Optional[str] = None) -> str:
     calls = turns + followups
     no_cache = calls * ((sys_tokens + user_tokens) * inp + out_tokens * out) / 1e6
     cached = calls * (sys_tokens * cache_read + user_tokens * inp + out_tokens * out) / 1e6
-    return (
-        f"# Cost estimate for the remaining run — model {model}\n"
-        f"- remaining rounds: {tc['total_rounds'] - st['round']} · agent turns: {turns} (exact, activation is "
-        f"seeded) + ~{followups} search follow-ups\n"
-        f"- tokens per call ≈ {sys_tokens} system + {user_tokens} user in, ~{out_tokens} out\n"
-        f"- estimated cost: **${cached:.2f}** with prompt caching hits, up to **${no_cache:.2f}** without\n"
+    crowd_in, crowd_out = 3500, 3000
+    crowd_cost = crowd_calls * (crowd_in * inp + crowd_out * out) / 1e6
+    naive = (crowd_turns * ((sys_tokens + user_tokens) * inp + out_tokens * out) / 1e6) if crowd_turns else 0
+    lines = [
+        f"# Cost estimate for the remaining run — model {model}",
+        f"- remaining rounds: {tc['total_rounds'] - st['round']} (activation is seeded, counts are exact)",
+        f"- LLM agents: {turns} turns + ~{followups} search follow-ups ≈ {sys_tokens} system + {user_tokens} user "
+        f"tokens in, ~{out_tokens} out per call → ${cached:.2f} with prompt caching, up to ${no_cache:.2f} without",
+    ]
+    if crowd_cfgs:
+        lines.append(f"- crowd: {len(crowd_cfgs)} members, {crowd_turns} member turns driven by {crowd_calls} "
+                     f"segment calls (~{crowd_in} in / ~{crowd_out} out tokens each) → ${crowd_cost:.2f} "
+                     f"(one LLM call per member turn would cost ~${naive:.2f})")
+    lines += [
+        f"- **total ≈ ${cached + crowd_cost:.2f}** (up to ${no_cache + crowd_cost:.2f}) for "
+        f"{calls + crowd_calls} LLM calls",
         f"- list prices used: ${inp}/M input, ${out}/M output, ${cache_read}/M cache read "
-        f"(claude-cli on a subscription consumes plan usage instead)\n"
-        f"- interviews and report-writing tools are extra but small (one call per interviewed agent)"
-    )
+        f"(claude-cli on a subscription consumes plan usage instead)",
+        "- interviews and report-writing tools are extra but small (one call per interviewed agent)",
+    ]
+    return "\n".join(lines)

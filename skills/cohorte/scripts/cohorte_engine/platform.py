@@ -1,11 +1,20 @@
 """Simulated social platforms (stand-in for OASIS' Twitter and Reddit environments).
 
 State is plain JSON-able data so a run can be saved after every round and resumed.
+
+Built to scale to tens of thousands of agents:
+  * post keywords, authors' posts and follower counts are indexed once, not recomputed per feed;
+  * feeds are ranked from a per-round candidate pool (globally hot/recent posts + posts by the
+    people the agent follows) instead of scoring every post for every agent;
+  * likes/dislikes/reposters are sets in memory (lists on disk);
+  * crowd-tier agents keep a short memory, and their reactions reach authors as one aggregated
+    notification per post ("37 people liked your post") instead of thousands of lines.
 """
 
 from __future__ import annotations
 
 import math
+from collections import defaultdict
 from typing import Any, Dict, List, Optional, Tuple
 
 from .util import keywords, truncate
@@ -20,7 +29,13 @@ INFO_ACTIONS = {"SEARCH_POSTS", "SEARCH_USER", "TREND", "REFRESH"}
 CONTENT_LIMIT = {"twitter": 600, "reddit": 3000}
 NEWS_BOOST_ROUNDS = 6
 MEMORY_KEEP = 40
+CROWD_MEMORY_KEEP = 6
 NOTIF_KEEP = 15
+SEEN_KEEP = 80
+POOL_SIZE = 150            # globally ranked candidates per round
+FOLLOWED_RECENT = 4        # latest posts per followed author added to an agent's candidates
+FOLLOWED_WINDOW = 48       # rounds
+SET_FIELDS = ("likes", "dislikes", "reposted_by")
 
 
 class Platform:
@@ -29,9 +44,17 @@ class Platform:
         self.cfg = cfg                                  # platform_configs[name]
         self.profiles = {p["agent_id"]: p for p in profiles}
         self.by_username = {p["username"].lower(): p["agent_id"] for p in profiles}
+        self.crowd_ids = {p["agent_id"] for p in profiles if p.get("tier") == "crowd"}
         data = data or {}
-        self.posts: Dict[int, dict] = {p["id"]: p for p in data.get("posts", [])}
-        self.comments: Dict[int, dict] = {c["id"]: c for c in data.get("comments", [])}
+        self.posts: Dict[int, dict] = {}
+        for p in data.get("posts", []):
+            for f in SET_FIELDS:
+                p[f] = set(p.get(f, []))
+            self.posts[p["id"]] = p
+        self.comments: Dict[int, dict] = {}
+        for c in data.get("comments", []):
+            c["likes"], c["dislikes"] = set(c.get("likes", [])), set(c.get("dislikes", []))
+            self.comments[c["id"]] = c
         self.follows: Dict[int, set] = {
             int(k): set(v) for k, v in data.get("follows", {}).items()
         } or {p["agent_id"]: set(p.get("following", [])) for p in profiles}
@@ -44,12 +67,31 @@ class Platform:
         self.sentiment: Dict[int, float] = {int(k): v for k, v in data.get("sentiment", {}).items()}
         self.next_post = max(self.posts, default=0) + 1
         self.next_comment = max(self.comments, default=0) + 1
+        # indexes (rebuilt on load, maintained incrementally)
+        self._kw: Dict[int, frozenset] = {}
+        self.author_posts: Dict[Optional[int], List[int]] = defaultdict(list)
+        for pid in sorted(self.posts):
+            if self.posts[pid]["kind"] != "repost":
+                self.author_posts[self.posts[pid]["author"]].append(pid)
+        self.follower_counts: Dict[int, int] = defaultdict(int)
+        for followed in self.follows.values():
+            for t in followed:
+                self.follower_counts[t] += 1
+        self._profile_kw: Optional[Dict[int, set]] = None
+        self._pool: Tuple[int, List[int]] = (-1, [])
+        self._crowd_agg: Dict[int, Dict[str, int]] = {}
 
     # ------------------------------------------------------------------ io --
     def to_dict(self) -> dict:
+        def post_out(p):
+            return {**p, **{f: sorted(p[f]) for f in SET_FIELDS}}
+
+        def comment_out(c):
+            return {**c, "likes": sorted(c["likes"]), "dislikes": sorted(c["dislikes"])}
+
         return {
-            "posts": [self.posts[k] for k in sorted(self.posts)],
-            "comments": [self.comments[k] for k in sorted(self.comments)],
+            "posts": [post_out(self.posts[k]) for k in sorted(self.posts)],
+            "comments": [comment_out(self.comments[k]) for k in sorted(self.comments)],
             "follows": {str(k): sorted(v) for k, v in self.follows.items()},
             "mutes": {str(k): sorted(v) for k, v in self.mutes.items() if v},
             "seen": {str(k): {str(pk): c for pk, c in v.items()} for k, v in self.seen.items()},
@@ -67,8 +109,7 @@ class Platform:
         return f"{prefix}{p['username']}" if p else f"{prefix}unknown"
 
     def followers_of(self, agent_id: int) -> int:
-        base = self.profiles.get(agent_id, {}).get("followers", 0)
-        return base + sum(1 for f in self.follows.values() if agent_id in f)
+        return self.profiles.get(agent_id, {}).get("followers", 0) + self.follower_counts.get(agent_id, 0)
 
     def engagement(self, post: dict) -> float:
         return (
@@ -76,19 +117,46 @@ class Platform:
             + 1.5 * len(post["comments"]) - 0.5 * len(post["dislikes"])
         )
 
+    def post_keywords(self, pid: int) -> frozenset:
+        kw = self._kw.get(pid)
+        if kw is None:
+            kw = self._kw[pid] = frozenset(keywords(self.posts[pid]["content"]))
+        return kw
+
     def _add_memory(self, agent_id: int, text: str) -> None:
         mem = self.memory.setdefault(agent_id, [])
         mem.append(text)
-        del mem[:-MEMORY_KEEP]
+        keep = CROWD_MEMORY_KEEP if agent_id in self.crowd_ids else MEMORY_KEEP
+        if len(mem) > keep:
+            del mem[:-keep]
 
     def _notify(self, agent_id: Optional[int], text: str, actor: int) -> None:
-        if agent_id is None or agent_id == actor or agent_id not in self.profiles:
+        if agent_id is None or agent_id == actor or agent_id not in self.profiles or agent_id in self.crowd_ids:
             return
         notes = self.notifications.setdefault(agent_id, [])
         notes.append(text)
         del notes[:-NOTIF_KEEP]
 
+    def _crowd_reaction(self, pid: int, kind: str) -> None:
+        agg = self._crowd_agg.setdefault(pid, {})
+        agg[kind] = agg.get(kind, 0) + 1
+
+    def flush_crowd_notifications(self, clock: str) -> None:
+        """One aggregated line per post for the crowd's reactions this round."""
+        labels = {"like": "liked", "dislike": "downvoted", "repost": "reposted", "quote": "quoted",
+                  "comment": "commented on"}
+        for pid, agg in self._crowd_agg.items():
+            post = self.posts.get(pid)
+            if not post or post["author"] is None or post["author"] in self.crowd_ids:
+                continue
+            parts = [f"{n} {'person' if n == 1 else 'people'} {labels[k]}" for k, n in agg.items() if n]
+            if parts:
+                self._notify(post["author"], f"{clock} " + ", ".join(parts) + f" your [post {pid}]", -1)
+        self._crowd_agg = {}
+
     def _mentions(self, content: str, actor: int, clock: str, post_id: int) -> None:
+        if actor in self.crowd_ids or "@" not in content and "u/" not in content:
+            return
         for token in content.split():
             if token.startswith(("@", "u/")):
                 uname = token.lstrip("@").replace("u/", "", 1).strip(".,:;!?)(\"'").lower()
@@ -104,52 +172,69 @@ class Platform:
         self.next_post += 1
         self.posts[pid] = {
             "id": pid, "author": author, "content": content[: CONTENT_LIMIT[self.name]], "round": round_no,
-            "clock": clock, "kind": kind, "ref": ref, "likes": [], "dislikes": [], "shares": 0, "quotes": 0,
-            "comments": [], "reposted_by": [],
+            "clock": clock, "kind": kind, "ref": ref, "likes": set(), "dislikes": set(), "shares": 0, "quotes": 0,
+            "comments": [], "reposted_by": set(),
         }
+        if kind != "repost":
+            self.author_posts[author].append(pid)
         if author is not None and kind in ("post", "quote"):
             self._mentions(content, author, clock, pid)
         return pid
 
     # ---------------------------------------------------------------- feed --
-    def _score(self, agent_id: int, post: dict, round_no: int, interest: set, rng) -> float:
+    def _base_score(self, post: dict, round_no: int) -> float:
         c = self.cfg
         age = max(0, round_no - post["round"])
-        recency = math.exp(-age / 12.0)
         eng = self.engagement(post)
         viral = c.get("viral_threshold", 10)
-        popularity = min(1.0, math.log1p(max(0.0, eng)) / math.log1p(viral * 3))
-        if eng >= viral:
-            popularity += 0.5
-        words = keywords(post["content"])
-        relevance = len(words & interest) / max(4, min(len(words), 12)) if words else 0.0
-        score = (c.get("recency_weight", 0.4) * recency + c.get("popularity_weight", 0.3) * popularity
-                 + c.get("relevance_weight", 0.3) * min(1.0, relevance * 2))
+        popularity = min(1.0, math.log1p(max(0.0, eng)) / math.log1p(viral * 3)) + (0.5 if eng >= viral else 0.0)
+        score = c.get("recency_weight", 0.4) * math.exp(-age / 12.0) + c.get("popularity_weight", 0.3) * popularity
+        if post["author"] is None and age < NEWS_BOOST_ROUNDS:
+            score += 1.0
+        return score
+
+    def prepare_round(self, round_no: int) -> None:
+        """Rank the global candidate pool once per round (cheap feeds for thousands of agents)."""
+        if self._pool[0] == round_no:
+            return
+        scored = [(self._base_score(p, round_no), pid) for pid, p in self.posts.items() if p["kind"] != "repost"]
+        scored.sort(reverse=True)
+        self._pool = (round_no, [pid for _, pid in scored[:POOL_SIZE]])
+
+    def _score(self, agent_id: int, post: dict, round_no: int, interest: set, rng, follows: set) -> float:
+        c = self.cfg
+        score = self._base_score(post, round_no)
+        words = self.post_keywords(post["id"])
+        if words and interest:
+            relevance = len(words & interest) / max(4, min(len(words), 12))
+            score += c.get("relevance_weight", 0.3) * min(1.0, relevance * 2)
         author = post["author"]
-        follows = self.follows.get(agent_id, set())
         if author in follows:
             score += 0.6 if self.name == "twitter" else 0.2
-        if any(r in follows for r in post["reposted_by"]):
+        if post["reposted_by"] and not follows.isdisjoint(post["reposted_by"]):
             score += 0.4
-        if author is None and age < NEWS_BOOST_ROUNDS:
-            score += 1.0
         if author is not None:
             mine, theirs = self.sentiment.get(agent_id), self.sentiment.get(author)
             if mine is not None and theirs is not None:
-                similarity = 1 - abs(mine - theirs) / 2
-                score += c.get("echo_chamber_strength", 0.5) * (similarity - 0.5)
-            influence = (self.profiles.get(author) or {}).get("influence_weight", 1.0)
-            score += 0.1 * math.log1p(influence)
+                score += c.get("echo_chamber_strength", 0.5) * (0.5 - abs(mine - theirs) / 2)
+            score += 0.1 * math.log1p((self.profiles.get(author) or {}).get("influence_weight", 1.0))
         score -= min(1.0, 0.4 * self.seen.get(agent_id, {}).get(post["id"], 0))
         return score + rng.random() * 0.15
 
     def feed(self, agent_id: int, round_no: int, size: int, interest: set, rng) -> List[int]:
+        self.prepare_round(round_no)
         muted = self.mutes.get(agent_id, set())
-        candidates = [
-            p for p in self.posts.values()
-            if p["author"] != agent_id and p["author"] not in muted and p["kind"] != "repost"
-        ]
-        ranked = sorted(candidates, key=lambda p: -self._score(agent_id, p, round_no, interest, rng))
+        follows = self.follows.get(agent_id, set())
+        candidates = set(self._pool[1])
+        for author in follows:
+            for pid in reversed(self.author_posts.get(author, [])[-FOLLOWED_RECENT:]):
+                if round_no - self.posts[pid]["round"] <= FOLLOWED_WINDOW:
+                    candidates.add(pid)
+        ranked = sorted(
+            (self.posts[pid] for pid in candidates
+             if self.posts[pid]["author"] != agent_id and self.posts[pid]["author"] not in muted),
+            key=lambda p: -self._score(agent_id, p, round_no, interest, rng, follows),
+        )
         chosen = [p["id"] for p in ranked[:size]]
         rest = [p["id"] for p in ranked[size:]]
         if rest and size >= 4:
@@ -160,9 +245,12 @@ class Platform:
         seen = self.seen.setdefault(agent_id, {})
         for pid in post_ids:
             seen[pid] = seen.get(pid, 0) + 1
+        if len(seen) > SEEN_KEEP:
+            for pid in list(seen)[: len(seen) - SEEN_KEEP]:
+                del seen[pid]
 
     def render_post(self, pid: int, round_no: int, minutes_per_round: int, viewer: int,
-                    with_comments: int = 0) -> str:
+                    with_comments: int = 0, extra: str = "") -> str:
         p = self.posts[pid]
         age_h = (round_no - p["round"]) * minutes_per_round / 60
         age = "just now" if age_h < 1 else (f"{int(age_h)}h ago" if age_h < 48 else f"{int(age_h // 24)}d ago")
@@ -178,10 +266,11 @@ class Platform:
             stats = f"♥ {len(p['likes'])} · ↻ {p['shares']} · ❝ {p['quotes']}"
         else:
             stats = f"▲ {len(p['likes'])} ▼ {len(p['dislikes'])} · {len(p['comments'])} comments"
-        lines = [f"{head} · {stats}"]
-        reposters = [r for r in p["reposted_by"] if r in self.follows.get(viewer, set())]
+        lines = [f"{head} · {stats}{extra}"]
+        viewer_follows = self.follows.get(viewer, set())
+        reposters = [r for r in p["reposted_by"] if r in viewer_follows][:3]
         if reposters:
-            lines.append("  ↻ reposted by " + ", ".join(self.handle(r) for r in reposters[:3]))
+            lines.append("  ↻ reposted by " + ", ".join(self.handle(r) for r in reposters))
         if p["kind"] == "quote" and p["ref"] in self.posts:
             q = self.posts[p["ref"]]
             lines.append(f"  quoting [post {q['id']}] {self.handle(q['author'])}: \"{truncate(q['content'], 140)}\"")
@@ -203,21 +292,21 @@ class Platform:
         for p in self.posts.values():
             if p["kind"] == "repost":
                 continue
-            text = p["content"] + " " + " ".join(self.comments[c]["content"] for c in p["comments"])
-            overlap = len(q & keywords(text, 3))
+            overlap = len(q & self.post_keywords(p["id"]))
             if overlap:
                 scored.append((overlap + 0.05 * self.engagement(p), p["id"]))
         return [pid for _, pid in sorted(scored, reverse=True)[:limit]]
 
     def search_users(self, query: str, limit: int = 5) -> List[int]:
+        if self._profile_kw is None:
+            self._profile_kw = {
+                aid: keywords(f"{p['name']} {p['username']} {p.get('bio', '')} {p.get('entity_type', '')}", 3)
+                | {p["username"].lower()}
+                for aid, p in self.profiles.items()
+            }
         q = keywords(query, 3) | {query.lower().lstrip("@")}
-        scored = []
-        for aid, prof in self.profiles.items():
-            text = f"{prof['name']} {prof['username']} {prof.get('bio', '')} {prof.get('entity_type', '')}"
-            overlap = len(q & (keywords(text, 3) | {prof["username"].lower()}))
-            if overlap:
-                scored.append((overlap, aid))
-        return [aid for _, aid in sorted(scored, reverse=True)[:limit]]
+        scored = [(len(q & kw), self.follower_counts.get(aid, 0), aid) for aid, kw in self._profile_kw.items() if q & kw]
+        return [aid for _, _, aid in sorted(scored, reverse=True)[:limit]]
 
     def trending(self, round_no: int, window: int = 24, limit: int = 5) -> List[int]:
         recent = [p for p in self.posts.values() if p["kind"] != "repost" and round_no - p["round"] <= window]
@@ -230,6 +319,7 @@ class Platform:
         args = {k: v for k, v in action.items() if k != "type"}
         rec: Dict[str, Any] = {"type": t, "args": args, "ok": True, "context": {}}
         me = self.handle(agent_id)
+        crowd = agent_id in self.crowd_ids
 
         def fail(reason: str) -> Dict[str, Any]:
             rec["ok"] = False
@@ -245,6 +335,8 @@ class Platform:
             return self.posts.get(pid)
 
         def describe(p: dict) -> Dict[str, Any]:
+            if crowd:
+                return {"post_id": p["id"]}
             return {"post_id": p["id"], "post_author": self.handle(p["author"]),
                     "post_content": truncate(p["content"], 200)}
 
@@ -267,25 +359,31 @@ class Platform:
             if t == "LIKE_POST":
                 if agent_id in p["likes"] or p["author"] == agent_id:
                     return fail("already liked or own post")
-                p["likes"].append(agent_id)
-                if agent_id in p["dislikes"]:
-                    p["dislikes"].remove(agent_id)
-                self._notify(p["author"], f"{clock} {me} liked your [post {p['id']}]", agent_id)
+                p["likes"].add(agent_id)
+                p["dislikes"].discard(agent_id)
+                if crowd:
+                    self._crowd_reaction(p["id"], "like")
+                else:
+                    self._notify(p["author"], f"{clock} {me} liked your [post {p['id']}]", agent_id)
                 self._add_memory(agent_id, f"{clock} You liked {snippet}")
             elif t == "DISLIKE_POST":
                 if agent_id in p["dislikes"] or p["author"] == agent_id:
                     return fail("already disliked or own post")
-                p["dislikes"].append(agent_id)
-                if agent_id in p["likes"]:
-                    p["likes"].remove(agent_id)
+                p["dislikes"].add(agent_id)
+                p["likes"].discard(agent_id)
+                if crowd:
+                    self._crowd_reaction(p["id"], "dislike")
                 self._add_memory(agent_id, f"{clock} You downvoted {snippet}")
             elif t == "REPOST":
                 if agent_id in p["reposted_by"] or p["author"] == agent_id:
                     return fail("already reposted or own post")
                 p["shares"] += 1
-                p["reposted_by"].append(agent_id)
+                p["reposted_by"].add(agent_id)
                 self.create_post(agent_id, p["content"], round_no, clock, kind="repost", ref=p["id"])
-                self._notify(p["author"], f"{clock} {me} reposted your [post {p['id']}]", agent_id)
+                if crowd:
+                    self._crowd_reaction(p["id"], "repost")
+                else:
+                    self._notify(p["author"], f"{clock} {me} reposted your [post {p['id']}]", agent_id)
                 self._add_memory(agent_id, f"{clock} You reposted {snippet}")
             elif t == "QUOTE_POST":
                 content = str(args.get("content") or "").strip()
@@ -294,8 +392,11 @@ class Platform:
                 p["quotes"] += 1
                 pid = self.create_post(agent_id, content, round_no, clock, kind="quote", ref=p["id"])
                 rec["context"]["new_post_id"] = pid
-                self._notify(p["author"], f"{clock} {me} quoted your [post {p['id']}] in [post {pid}]: "
-                                          f"\"{truncate(content, 160)}\"", agent_id)
+                if crowd:
+                    self._crowd_reaction(p["id"], "quote")
+                else:
+                    self._notify(p["author"], f"{clock} {me} quoted your [post {p['id']}] in [post {pid}]: "
+                                              f"\"{truncate(content, 160)}\"", agent_id)
                 self._add_memory(agent_id, f"{clock} You quoted {snippet} saying: \"{truncate(content, 200)}\"")
             else:  # CREATE_COMMENT
                 content = str(args.get("content") or "").strip()
@@ -305,16 +406,19 @@ class Platform:
                 self.next_comment += 1
                 self.comments[cid] = {"id": cid, "post_id": p["id"], "author": agent_id,
                                       "content": content[: CONTENT_LIMIT[self.name]], "round": round_no,
-                                      "clock": clock, "likes": [], "dislikes": []}
+                                      "clock": clock, "likes": set(), "dislikes": set()}
                 p["comments"].append(cid)
                 rec["context"]["comment_id"] = cid
-                self._notify(p["author"], f"{clock} {me} commented on your [post {p['id']}] "
-                                          f"([comment {cid}]): \"{truncate(content, 160)}\"", agent_id)
-                for other in {self.comments[c]["author"] for c in p["comments"][:-1]}:
-                    if other != p["author"]:
+                if crowd:
+                    self._crowd_reaction(p["id"], "comment")
+                else:
+                    self._notify(p["author"], f"{clock} {me} commented on your [post {p['id']}] "
+                                              f"([comment {cid}]): \"{truncate(content, 160)}\"", agent_id)
+                    others = {self.comments[c]["author"] for c in p["comments"][-30:-1]} - {p["author"]}
+                    for other in others:
                         self._notify(other, f"{clock} {me} also commented on [post {p['id']}] "
                                             f"([comment {cid}]): \"{truncate(content, 120)}\"", agent_id)
-                self._mentions(content, agent_id, clock, p["id"])
+                    self._mentions(content, agent_id, clock, p["id"])
                 self._add_memory(agent_id, f"{clock} You commented on {snippet}: \"{truncate(content, 200)}\"")
             return rec
         if t in ("LIKE_COMMENT", "DISLIKE_COMMENT"):
@@ -324,16 +428,16 @@ class Platform:
                 c = None
             if c is None:
                 return fail("unknown comment_id")
-            rec["context"] = {"comment_id": c["id"], "comment_author": self.handle(c["author"]),
-                              "comment_content": truncate(c["content"], 200), "post_id": c["post_id"]}
+            rec["context"] = {"comment_id": c["id"], "post_id": c["post_id"]} if crowd else {
+                "comment_id": c["id"], "comment_author": self.handle(c["author"]),
+                "comment_content": truncate(c["content"], 200), "post_id": c["post_id"]}
             field, other = ("likes", "dislikes") if t == "LIKE_COMMENT" else ("dislikes", "likes")
             if agent_id in c[field] or c["author"] == agent_id:
                 return fail("duplicate or own comment")
-            c[field].append(agent_id)
-            if agent_id in c[other]:
-                c[other].remove(agent_id)
+            c[field].add(agent_id)
+            c[other].discard(agent_id)
             verb = "upvoted" if t == "LIKE_COMMENT" else "downvoted"
-            if t == "LIKE_COMMENT":
+            if t == "LIKE_COMMENT" and not crowd:
                 self._notify(c["author"], f"{clock} {me} upvoted your [comment {c['id']}]", agent_id)
             self._add_memory(agent_id, f"{clock} You {verb} {self.handle(c['author'])}'s comment "
                                        f"\"{truncate(c['content'], 100)}\"")
@@ -347,7 +451,9 @@ class Platform:
                 if target in self.follows.setdefault(agent_id, set()):
                     return fail("already following")
                 self.follows[agent_id].add(target)
-                self._notify(target, f"{clock} {me} started following you", agent_id)
+                self.follower_counts[target] += 1
+                if not crowd:
+                    self._notify(target, f"{clock} {me} started following you", agent_id)
                 self._add_memory(agent_id, f"{clock} You followed {self.handle(target)}")
             else:
                 self.mutes.setdefault(agent_id, set()).add(target)

@@ -1,6 +1,6 @@
 {
   "name": "cohorte",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Swarm-intelligence rehearsal for your project: a cohort of persona robots reacts to your launch, pricing or message on simulated Twitter/Reddit, then you get a prediction report, agent interviews and A/B re-tests. A Claude re-implementation of MiroFish.",
   "author": { "name": "yeubridev" },
   "repository": "https://github.com/yeubridev/cohorte",
