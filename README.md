@@ -1,3 +1,29 @@
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/banner-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/brand/banner-light.svg">
+  <img alt="cohorte: rehearse your launch with 10,000 robots" src="assets/brand/banner-light.svg" width="100%">
+</picture>
+
+<p>
+  <a href="https://github.com/yeubridev/cohorte/actions/workflows/tests.yml"><img alt="tests" src="https://github.com/yeubridev/cohorte/actions/workflows/tests.yml/badge.svg"></a>
+  <img alt="Claude Code skill" src="https://img.shields.io/badge/Claude_Code-skill-E4572E?style=flat-square">
+  <img alt="Python 3.9+" src="https://img.shields.io/badge/python-3.9%2B-1F9E89?style=flat-square">
+  <img alt="10,000+ agents" src="https://img.shields.io/badge/agents-10%2C000%2B-1B1F2A?style=flat-square">
+  <img alt="No dependencies" src="https://img.shields.io/badge/dependencies-stdlib_only-5B6170?style=flat-square">
+</p>
+
+<p>
+  <a href="#install"><b>Install</b></a> ·
+  <a href="#use-it"><b>Use it</b></a> ·
+  <a href="#from-a-dozen-robots-to-10000"><b>Scale</b></a> ·
+  <a href="#how-it-maps-to-mirofish"><b>MiroFish mapping</b></a> ·
+  <a href="skills/cohorte/SKILL.md"><b>Skill</b></a>
+</p>
+
+</div>
+
 # Cohorte
 
 **Rehearse your project's reception with a cohort of AI robots, then adapt it before real people see it.**
@@ -139,6 +165,13 @@ Details: [`skills/cohorte/references/engine.md`](skills/cohorte/references/engin
 The robots are language-model personas. They are articulate, often more reasonable and more alike than real
 crowds, and they only know what the seed tells them. Use Cohorte to find objections, compare variants and prepare
 answers. It does not replace talking to real users. Treat small differences between runs as noise.
+
+## Brand
+
+The logo is a ring of robots around one voice: grey for indifferent, teal for positive and coral for negative.
+Files are in [`assets/brand/`](assets/brand): light and dark banners and logos, plus
+`social-preview.png` (1280×640) for the repository's social preview. Regenerate them with
+`python3 assets/brand/generate.py assets/brand`.
 
 ## Development
 
