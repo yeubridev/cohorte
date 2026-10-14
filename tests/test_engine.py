@@ -101,9 +101,22 @@ class TestWorld(unittest.TestCase):
         with self.assertRaises(CohorteError):
             validate_world(w)
         w = small_world()
-        w["entities"][6]["count"] = 500
+        w["entities"][6]["count"] = 50000          # over max_agents
         with self.assertRaises(CohorteError):
             validate_world(w)
+        w = small_world()
+        w["entities"][6].update({"count": 500, "tier": "llm"})   # 500 LLM agents > max_llm_agents
+        with self.assertRaises(CohorteError):
+            validate_world(w)
+
+    def test_tiers(self):
+        w = small_world()
+        w["entities"][6]["count"] = 5000
+        world, _ = validate_world(w)
+        parents = world["entities"][6]
+        self.assertEqual((parents["tier"], parents["llm_members"]), ("crowd", 3))
+        self.assertEqual(world["entities"][7]["tier"], "llm")   # 4 members <= crowd_threshold
+        self.assertEqual(world["population"]["agents"], 5017)
 
     def test_unknown_type_falls_back(self):
         w = small_world()
@@ -153,7 +166,7 @@ class TestPipeline(CliCase):
         self.cli("setup", "demo")
         show = self.cli("show", "demo")
         self.assertIn("Kick-off posts", show)
-        self.assertIn("estimated cost", self.cli("estimate", "demo", "--model", "haiku"))
+        self.assertIn("total ≈", self.cli("estimate", "demo", "--model", "haiku"))
         self.cli("run", "demo")
         stats = self.cli("stats", "demo")
         self.assertIn("rounds 6/6", stats)
@@ -185,6 +198,45 @@ class TestPipeline(CliCase):
             with open(os.path.join(self.home, "sims", name, "turns.jsonl")) as f:
                 return [json.loads(line) for line in f]
         self.assertEqual(turns("full"), turns("chunked"))
+
+    def test_crowd_scale(self):
+        """Thousands of crowd agents: few LLM calls, deterministic, resumable, analysable."""
+        import time
+        w = small_world(hours=8)
+        for ent in w["entities"]:
+            if ent["id"] in ("parents", "fitness", "privacy", "general"):
+                ent["count"] = 1500
+        with open(self.world_path, "w") as f:
+            json.dump(w, f)
+        self.cli("init", "crowd", "--world", self.world_path, "--backend", "mock")
+        self.cli("setup", "crowd")
+        self.assertIn("6006 agents", self.cli("show", "crowd"))
+        self.assertIn("segment calls", self.cli("estimate", "crowd"))
+        self.cli("fork", "crowd", "crowd-chunked")
+        start = time.time()
+        self.cli("run", "crowd")
+        elapsed = time.time() - start
+        self.cli("run", "crowd-chunked", "--max-rounds", "3")
+        self.cli("run", "crowd-chunked")
+
+        def turns(name):
+            with open(os.path.join(self.home, "sims", name, "turns.jsonl")) as f:
+                return [json.loads(line) for line in f]
+        full = turns("crowd")
+        self.assertEqual(full, turns("crowd-chunked"))
+        crowd_turns = [t for t in full if t["source"] == "crowd"]
+        self.assertGreater(len(crowd_turns), 1000)
+        self.assertTrue(any(t["source"] == "crowd_summary" and t["thought"] for t in full))
+        with open(os.path.join(self.home, "sims", "crowd", "usage.json")) as f:
+            calls = json.load(f)["calls"]
+        self.assertLess(calls, len(crowd_turns) / 5)
+        self.assertLess(elapsed, 120)
+        stats = self.cli("stats", "crowd")
+        self.assertIn("Crowd archetypes", stats)
+        crowd_id = next(t["agent_id"] for t in crowd_turns)
+        self.assertIn("crowd member of", self.cli("agent", "crowd", str(crowd_id)))
+        self.assertIn("mock answer", self.cli("interview", "crowd", "-q", "Why?", "--agents", str(crowd_id)))
+        self.assertIn("crowd", self.cli("thread", "crowd", "1", "--platform", "twitter"))
 
     def test_manual_backend_loop(self):
         self.cli("init", "man", "--world", self.world_path, "--backend", "manual")

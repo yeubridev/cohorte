@@ -24,6 +24,30 @@ your project ──► seed.md + world.json ──► personas & config ──�
                                                                              (adapt and re-test)
 ```
 
+## From a dozen robots to 10,000+
+
+Robots come in two tiers:
+
+- **LLM agents** are named actors (your company, media, experts) plus a few *delegates* per crowd. Each one has a
+  full persona and makes its own LLM call every time it is online. These are the voices you interview.
+- **Crowd members** fill big segments (`"count": 4000`). Claude first designs the segment's archetypes, such as
+  "single parent on a tight budget" or "policy-reading privacy hardliner". Members are then sampled from those
+  archetypes as individual agents, each with its own name, follows, feed, opinion, likes, comments and posts.
+  Each round costs **one LLM call per segment**, not one per member. That call returns reaction probabilities and
+  texts in the archetype's voice, and each member samples its own actions from them. This is the "LLM archetypes"
+  approach that large-population simulators use.
+
+Measured results:
+
+| Run | Agents | LLM calls | Engine time | Cost |
+|---|---|---|---|---|
+| Mock backend, 24 simulated hours | 10,000 (18 LLM + 9,982 crowd) | 353 instead of ~32,000 | ~29 s | free |
+| Claude Haiku 5.5 via `claude -p`, 3 evening hours | 10,000 (13 LLM + 9,987 crowd) | 88 (setup included) | 2.5 min wall | $0.13 |
+| Estimate, 24 h, 10,000 agents | Haiku 5.5 ≈ $0.35 · Opus 5.5 ≈ $14 | ≈ 300 | | one call per agent turn: ≈ $13 / ≈ $520 |
+
+The engine itself was also made faster. Feeds are now ranked from a per-round candidate pool with cached
+keywords, and state is saved compactly. A 2,000-agent run went from 68 s to 17 s of engine time.
+
 ## What the robots look like
 
 From the bundled fictional example (an AI meal-planning app launching at 12 €/month), 10 agents, 4 simulated
@@ -77,6 +101,7 @@ In Claude Code, inside your project, ask in plain words:
 - "Simulate the reaction to moving from 9 €/month to 12 €/month for existing users. Which segments churn and why?"
 - "Run the same cohort on version B of the landing headline and compare."
 - "Interview the three most negative robots about what would change their mind."
+- "Simulate 10,000 French parents and 2,000 privacy advocates reacting to the pricing page."
 
 Claude frames the prediction question, reads your project to write the seed and cast, shows you the roster and
 the cost, runs the simulation, writes the report (`.cohorte/sims/<name>/report.md`) and helps you adapt and re-test.

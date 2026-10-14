@@ -29,7 +29,14 @@ DEFAULT_SETTINGS = {
     "max_actions_per_turn": 3,
     "memory_size": 12,
     "feed_size": {"twitter": 8, "reddit": 6},
-    "max_agents": 80,
+    # Population tiers: crowds larger than crowd_threshold keep `delegates` full LLM members and
+    # turn the rest into crowd-tier agents driven by one LLM call per segment and round.
+    "crowd_threshold": 12,
+    "delegates": 3,
+    "archetypes_per_crowd": 6,
+    "crowd_hourly_rate": 0.15,    # chance an average crowd member checks a platform in a given hour
+    "max_agents": 20000,
+    "max_llm_agents": 150,        # agents with their own LLM call per turn (named actors + delegates)
 }
 
 
@@ -161,7 +168,7 @@ def validate_world(world: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
     if not isinstance(entities, list) or not entities:
         raise CohorteError("world.json needs a non-empty 'entities' list.")
     seen_ids = set()
-    total_agents = 0
+    total_agents = llm_agents = 0
     for i, ent in enumerate(entities):
         if not isinstance(ent, dict) or not ent.get("name"):
             raise CohorteError(f"entities[{i}] needs at least a 'name'.")
@@ -183,13 +190,29 @@ def validate_world(world: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
         ent.setdefault("summary", "")
         ent.setdefault("attributes", {})
         ent.setdefault("facts", [])
+        tier = ent.get("tier") or "auto"
+        if tier not in ("auto", "llm", "crowd"):
+            raise CohorteError(f"Entity '{ent['name']}': tier must be auto, llm or crowd.")
+        if ent["count"] == 1 or tier == "llm" or (tier == "auto" and ent["count"] <= int(settings["crowd_threshold"])):
+            ent["tier"], ent["llm_members"] = "llm", ent["count"]
+        else:
+            ent["tier"] = "crowd"
+            ent["llm_members"] = min(ent["count"], max(0, to_int(ent.get("delegates"), settings["delegates"])))
         total_agents += ent["count"]
-    max_agents = int(settings.get("max_agents", 80))
+        llm_agents += ent["llm_members"]
+    max_agents = int(settings["max_agents"])
     if total_agents > max_agents:
         raise CohorteError(
             f"The world expands to {total_agents} agents (max {max_agents}). Lower some 'count' values "
-            "or raise settings.max_agents (cost grows linearly with agents)."
+            "or raise settings.max_agents."
         )
+    if llm_agents > int(settings["max_llm_agents"]):
+        raise CohorteError(
+            f"{llm_agents} agents would each get their own LLM call per turn (max {settings['max_llm_agents']}). "
+            "Use tier 'auto'/'crowd' for big crowds (fewer delegates) or raise settings.max_llm_agents "
+            "(cost and time grow linearly with LLM agents)."
+        )
+    world["population"] = {"agents": total_agents, "llm_agents": llm_agents, "crowd_agents": total_agents - llm_agents}
     if total_agents < 4:
         warnings.append(f"Only {total_agents} agents: interactions will be thin (10-40 is typical).")
 

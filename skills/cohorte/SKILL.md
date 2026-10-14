@@ -1,13 +1,22 @@
 ---
 name: cohorte
-description: Swarm-intelligence rehearsal of how people will react to a project, product, launch, landing page, pricing change, announcement or policy (a Claude re-implementation of MiroFish). Builds a world from the user's material, generates a cohort of persona "robots" that post, like, repost, comment and argue on simulated Twitter- and Reddit-like platforms over simulated days, then writes a prediction report, lets the user interview any agent, and A/B-tests changes on the same population. Use when the user wants to test or pressure-test their project against simulated users, customers or public opinion, predict reception, find objections before launch, compare two versions of a message, run a MiroFish/OASIS-style social simulation, or talk to simulated personas.
+description: Swarm-intelligence rehearsal of how people will react to a project, product, launch, landing page, pricing change, announcement or policy (a Claude re-implementation of MiroFish). Builds a world from the user's material, generates a cohort of persona "robots" (from a dozen to 10,000+) that post, like, repost, comment and argue on simulated Twitter- and Reddit-like platforms over simulated days, then writes a prediction report, lets the user interview any agent, and A/B-tests changes on the same population. Use when the user wants to test or pressure-test their project against simulated users, customers or public opinion, predict reception, find objections before launch, compare two versions of a message, run a MiroFish/OASIS-style social simulation, or talk to simulated personas.
 ---
 
 # Cohorte — rehearse the future with a cohort of robots
 
 Cohorte recreates the MiroFish pipeline (github.com/666ghj/MiroFish) as a skill. **You** do what MiroFish's
 LLM services do around the simulation (understanding the seed, building the world, acting as the ReportAgent),
-and a bundled Python engine runs the multi-agent simulation itself, with one independent LLM call per agent turn.
+and a bundled Python engine runs the multi-agent simulation itself.
+
+**Two tiers of robots** make large populations affordable (10,000 agents for 24 simulated hours ≈ 300 LLM calls):
+- **LLM agents**: named actors (company, media, experts) and a few *delegates* per crowd. Each has a full
+  persona and its own LLM call on every turn, like MiroFish/OASIS agents. These are the voices you interview.
+- **Crowd members**: big segments (`count` above `crowd_threshold`, default 12) are split into LLM-designed
+  archetypes and sampled into individual agents (own name, follows, feed, opinion, likes, comments, posts).
+  Each round, **one LLM call per segment** reads what its online members see and returns per-archetype reaction
+  probabilities, texts in their voice, mood and probe answers; every member then samples its own actions and
+  updates its own opinion. Use `"tier": "llm"` on an entity to give every member its own LLM turn instead.
 
 | MiroFish stage | Here |
 |---|---|
@@ -45,6 +54,10 @@ Model: the engine defaults to `claude-opus-5-5`. The robots make hundreds of cal
 user the `estimate` for the default and for `--model haiku` (Claude Haiku 5.5, far cheaper) and let them choose.
 Never switch model on your own for cost.
 
+Speed: the engine itself handles 10,000 agents in ~1 s per simulated round; wall time is the LLM calls. With
+`anthropic`, raise `--concurrency` (16-32) for big runs. `claude-cli` measured ~2.5 min for 3 rounds of a
+10,000-agent world (≈ 70 calls at concurrency 8).
+
 ## Workflow
 
 ### 1. Frame the test
@@ -52,6 +65,8 @@ Work out, from the conversation and the repo (README, landing page, pricing, doc
 - **What is tested**: the exact artifact (launch post, pricing page, feature, policy, pitch, story…).
 - **The decision** it informs ("12 € or 6 €?", "ship with or without the data-sharing clause?").
 - **Who matters**: target segments, adjacent skeptics, amplifiers (media, creators), competitors, institutions.
+- **How many**: a few dozen LLM agents find objections; thousands of crowd members add realistic volume,
+  virality and segment-level numbers (share of each archetype that would try it). Size crowds to the question.
 - **The signal**: what would count as success or failure (try intent, sentiment, a specific objection dying out).
 
 Turn it into a **prediction question**, MiroFish's "simulation requirement", e.g. *"Predict how indie developers,

@@ -56,6 +56,33 @@ Actions: Twitter-like = CREATE_POST, LIKE_POST, REPOST, QUOTE_POST, FOLLOW, DO_N
 Reddit-like = CREATE_POST, CREATE_COMMENT, LIKE/DISLIKE_POST, LIKE/DISLIKE_COMMENT, SEARCH_POSTS, SEARCH_USER,
 TREND, REFRESH, FOLLOW, MUTE, DO_NOTHING.
 
+## Crowd tier (large populations)
+- **Setup**: one LLM call per crowd designs `archetypes_per_crowd` archetypes (label, share, description, voice,
+  interests, professions, countries, ages, mood mean/spread, activity, susceptibility, stance). Members are
+  sampled from them (names from built-in multicultural pools; `agents.json` entries have `"tier": "crowd"`,
+  `archetype`); `config.crowd` holds the archetypes, segments, `hourly_rate`, `feed_size`, `max_actions`.
+- **Activation**: each member is online with probability `hourly_rate × minutes_per_round/60 × 2·activity ×
+  hour multiplier` when the hour is in its active hours (seeded, so `estimate` stays exact).
+- **Decision**: per platform and round, one `crowd_turn` call per segment with online members shows the archetypes
+  (with their current mood and last collective thoughts) and the 10 posts most seen by those members. It returns per
+  archetype: reaction probabilities per post (`like`, `repost`/`dislike`, `comment`), 1-3 comment and post texts,
+  `new_post_rate`, `sentiment`, `probes` and a collective `thought`.
+- **Sampling**: each member walks its own feed: comment (uses one of the archetype's texts, each text once),
+  dislike (more likely when it disagrees with the author), like (more likely when it agrees; may follow the
+  author), repost; maybe writes one of the archetype's posts. Opinion moves toward the archetype mood plus the
+  member's own offset, scaled by susceptibility; probes = archetype answer + member offset + noise.
+- **Effects on LLM agents**: crowd reactions change counts, rankings and virality in everyone's feeds, crowd
+  comments appear in threads, and authors get one aggregated notification per post ("212 people liked…").
+- **Records**: `turns.jsonl` gets one compact record per member turn (`source: "crowd"`) and one per archetype and
+  round (`source: "crowd_summary"`, with the collective thought). `stats`, `timeline`, `search --thoughts`,
+  `agent`, `thread` and `interview` all handle crowd members.
+
+## Performance
+Feeds are ranked from a per-round pool of the 150 hottest posts plus the latest posts of followed accounts, with
+cached post keywords and incremental follower counts; `state.json` is written compactly. Measured on the mock
+backend: 2,000 all-LLM agents × 6 rounds went from 68 s to 17 s of engine time; 10,000 agents (18 LLM + 9,982
+crowd) × 24 rounds take ~29 s and 353 LLM calls instead of ~32,000.
+
 ## Tuning
 - Livelier conversation: raise `agents_per_hour_max`, individuals' `activity_level`, or `max_actions`.
 - Cheaper: Haiku, fewer rounds (`minutes_per_round` 90-120), lower `persona_words`, one platform, smaller feeds.

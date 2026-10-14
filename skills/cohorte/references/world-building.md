@@ -41,7 +41,11 @@ Write it as the public would encounter it, then add background facts:
     "max_actions_per_turn": 3, "memory_size": 12,
     "feed_size": {"twitter": 8, "reddit": 6},
     "seed": 42,                          // random seed: same seed = same activation schedule
-    "max_agents": 80
+    "crowd_threshold": 12,               // crowds above this size use the crowd tier (unless "tier": "llm")
+    "delegates": 3,                      // LLM members kept per crowd (interviewable voices)
+    "archetypes_per_crowd": 6,           // sub-groups the LLM designs per crowd segment
+    "crowd_hourly_rate": 0.15,           // chance an average crowd member is online in a given hour
+    "max_agents": 20000, "max_llm_agents": 150
   },
   "ontology": {
     "entity_types": [ {"name": "PascalCase", "kind": "individual|group", "description": "...",
@@ -51,7 +55,9 @@ Write it as the public would encounter it, then add background facts:
   "entities": [
     {"id": "acme", "name": "Acme", "type": "Startup", "summary": "...", "facts": ["..."], "attributes": {}},
     {"id": "devs", "name": "Indie SaaS developer", "type": "IndieDeveloper", "summary": "...",
-     "count": 6, "diversity": "2 bootstrappers, 1 agency, mixed countries; at least 2 skeptical of AI"}
+     "count": 6, "diversity": "2 bootstrappers, 1 agency, mixed countries; at least 2 skeptical of AI"},
+    {"id": "users", "name": "Freelance designer", "type": "Freelancer", "summary": "...",
+     "count": 4000, "tier": "auto", "delegates": 3, "diversity": "..."}   // crowd tier: 3 LLM delegates + 3,997 crowd members
   ],
   "relations": [ {"source": "acme", "target": "devs", "type": "SELLS_TO", "fact": "..."} ],
   "initial_posts": [ {"poster": "acme", "content": "exact launch post", "platforms": "all"} ],
@@ -81,7 +87,11 @@ Write it as the public would encounter it, then add background facts:
 A crowd entity (`count > 1`) is expanded at `setup` into that many distinct individuals (names, ages, countries,
 angles) before personas are written. Guidelines:
 
-- **15-40 agents** is the useful range. Under 10, conversations stay thin; over 60, cost grows with little gain.
+- **15-40 LLM agents** is the useful range for the voices (named actors + delegates). Under 10, conversations
+  stay thin; more mostly adds cost.
+- **Crowds** add volume cheaply: 500-10,000 members per segment cost the same number of LLM calls (one per
+  segment per round). Use them when the question is about scale effects: what share of a segment reacts, what
+  goes viral, how the majority's mood shifts, whether a vocal minority dominates.
 - Cover: core target segments (most agents), adjacent or reluctant segments, **at least one hostile or skeptical
   voice per key risk** (price, privacy, ethics, quality), amplifiers (1-2 media, 1-2 creators/experts),
   the user's own organisation (official account), and competitors when relevant.

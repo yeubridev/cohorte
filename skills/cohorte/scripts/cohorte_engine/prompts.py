@@ -289,3 +289,69 @@ def probe_schema(probes) -> str:
     if lines:
         return '  "probes": {\n' + "".join("  " + line for line in lines).rstrip(",\n") + "\n  },\n"
     return ""
+
+
+# --------------------------------------------------------------------------- #
+# Crowd tier (thousands of agents driven by segment-level LLM calls)
+# --------------------------------------------------------------------------- #
+
+ARCHETYPE_PROMPT = """We are populating a simulated social network with {count} real-world people from this segment.
+Describe the {n} archetypes (sub-groups) that best cover how people in it differ in their view of the topic.
+
+Segment: {name}
+Entity type: {entity_type}
+Description: {summary}
+Diversity requirements: {diversity}
+
+Simulation context:
+{context}
+
+Be realistic: include enthusiasts, skeptics, the indifferent and the hard to reach unless the description
+excludes them. Shares must sum to 1. Moods are their initial feeling about: {subject}.
+Return JSON:
+{{"archetypes": [{{"id": "a1", "label": "short name", "share": 0.25,
+  "description": "2-3 sentences: who they are, what they want, how they see the topic",
+  "voice": "how they write online (length, tone, vocabulary, emojis, typos)",
+  "interests": ["topic", "..."], "professions": ["...", "..."], "countries": ["...", "..."],
+  "age_min": 25, "age_max": 45, "female_share": 0.5,
+  "sentiment_mean": -0.3, "sentiment_spread": 0.3,
+  "activity": 0.5, "susceptibility": 0.3, "stance": "supportive|opposing|neutral|observer"}}]}}
+activity = how often they engage online (0-1); susceptibility = how easily posts change their mind (0-1).
+{language_rule}"""
+
+CROWD_SYSTEM = """You simulate how large groups of ordinary people react on {platform_desc}
+You know each archetype's mindset and voice and you estimate what its members do with the posts in front of
+them. Be realistic: most people scroll past; likes are common, comments rarer, original posts rarest;
+reactions differ between archetypes and depend on who posted and what was said. Never make everyone agree.
+Members do not know they are simulated and never mention AI or simulations.
+{language_rule}
+Return one valid JSON object only."""
+
+CROWD_USER = """Now: {clock} on {platform_name}. People's feeling is tracked about: {subject}.
+
+## Segment: {segment} ({entity_type}) — {members_online} members online now
+{segment_summary}
+
+### Archetypes in this segment
+{archetypes}
+
+## Posts these members are seeing right now (most seen first)
+{posts}
+
+## Task
+For each archetype listed, estimate what its online members do with these posts and how they feel now.
+Probabilities are per member who sees the post. {comment_note}
+Return JSON:
+{{"archetypes": {{
+  "<archetype id>": {{
+    "thought": "one sentence: what members of this archetype think right now and why",
+    "sentiment": <-1..1: their feeling about {subject} now>,
+{probe_schema}    "reactions": {{"<post id>": {{{reaction_keys}}}}},
+    "comments": {{"<post id>": ["short text in their voice", "..."]}},
+    "new_post_rate": <0-0.2: chance a member writes their own post now>,
+    "posts": ["original post in their voice", "..."]
+  }}
+}}}}
+Only list posts an archetype reacts to (omit ignored posts). Give 1-3 comment texts for posts with comment
+probability above 0.03 and 1-3 post texts when new_post_rate is above 0.02. Texts must differ from each other
+and sound like different people of that archetype."""
