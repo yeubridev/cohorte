@@ -21,7 +21,8 @@
   <a href="#real-output-10000-robots-react-to-a-launch"><b>Real output</b></a> ·
   <a href="#how-it-works"><b>How it works</b></a> ·
   <a href="#cost-and-speed"><b>Cost</b></a> ·
-  <a href="#faq"><b>FAQ</b></a>
+  <a href="#faq"><b>FAQ</b></a> ·
+  <a href="ROADMAP.md"><b>Roadmap</b></a>
 </p>
 
 </div>
