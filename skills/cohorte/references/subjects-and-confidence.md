@@ -22,6 +22,19 @@ rates (0-10). Those dimensions are combined into a weighted **potential score (0
 
 If the world has no `probes`, the two highest-weight dimensions become the probes of the social simulation.
 
+### Potential vs satisfaction: predict the right quantity
+
+- **Potential:** appeal to the whole cohort. It's the right target for reach questions: who clicks, who installs,
+  who buys, opening box office.
+- **Satisfaction of choosers:** `assess` also prints this for movie, series, game, book, video, app and product. It
+  weights each robot's satisfaction (enjoyment, recommend, rating; for games, fun and retention) by its intent to
+  watch or buy. It's the right target for ratings given by the people who chose the subject: CinemaScore, Steam
+  or app-store reviews, Goodreads.
+
+Example: a children's film can have low potential with a general audience and still get an A from the families
+who went. When you report or calibrate, use the score that matches the real outcome. Mixing them up made both
+Cohorte and a single prompt score below chance on our first real films (`benchmarks/PROTOCOL.md`).
+
 ## 2. Ingesting the material
 
 ```bash
