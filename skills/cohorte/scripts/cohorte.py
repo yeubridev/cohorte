@@ -290,7 +290,10 @@ def cmd_calibrate(args):
 
 
 def cmd_backtest(args):
-    cases = backtest_mod.load_cases(args.cases)
+    cases = [c for path in args.cases for c in backtest_mod.load_cases(path)]
+    ids = [c["id"] for c in cases]
+    if len(ids) != len(set(ids)):
+        raise CohorteError("Duplicate case ids across the given case files.")
     if args.only:
         wanted = set(args.only.split(","))
         cases = [c for c in cases if c["id"] in wanted]
@@ -303,7 +306,7 @@ def cmd_backtest(args):
           f"(setup {plan['setup_calls']}, cohort ratings {plan['assess_calls']}, baseline {plan['baseline_calls']})")
     if args.dry_run:
         return
-    name = os.path.basename(os.path.normpath(args.cases)).rsplit(".", 1)[0]
+    name = "+".join(os.path.basename(os.path.normpath(p)).rsplit(".", 1)[0] for p in args.cases)
     out = os.path.abspath(args.out or os.path.join(_home(args), "backtests", name))
     settings = {"backend": args.backend, "model": args.model, "concurrency": args.concurrency}
     models = [m for m in (args.models or "").split(",") if m] or None
@@ -476,7 +479,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_calibrate)
 
     p = sub.add_parser("backtest", help="score Cohorte against a single-prompt baseline on known outcomes")
-    p.add_argument("cases", help="folder of case files, a .json or a .jsonl (see benchmarks/README.md)")
+    p.add_argument("cases", nargs="+", help="folders of case files, .json or .jsonl (see benchmarks/README.md)")
     p.add_argument("--out", help="output folder (default <home>/backtests/<cases name>); re-running resumes")
     p.add_argument("--runs", type=int, default=2, help="assessment runs per variant, for both methods (default 2)")
     p.add_argument("--models", help="comma-separated models for the cohort ensemble")

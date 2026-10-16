@@ -1,0 +1,375 @@
+[
+ {
+  "id": "games-2026-07-wk2",
+  "kind": "game",
+  "title": "Games released the week of 2026-07-07 (Jul 7-15)",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-07-07",
+  "leak_safe": true,
+  "source": "https://store.steampowered.com/app/2209900/Moonlight_Peaks/",
+  "variants": [
+   {
+    "id": "moonlight-peaks",
+    "label": "Moonlight Peaks",
+    "seed_text": "Moonlight Peaks. Gothic life sim / farming sim. Developer: Little Chicken Game Company (Netherlands). Publisher: Marvelous Europe. Platforms: PC (Steam), Nintendo Switch, Nintendo Switch 2, Google Play Games. Release: July 7, 2026. Franchise status: new IP. Not early access; a free Steam demo covering seven in-game days was available before launch. Price: standard edition listed at 35 USD on Steam; a Digital Deluxe bundle adds the soundtrack and art book. Store description: welcome to your new vampiric life in the magical town of Moonlight Peaks. You play a young vampire trying to show your skeptical father, Count Dracula, that a compassionate life is possible. Raise mystical crops, learn spell-casting and potion-making, decorate your home and build relationships with a town of werewolves, witches and mermaids."
+   },
+   {
+    "id": "backyard-baseball",
+    "label": "Backyard Baseball (2026)",
+    "seed_text": "Backyard Baseball (2026). Kids' arcade baseball sports game, a reimagining of the classic Backyard Baseball series. Developer: Mega Cat Studios; publisher/rights holder: Playground Productions. Announced February 2026 at IGN Fan Fest. Platforms: PC (Steam) and Mac at launch, with console versions (PlayStation, Xbox, Switch) announced; some console dates later than PC. Release: July 9, 2026. Franchise status: revival of a long-running franchise, described as the first original entry to reach consoles in 15 years. Not early access. Price: 39.99 USD. No microtransactions. Content: 11 remastered stadiums, 24 original teams, 6 game modes and a roster of 30 Backyard characters, with modern 3D visuals plus 2D elements evoking the original games."
+   },
+   {
+    "id": "denshattack",
+    "label": "Denshattack!",
+    "seed_text": "Denshattack! Arcade-style trick/platforming action game in which you pull stunts with trains. Developer: Undercoders. Publisher: Fireshine Games. Platforms: PC (Steam, Windows), PlayStation 5, Xbox Series X|S, Nintendo Switch 2. Release: July 15, 2026 (delayed from June 17 for extra polish). Franchise status: new IP. Not early access; a free Steam demo was available before launch. Price: 19.99 EUR on Steam (standard), with a Digital Deluxe Edition adding seasonal train skins. Single-player only. Store description: a fast, arcade-style train-tricks game set in a colourful dystopian Japan, where you take on rival gangs and a megacorporation by grinding, jumping and flipping your train across the city."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "moonlight-peaks": 88,
+    "backyard-baseball": 80,
+    "denshattack": 98
+   },
+   "sources": {
+    "moonlight-peaks": "https://store.steampowered.com/app/2209900/Moonlight_Peaks/ - All Reviews: Very Positive, 88% of 1,884 (read 2026-10-16 via web search snapshot)",
+    "backyard-baseball": "https://store.steampowered.com/app/3935020/Backyard_Baseball/ - Very Positive, 80% of 1,299 (read 2026-10-16 via web search snapshot)",
+    "denshattack": "https://www.gamebrief.net/blog/denshattack-review-2026 - Steam all languages: Overwhelmingly Positive, 98% of 3,708 (page checked 2026-10-15); Steam store snapshots of ~2,100 reviews also show 98% (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-07-wk5",
+  "kind": "game",
+  "title": "Games released the week of 2026-07-27 (Jul 28-29)",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-07-28",
+  "leak_safe": true,
+  "source": "https://store.steampowered.com/app/2806050/Halo_Campaign_Evolved/",
+  "variants": [
+   {
+    "id": "halo-campaign-evolved",
+    "label": "Halo: Campaign Evolved",
+    "seed_text": "Halo: Campaign Evolved. First-person shooter; a remake of the original Halo: Combat Evolved campaign. Developer: Halo Studios (Xbox). Platforms: Xbox Series X|S, PC (Steam), PlayStation 5. Release: July 28, 2026. Franchise status: remake within the Halo franchise. Not early access. Price: Standard Edition 49.99 USD, Premium Edition 69.99 USD. Store description: the original campaign rebuilt with updated visuals and cinematics, plus a new three-mission side adventure with Master Chief and Sgt. Johnson. Optional Skull modifiers randomize weapons, enemies and environments; players can now hijack enemy vehicles and drive a Wraith tank. Solo play or online co-op for up to four players with crossplay and cross-progression."
+   },
+   {
+    "id": "mistfall-hunter",
+    "label": "Mistfall Hunter",
+    "seed_text": "Mistfall Hunter. Third-person PvPvE extraction action RPG in a dark fantasy setting. Developer: Bellring Games. Publisher: Skystone Games (founded by Diablo co-creators David Brevik and Bill Wang). Platforms: PC (Steam, Microsoft Store), PlayStation 5, Xbox Series X|S; day one on Xbox Game Pass. Release: July 29, 2026 (6 PM PT). Franchise status: new IP. Not early access; preceded by several beta tests including a Steam Next Fest open beta. Price: Standard Edition 24.99 USD, Deluxe Edition 39.99 USD, 10% launch discount. Description: hunt solo or in three-player squads in the Gyldenmist, a fog-covered dark fantasy world; PvPvE extraction gameplay. Six classes: Mercenary, Sorcerer, Black Arrow, Shadow Strix, Seer and Withered Knight."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "halo-campaign-evolved": 59,
+    "mistfall-hunter": 54
+   },
+   "sources": {
+    "halo-campaign-evolved": "https://store.steampowered.com/app/2806050/Halo_Campaign_Evolved/ - English reviews: Mixed, 59% of 10,213 (read 2026-10-16 via web search snapshot)",
+    "mistfall-hunter": "https://store.steampowered.com/app/3282300/Mistfall_Hunter/ - Mixed, 54% of 7,638 (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-08-wk1",
+  "kind": "game",
+  "title": "Games released the week of 2026-08-03 (Aug 4-6)",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-08-04",
+  "leak_safe": true,
+  "source": "https://store.steampowered.com/app/1478500/Big_Walk/",
+  "variants": [
+   {
+    "id": "big-walk",
+    "label": "Big Walk",
+    "seed_text": "Big Walk. Online cooperative adventure about walking, talking and teamwork. Developer: House House. Publisher: Panic. Platforms: PC and Mac (Steam), PlayStation 5, Nintendo Switch 2. Release: August 4, 2026. Franchise status: new IP. Not early access. Price: 19.99 USD with a 25% launch discount. Multiplayer: 2 to 12 online players, cross-platform; no single-player mode and no public matchmaking. Description: a hand-crafted cooperative adventure meant to be played start to finish with a group of friends. Set out together through a wide-open world full of challenges, puzzles and discoveries; communication is central, and when players suddenly find themselves speechless they have to find other ways to communicate."
+   },
+   {
+    "id": "beast-of-reincarnation",
+    "label": "Beast of Reincarnation",
+    "seed_text": "Beast of Reincarnation. Single-player action RPG with a melee combat focus. Developer: GAME FREAK (the Pokemon studio's first big non-Pokemon action game). Publisher: Fictions. Platforms: PlayStation 5, Xbox Series X|S, PC (Steam); Xbox Play Anywhere and day one on Xbox Game Pass Ultimate. Release: August 4, 2026. Franchise status: new IP. Not early access. Price: Standard Edition 59.99 USD, Digital Deluxe 69.99 USD (cosmetics and currency). Description: in a post-apocalyptic Japan, Emma and her dog companion Koo hunt powerful beasts on a journey to eventually face the Beast of Reincarnation. Combat centers on melee action and coordinated battles with your companion rather than capturing or raising creatures."
+   },
+   {
+    "id": "marvel-tokon",
+    "label": "MARVEL Tokon: Fighting Souls",
+    "seed_text": "MARVEL Tokon: Fighting Souls. 2D tag-team fighting game. Developer: Arc System Works (Guilty Gear, Dragon Ball FighterZ). Publisher: PlayStation Publishing. Platforms: PlayStation 5 and PC (Steam). Release: August 6, 2026. Franchise status: new game using Marvel characters. Not early access. Price: Standard 59.99 USD, Digital Deluxe 84.99 USD, Ultimate 99.99 USD (the latter two include a Year 1 pass). Description: a 4-vs-4 tag-team fighter with a shared health bar, launching with 20 Marvel heroes and villains including the X-Men, and a story mode written by comics writer Kieron Gillen."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "big-walk": 96,
+    "beast-of-reincarnation": 64,
+    "marvel-tokon": 48
+   },
+   "sources": {
+    "big-walk": "https://store.steampowered.com/app/1478500/Big_Walk/ - Overwhelmingly Positive, 96% of 27,676 (read 2026-10-16 via web search snapshot)",
+    "beast-of-reincarnation": "https://store.steampowered.com/app/2001760/Beast_of_Reincarnation/ - Mixed, 64% of 1,578 (read 2026-10-16 via web search snapshot)",
+    "marvel-tokon": "https://store.steampowered.com/app/3787240/MARVEL_Tkon_Fighting_Souls/ - Mixed, 48% of 4,205 (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-08-wk3",
+  "kind": "game",
+  "title": "Games released 2026-08-13 to 2026-08-20",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-08-13",
+  "leak_safe": true,
+  "source": "https://store.steampowered.com/app/2825860/The_Sinking_City_2/",
+  "variants": [
+   {
+    "id": "hell-let-loose-vietnam",
+    "label": "Hell Let Loose: Vietnam",
+    "seed_text": "Hell Let Loose: Vietnam. Large-scale 50-vs-50 tactical first-person military shooter set in the Vietnam War. Developer: Expression Games. Publisher: Team17. Platforms: PC (Steam, Epic Games Store), PlayStation 5, Xbox Series X|S. Release: August 13, 2026 (delayed from June 18). Franchise status: standalone follow-up to Hell Let Loose (WWII), moved to Unreal Engine 5. Not early access. Price: Standard Edition 39.99 USD, Deluxe Edition 59.99 USD. Description: fight as US forces or the North Vietnamese Army across 6 new Vietnam maps featuring dense jungle, twisting deltas and open clearings, with helicopters and other vehicles."
+   },
+   {
+    "id": "sinking-city-2",
+    "label": "The Sinking City 2",
+    "seed_text": "The Sinking City 2. Single-player survival horror set in the 1920s. Developer and publisher: Frogwares. Platforms: PC (Steam, Epic Games Store, GOG), PlayStation 5, Xbox Series X|S. Release: August 18, 2026 (Premium Edition owners get 24-hour early access). Franchise status: sequel to The Sinking City (2019). Not early access. Price: Standard Edition 49.99 USD (Frogwares framed this as deliberately below the usual 60 USD for survival horror), Deluxe 54.99 USD, Premium 59.99 USD. Description: explore the drowned alleys of Arkham, stalked by the dead; classic survival horror with inventory management, puzzles, backtracking and limited resources as you fend off unspeakable horrors."
+   },
+   {
+    "id": "mortal-shell-2",
+    "label": "Mortal Shell II",
+    "seed_text": "Mortal Shell II. Dark fantasy soulslike action RPG. Developer: Cold Symmetry. Publisher: Playstack. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S. Release: August 20, 2026 (Devout Edition includes 72 hours of advance access); an open beta was held beforehand. Franchise status: standalone sequel to Mortal Shell (2020). Not early access. Price: Standard 49.99 USD, Devout Edition 59.99 USD (adds eight Obsidian Shell character skins), physical PS5 Revered Edition 69.99 USD with art book and SteelBook. Description: play as the Harbinger in a ravaged fantasy world; the series' signature mechanic of hardening into stone mid-combat returns."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "hell-let-loose-vietnam": 62,
+    "sinking-city-2": 82,
+    "mortal-shell-2": 77
+   },
+   "sources": {
+    "hell-let-loose-vietnam": "https://store.steampowered.com/app/3079210/Hell_Let_Loose_Vietnam/ - English reviews: Mixed, 62% of 8,938 (read 2026-10-16 via web search snapshot)",
+    "sinking-city-2": "https://store.steampowered.com/app/2825860/The_Sinking_City_2/ - Very Positive, 82% of 1,635 (read 2026-10-16 via web search snapshot)",
+    "mortal-shell-2": "https://gg.deals/game/mortal-shell-ii/ - 77% positive of 16,031 Steam reviews (snapshot date unknown); other snapshots: 75% of ~10,000 (bo3.gg, 2026-08-25), 75% of 15,151 (wasdland), 79% of 21,911 (unverified third-party review page, ~2026-10-15) (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-08-wk5",
+  "kind": "game",
+  "title": "Games released 2026-08-27 to 2026-08-31",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-08-27",
+  "leak_safe": true,
+  "source": "https://store.steampowered.com/app/2075800/STAR_WARS_Zero_Company/",
+  "variants": [
+   {
+    "id": "star-wars-zero-company",
+    "label": "STAR WARS Zero Company",
+    "seed_text": "STAR WARS Zero Company. Single-player turn-based tactics game set in the Clone Wars. Developer: Bit Reactor (studio of former Firaxis/XCOM developers) with Respawn Entertainment and Lucasfilm Games. Publisher: Electronic Arts. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S. Release: August 27, 2026. Franchise status: new game in the Star Wars franchise (first from this studio). Not early access. Price: a pre-release leak listed 49.99 USD on PC and 59.99 USD on consoles (standard). Description: in the twilight of the Clone Wars, play as Hawks, a former Republic officer commanding an elite squad of specialist operatives; turn-based combat with three action points per unit per turn."
+   },
+   {
+    "id": "captain-tsubasa-2",
+    "label": "Captain Tsubasa 2: World Fighters",
+    "seed_text": "Captain Tsubasa 2: World Fighters. Anime football (soccer) action game. Developer: TAMSOFT. Publisher: Bandai Namco Entertainment. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S, Nintendo Switch. Release: August 27, 2026 on consoles, August 28 on Steam. Franchise status: sequel to Captain Tsubasa: Rise of New Champions, based on the Captain Tsubasa manga/anime. Not early access. Price: 59.99 USD standard; higher editions add a Season Pass and cosmetics. Description: 22 national teams, over 110 playable characters and more than 150 cutscenes; new over-the-top super moves, and goalkeeper-versus-shooter duels get a more tactical system."
+   },
+   {
+    "id": "serious-sam-shatterverse",
+    "label": "Serious Sam: Shatterverse",
+    "seed_text": "Serious Sam: Shatterverse. Co-op roguelite first-person shooter. Developer: Behaviour Interactive, with Croteam's blessing. Publisher: Devolver Digital. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S. Release: August 31, 2026. Franchise status: spin-off in the Serious Sam series. Not early access. Price: not found in pre-release sources. Description: Mental has fractured the walls between universes; up to five players team up as alternate versions of Sam, moving through shifting universes, collecting boons and run modifiers, and fighting Mental's five lieutenants to repair reality."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "star-wars-zero-company": 83,
+    "captain-tsubasa-2": 51,
+    "serious-sam-shatterverse": 50
+   },
+   "sources": {
+    "star-wars-zero-company": "https://store.steampowered.com/app/2075800/STAR_WARS_Zero_Company/ - English reviews: Very Positive, 83% of 17,793 (read 2026-10-16 via web search snapshot)",
+    "captain-tsubasa-2": "https://store.steampowered.com/app/2172910/CAPTAIN_TSUBASA_2_WORLD_FIGHTERS/ - Mixed, 51% of 370 (read 2026-10-16 via web search snapshot)",
+    "serious-sam-shatterverse": "https://store.steampowered.com/app/2067210/Serious_Sam_Shatterverse/ - Mixed, 50% of 728 (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-09-wk1",
+  "kind": "game",
+  "title": "Games released the week of 2026-08-31 (Sep 3-4)",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-09-03",
+  "leak_safe": true,
+  "source": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/",
+  "variants": [
+   {
+    "id": "blood-of-dawnwalker",
+    "label": "The Blood of Dawnwalker",
+    "seed_text": "The Blood of Dawnwalker. Single-player open-world action RPG. Developer: Rebel Wolves (studio founded by former CD Projekt Red / Witcher 3 developers). Publisher: Bandai Namco Entertainment. Platforms: PC (Steam, Microsoft Store), PlayStation 5, Xbox Series X|S. Release: September 3, 2026. Franchise status: new IP (debut game of the studio). Not early access. Price: Standard 69.99 USD, Eclipse Edition 79.99 USD, Collector's Edition 199.99 USD. Description: in 14th-century Europe, amid bloody wars and the Black Death, play as Coen, a young man turned half-human, half-vampire, whose abilities shift between day and night. Time advances only when you take on quests, as you choose between saving humanity or saving your family."
+   },
+   {
+    "id": "onimusha-way-of-the-sword",
+    "label": "Onimusha: Way of the Sword",
+    "seed_text": "Onimusha: Way of the Sword. Single-player sword-fighting action game. Developer and publisher: Capcom. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S, Nintendo Switch 2. Release: September 4, 2026 (moved up from September 25). Franchise status: new entry reviving the Onimusha series after about 20 years. Not early access; a playable demo was released before launch. Price: Standard 69.99 USD, Digital Deluxe 79.99 USD, Premium Deluxe 89.99 USD. Description: set in an Edo-period Kyoto warped by clouds of Malice and overrun by demons, featuring the legendary swordsman Miyamoto Musashi."
+   },
+   {
+    "id": "nba-2k27",
+    "label": "NBA 2K27",
+    "seed_text": "NBA 2K27. Basketball sports simulation, annual release. Developer: Visual Concepts. Publisher: 2K. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S, Nintendo Switch 2. Release: September 4, 2026 (Deluxe and Ultra editions get early access from August 28). Franchise status: yearly entry in the NBA 2K series. Not early access in the Steam sense. Price: Standard 69.99 USD, Deluxe 99.99 USD, Ultra 149.99 USD. Cover athletes: Victor Wembanyama (Standard), Caitlin Clark (Deluxe), Derrick Rose (Ultra). Announced by 2K press release on July 22, 2026 with pre-orders open immediately; a gameplay trailer followed on July 28."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "blood-of-dawnwalker": 87,
+    "onimusha-way-of-the-sword": 90,
+    "nba-2k27": 50
+   },
+   "sources": {
+    "blood-of-dawnwalker": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Very Positive (87%); review count not given there, dlcompare.com reports ~87% of more than 27,000 reviews (read 2026-10-16 via web search snapshot)",
+    "onimusha-way-of-the-sword": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Very Positive (90%); videogamescritic.com/game/onimusha-way-of-the-sword-2638890 reports 90% of 22,763 (read 2026-10-16 via web search snapshot)",
+    "nba-2k27": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Mixed (50%); happygamer.com (2026-10-15) reports Mixed across 3,559 reviews (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-09-wk2",
+  "kind": "game",
+  "title": "Games released 2026-09-08 to 2026-09-17",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-09-08",
+  "leak_safe": true,
+  "source": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/",
+  "variants": [
+   {
+    "id": "halloween-the-game",
+    "label": "Halloween: The Game",
+    "seed_text": "Halloween: The Game. Asymmetrical multiplayer horror (1 vs 4) with a standalone single-player story. Developer: IllFonic. Publisher: Gun Interactive. Platforms: PC (Steam, Epic Games Store), PlayStation 5, Xbox Series X|S, with crossplay. Release: September 8, 2026 (Digital Deluxe buyers get 4-day early access from September 4). Franchise status: licensed game based on John Carpenter's Halloween films. Not Steam Early Access. Price: Standard 39.99 USD, Digital Deluxe 59.99 USD. Description: Michael Myers stalks Haddonfield while four Heroes of Haddonfield warn civilians, call the police, arm NPCs and look for a way out; a separate single-player story lets you relive the original film from Michael's perspective."
+   },
+   {
+    "id": "trails-in-the-sky-2nd",
+    "label": "Trails in the Sky 2nd Chapter",
+    "seed_text": "Trails in the Sky 2nd Chapter. Single-player JRPG, a full remake of the 2006 Falcom classic. Developer: Nihon Falcom; published in the West by GungHo. Platforms: PC (Steam), PlayStation 5, Nintendo Switch, Nintendo Switch 2. Release: September 17, 2026 worldwide. Franchise status: remake and direct sequel to Trails in the Sky 1st Chapter, part of the long-running Trails series. Not early access. Price: 59.99 USD (64.99 USD on Switch 2). Description: following immediately after the events of the 1st Chapter, Estelle Bright sets out across the kingdom of Liberl in search of her adoptive brother Joshua, running into the secret society Ouroboros and meeting new and returning allies."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "halloween-the-game": 66,
+    "trails-in-the-sky-2nd": 96
+   },
+   "sources": {
+    "halloween-the-game": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Mixed (66%); trackers (steamplayerstats, raijin.gg) report ~66% of ~15,700-16,400 reviews (read 2026-10-16 via web search snapshot)",
+    "trails-in-the-sky-2nd": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Overwhelmingly Positive (96%); Steam store snapshot shows 96% of 739 (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-09-wk4",
+  "kind": "game",
+  "title": "Games released 2026-09-24 to 2026-09-29",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-09-24",
+  "leak_safe": true,
+  "source": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/",
+  "variants": [
+   {
+    "id": "control-resonant",
+    "label": "CONTROL Resonant",
+    "seed_text": "CONTROL Resonant. Single-player action RPG with melee combat. Developer and publisher: Remedy Entertainment. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S. Release: September 24, 2026 (announced at PlayStation State of Play, June 2, 2026). Franchise status: sequel to Control (2019). Not early access. Price: Standard 59.99 USD, Digital Deluxe 69.99 USD. Description: the focus shifts from Jesse Faden to her brother Dylan. A cosmic anomaly known as the Pattern appears over a distorted Manhattan and paranatural threats escape containment; Remedy's first game built entirely around close-quarters combat, set in an open Manhattan."
+   },
+   {
+    "id": "silent-hill-townfall",
+    "label": "SILENT HILL: Townfall",
+    "seed_text": "SILENT HILL: Townfall. First-person psychological survival horror. Developer: Screen Burn Interactive (formerly No Code). Publishers: Konami and Annapurna Interactive. Platforms: PC (Steam, Epic Games Store) and PlayStation 5; no Xbox version announced. Release: September 24, 2026 (Deluxe Edition 48-hour early access from September 22). Franchise status: spin-off in the Silent Hill franchise. Not early access. Price: Standard 49.99 USD, Deluxe 59.99 USD. Description: in 1996, Simon Ordell arrives on the fog-covered Scottish island town of St. Amelia and is drawn into its dark secrets."
+   },
+   {
+    "id": "minecraft-dungeons-2",
+    "label": "Minecraft Dungeons II",
+    "seed_text": "Minecraft Dungeons II. Action dungeon crawler with online and local co-op for up to four players. Developers: Mojang Studios and Double Eleven. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S, Nintendo Switch, Nintendo Switch 2; day one on Xbox Game Pass. Release: September 29, 2026 (dated at the Xbox Games Showcase). Franchise status: sequel to Minecraft Dungeons (2020), Minecraft spin-off. Not early access. Price: Standard 29.99 USD, Deluxe 49.99 USD (includes future DLC). Description: drop the pickaxe, grab a sword and charge into a new adventure spanning two worlds, battling large groups of enemies and powerful foes."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "control-resonant": 91,
+    "silent-hill-townfall": 68,
+    "minecraft-dungeons-2": 63
+   },
+   "sources": {
+    "control-resonant": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Very Positive (91%); other reports: 92% of 8,381 (Steam store snapshot), Very Positive from 17,295 reviews (2026-10-14 report) (read 2026-10-16 via web search snapshot)",
+    "silent-hill-townfall": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Mixed (68%); tech-insider.org reports 68% of ~900 reviews (read 2026-10-16 via web search snapshot)",
+    "minecraft-dungeons-2": "https://www.gamingonlinux.com/2026/10/heres-the-top-steam-releases-of-september-2026-along-with-compatibility-ratings/ - Overall User Rating: Mixed (63%); Steam store snapshot shows 67% of 5,587 English-language reviews (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ },
+ {
+  "id": "games-2026-10-wk1",
+  "kind": "game",
+  "title": "Games released the week of 2026-09-28 (Oct 1-2)",
+  "context": "Video games released the same week; players browsing store pages decide what to buy and play.",
+  "date": "2026-10-01",
+  "leak_safe": true,
+  "source": "https://store.steampowered.com/app/2288340/ACE_COMBAT_8_WINGS_OF_THEVE/",
+  "variants": [
+   {
+    "id": "ace-combat-8",
+    "label": "ACE COMBAT 8: WINGS OF THEVE",
+    "seed_text": "ACE COMBAT 8: WINGS OF THEVE. Arcade flight combat action game. Developer: Bandai Namco Aces. Publisher: Bandai Namco Entertainment. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S. Release: October 2, 2026 (Deluxe owners get three days of early access from September 28). Franchise status: first mainline Ace Combat since Ace Combat 7 (2019). Not early access in the Steam sense. Price: Standard 69.99 USD, Deluxe 89.99 USD. Description: built on Unreal Engine 5, the series returns to the Strangereal universe, where the Federation of Central Usea has fallen under occupation; the campaign follows Joker Flight, with more than 30 aircraft and Ace Combat Online, the most expansive multiplayer in franchise history."
+   },
+   {
+    "id": "retrospace",
+    "label": "RetroSpace",
+    "seed_text": "RetroSpace. First-person immersive sim / action with horror elements and a retro-futuristic disco style. Developer: The Wild Gentlemen (makers of Chicken Police). Publisher: Kwalee. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S. Release: October 1, 2026. Franchise status: new IP. Not early access; a free Steam demo was available before launch. Price: 19.99 EUR (17.99 EUR launch discount until October 8). Description: a space station is being swallowed by a black hole and mutants roam the corridors. Turn off lights, hack terminals and hide from enemies, or fight with the Universe Cleaner, a spray gun that both fights enemies and wipes blood off walls; the game can reportedly be completed with the spray gun alone."
+   },
+   {
+    "id": "mxgp-26",
+    "label": "MXGP 26 - The Official Game",
+    "seed_text": "MXGP 26 - The Official Game. Officially licensed motocross racing simulation. Developer: Artefacts Studio. Publisher: Nacon. Platforms: PC (Steam), PlayStation 5, Xbox Series X|S. Release: October 1, 2026. Franchise status: latest entry in the annual official MXGP game series. Not early access. Price: 6,930 JPY standard in Japan, Fox Holeshot Edition 7,920 JPY with cosmetic content (Western price not found in pre-release sources). Description: all 19 official tracks from the current MXGP and MX2 season, Unreal Engine 5 visuals, dynamic terrain deformation and online races for up to 10 players."
+   }
+  ],
+  "outcome": {
+   "metric": "Steam positive reviews %",
+   "scale": [
+    0,
+    100
+   ],
+   "values": {
+    "ace-combat-8": 85,
+    "retrospace": 90,
+    "mxgp-26": 60
+   },
+   "sources": {
+    "ace-combat-8": "https://store.steampowered.com/app/2288340/ACE_COMBAT_8_WINGS_OF_THEVE/ - Very Positive, 85% of 9,222 (igamemag.com later reported 82% of 17,700+) (read 2026-10-16 via web search snapshot)",
+    "retrospace": "https://store.steampowered.com/app/2067820/RetroSpace/ - Very Positive, 90% of 462 (read 2026-10-16 via web search snapshot)",
+    "mxgp-26": "https://store.steampowered.com/app/3634190/MXGP_26__The_Official_Game/ - Mixed, 60% of 213 (read 2026-10-16 via web search snapshot)"
+   }
+  }
+ }
+]
