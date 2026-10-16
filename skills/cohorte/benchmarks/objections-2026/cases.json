@@ -1,0 +1,711 @@
+[
+  {
+    "id": "obj-2026-fpf-logo",
+    "kind": "generic",
+    "title": "Portuguese Football Federation: new minimalist logo and visual identity (2026-07-01)",
+    "context": "The Federacao Portuguesa de Futebol (FPF) governs football in Portugal and runs the national teams. The new logo concerns its brand identity, seen by Portuguese football fans and supporters of the national team.",
+    "date": "2026-07-01",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://www.footyheadlines.com/7465452951/portuguese-football-federation-unveils-controversial-minimalist-logo.html",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Portuguese Football Federation: new minimalist logo and visual identity (2026-07-01)",
+        "seed_text": "The Portuguese Football Federation (FPF) has unveiled a new logo and brand identity, launched on 1 July 2026 and already live across the federation's digital platforms. The new mark is a highly simplified, minimalist reinterpretation of the traditional Portuguese shield. It keeps the federation's red, green and gold colours, but replaces the detailed shield with a cleaner rounded form and drops the fine detailing of the previous emblem, including the traditional cross. The federation says the identity was designed to work across a wide range of sizes and uses, from mobile phone screens to printed materials and events, and is part of a graphic harmonisation of the entities within the FPF group."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "generic, sterile minimalist design",
+          "looks bland and soulless",
+          "a downgrade / step backwards from the old crest"
+        ],
+        [
+          "looks like the Sagres beer logo",
+          "resembles a beer brand",
+          "looks like a commercial brand mark"
+        ],
+        [
+          "removal of the traditional cross and heritage",
+          "breaks with history and Christian origins",
+          "loss of identity"
+        ]
+      ],
+      "sources": [
+        "https://www.footyheadlines.com/7465452951/portuguese-football-federation-unveils-controversial-minimalist-logo.html",
+        "https://www.footyheadlines.com/7465452951/portuguese-football-federation-unveils-controversial-minimalist-logo-won-t-be-used-on-kits.html",
+        "https://1000logos.net/news/portuguese-football-federation-logo-shows-why-football-is-still-different-from-every-other-brand/",
+        "https://rfm.pt/atualidade/23366/afinal-o-simbolo-da-selecao-nao-mudou-porque-e-que-a-fpf-apresentou-um-novo-logotipo-a-meio-do-mundial-2026",
+        "https://www.cronica.com.mx/deportes/2026/07/02/seleccion-de-portugal-cambiara-de-escudo-federacion-explica-el-nuevo-emblema-revelado/"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-playstation-discs",
+    "kind": "policy",
+    "title": "Sony PlayStation: physical discs end for new games from January 2028 (2026-07-01)",
+    "context": "Sony Interactive Entertainment makes the PlayStation consoles and runs the PlayStation Store. The change affects PlayStation players who buy, collect, trade or resell games on disc.",
+    "date": "2026-07-01",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://engadget.com/2205792/sony-will-stop-making-disc-based-playstation-games-starting-2028/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Sony PlayStation: physical discs end for new games from January 2028 (2026-07-01)",
+        "seed_text": "In a PlayStation Blog post, Sony Interactive Entertainment announced that it will stop producing physical discs for new PlayStation console games starting in January 2028. Games released on or after that date will be sold digitally only, through the PlayStation Store and through retailers selling digital codes. Games already released on disc, and games scheduled to launch on disc before January 2028, are not affected, and existing PlayStation consoles with disc drives will continue to play disc-based games, so current physical libraries keep working. Sony said the change reflects changing consumer habits and called it a natural direction, as the general preference for digital media now significantly outpaces physical discs."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "no more resale, trading or lending of used games",
+          "kills the second-hand game market",
+          "can't sell or lend games"
+        ],
+        [
+          "you don't own digital games, only a revocable licence",
+          "loss of ownership",
+          "access tied to the account and can be taken away"
+        ],
+        [
+          "game preservation",
+          "games may become unplayable when servers or stores close",
+          "physical media lasts"
+        ],
+        [
+          "strengthens Sony's control over prices / PlayStation Store monopoly",
+          "no retail competition on game prices"
+        ]
+      ],
+      "sources": [
+        "https://www.tweaktown.com/news/112445/45000-gamers-urge-sony-to-reconsider-killing-physical-playstation-games/index.html",
+        "https://www.tweaktown.com/news/112496/playstation-disc-phaseout-petition-hits-120000-signatures-in-just-four-days/index.html",
+        "https://theweek.com/culture-life/personal-technology/sony-future-ending-physical-discs-playstation-games",
+        "https://www.avclub.com/playstation-ending-physical-game-disc-production-2028",
+        "https://godisageek.com/2026/07/sony-disc-backlash-no-impact-2028-cutoff/",
+        "https://www.tweaktown.com/news/112604/sonys-dollars500-million-lawsuit-heats-up-after-choice-to-end-playstation-disc-production/index.html"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-cfb27-microtransactions",
+    "kind": "game",
+    "title": "EA Sports College Football 27: paid progression in Dynasty and Road to Glory (2026-07-06)",
+    "context": "EA Sports College Football 27 is EA's annual college football game on PS5, Xbox Series X|S and, for the first time, PC. The change affects players of its offline/single-player career modes, Dynasty and Road to Glory.",
+    "date": "2026-07-06",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://www.pcgamer.com/games/sports/college-football-27-to-remove-microtransactions-after-player-backlash-though-ea-maintains-they-were-only-added-to-give-players-more-choice/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "EA Sports College Football 27: paid progression in Dynasty and Road to Glory (2026-07-06)",
+        "seed_text": "EA Sports College Football 27 opens early access on July 6, 2026 for Deluxe Edition and MVP Bundle owners (about $100), ahead of the July 9 worldwide launch of the $70 Standard Edition on PS5, Xbox Series X|S and PC. In this year's game, players can spend College Football Points, the premium currency also used in College Football Ultimate Team and bought with real money in packs priced from $9.99 to $149.99, on progression in the career modes. In Dynasty, coaches can purchase Coach XP levels with College Football Points, and in Road to Glory players can buy upgrades to their player's progression. The XP adjustment sliders that last year's game offered for tuning progression speed are not part of these modes this year."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "pay-to-progress in single-player/offline modes",
+          "microtransactions don't belong in Dynasty or Road to Glory",
+          "paying for XP in modes you play alone"
+        ],
+        [
+          "free XP sliders removed and replaced by paid boosts",
+          "took away a free quality-of-life option to sell it back",
+          "slowed progression to push purchases"
+        ],
+        [
+          "not disclosed before release / absent from previews",
+          "hidden until launch",
+          "sneaked in after pre-orders"
+        ]
+      ],
+      "sources": [
+        "https://www.pcgamer.com/games/sports/college-football-27-to-remove-microtransactions-after-player-backlash-though-ea-maintains-they-were-only-added-to-give-players-more-choice/",
+        "https://www.sportsgamersonline.com/news/cfbplaydontpay-trends-on-x-as-fans-criticize-colllege-football-27-microtransactions/amp/",
+        "https://www.shacknews.com/article/149985/college-football-27-removing-microtransactions-rtg-dynasty",
+        "https://www.pushsquare.com/news/2026/07/college-football-27-to-remove-single-player-microtransactions-after-fans-threatened-boycott",
+        "https://opencritic.com/news/34415/ea-backtracks-and-removes-paid-progression-from-college-football-27",
+        "https://www.foxnews.com/outkick-sports/youtuber-helped-save-college-football-27-microtransactions.amp",
+        "https://www.dailylobo.com/article/2026/07/ea-rolls-back-college-football-27-video-game-microtransactions-after-player-backlash"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-meta-muse-image",
+    "kind": "product",
+    "title": "Meta: Muse Image launch with @-mention of public Instagram accounts (2026-07-07)",
+    "context": "Meta runs Instagram, WhatsApp, Facebook and the Meta AI app. The launch affects Instagram users, in particular anyone with a public account whose photos can be referenced by other people's AI image prompts.",
+    "date": "2026-07-07",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://techcrunch.com/2026/07/10/meta-removes-controversial-ai-feature-on-instagram-after-backlash/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Meta: Muse Image launch with @-mention of public Instagram accounts (2026-07-07)",
+        "seed_text": "Meta introduced Muse Image, the first image-generation model from Meta Superintelligence Labs. It powers image creation and editing in the Meta AI app and on meta.ai, and is rolling out across Instagram, WhatsApp, and later Facebook and Messenger. It can edit photos, remove objects, render legible text and generate working QR codes. On Instagram (US first), Stories get more than 30 new AI effects, and people can @-mention a public Instagram account in a Meta AI prompt so the model can use that account's publicly available photos as references when creating a new image. Public accounts can turn off this kind of AI referencing of their content in settings. On WhatsApp, people can generate images in chats with Meta AI in a first set of countries. Basic use is free; heavier use will require a subscription. Advertisers will be able to use Muse Image through Advantage+ creative in the coming weeks."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "opt-out instead of opt-in consent",
+          "everyone's public photos included by default",
+          "should require explicit permission"
+        ],
+        [
+          "anyone can use your likeness / photos without approval",
+          "enables deepfakes and harassment",
+          "misuse of people's faces"
+        ],
+        [
+          "no notification when your photos are used",
+          "you never know your images were referenced"
+        ],
+        [
+          "opt-out setting buried and hard to find",
+          "have to dig through settings to protect yourself"
+        ]
+      ],
+      "sources": [
+        "https://techcrunch.com/2026/07/10/meta-removes-controversial-ai-feature-on-instagram-after-backlash/",
+        "https://www.computerworld.com/article/4196220/meta-pulls-instagram-ai-feature-amid-privacy-concerns.html",
+        "https://fstoppers.com/artificial-intelligence/missed-mark-meta-retreats-instagram-ai-photo-grab-903480",
+        "https://propakistani.pk/2026/07/11/meta-deactivates-controversial-instagram-ai-deepfake-feature-after-backlash/",
+        "https://www.diyphotography.net/meta-shuts-down-ai-training-muse-image-after-backlash/",
+        "https://hoodline.com/2026/07/bay-area-instagram-users-race-to-shut-off-sneaky-new-ai-switch/",
+        "https://betanews.com/article/meta-pulls-ai-image-generation-feature-from-instagram-just-days-after-launch/"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-chatgpt-desktop-app",
+    "kind": "app",
+    "title": "OpenAI: new ChatGPT desktop app merging Codex and ChatGPT Work, old app renamed ChatGPT Classic (2026-07-09)",
+    "context": "OpenAI makes ChatGPT and the Codex coding agent. The change affects people who use the ChatGPT and Codex desktop apps on Mac and Windows.",
+    "date": "2026-07-09",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://9to5mac.com/2026/07/17/openai-fixes-chat-access-in-the-chatgpt-app-for-mac/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "OpenAI: new ChatGPT desktop app merging Codex and ChatGPT Work, old app renamed ChatGPT Classic (2026-07-09)",
+        "seed_text": "OpenAI announced ChatGPT Work, a ChatGPT agent with built-in Codex that can complete multi-step tasks across web, mobile and desktop using information from your apps, local files and a new built-in browser, and return finished documents, spreadsheets or slides. Alongside it, the Codex app is merging into a new ChatGPT desktop app for Mac and Windows with Chat, Work and Codex modes, available on every plan including Free; if you already have the Codex app, updating it turns it into the new ChatGPT desktop app. The previous ChatGPT desktop app is renamed ChatGPT Classic and will keep receiving model updates, bug fixes, security patches and support for existing Enterprise capabilities, while new agent features come to the new app. ChatGPT Work is available today for Pro, Enterprise and Edu, expanding to Plus and Business in the next few days. GPT-5.6 models launch across ChatGPT, Codex and the API."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "regular chat buried / chats and Projects missing",
+          "can't find chat history or Projects",
+          "Chat mode hidden behind Work and Codex"
+        ],
+        [
+          "confusing interface",
+          "unclear difference between Work and Codex",
+          "messy, cluttered app"
+        ],
+        [
+          "native Mac app replaced by a bloated Electron app",
+          "huge download, slower launch and performance",
+          "bloat"
+        ],
+        [
+          "forced change / unwanted rename",
+          "Codex users resent the rename",
+          "considering cancelling subscription"
+        ]
+      ],
+      "sources": [
+        "https://9to5mac.com/2026/07/17/openai-fixes-chat-access-in-the-chatgpt-app-for-mac/",
+        "https://www.ithinkdiff.com/openai-fixes-chatgpt-mac-app-bloat-remains/",
+        "https://www.ithinkdiff.com/openai-president-chatgpt-desktop-app-mess/",
+        "https://letsdatascience.com/news/openai-restores-chats-and-projects-in-redesigned-chatgpt-des-6add8a39",
+        "https://daringfireball.net/linked/2026/07/09/todays-the-day-openai-fucked-up-the-chatgpt-mac-app",
+        "https://community.openai.com/t/openai-is-cooked-broken-desktop-experience-cancelled-subscription/1386909",
+        "https://community.openai.com/t/chat-mode-missing-in-the-new-chatgpt-macos-app-26-707-31428-web-has-chat-work-desktop-only-shows-work-codex/1386324"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-ac-black-flag-resynced-dlc",
+    "kind": "game",
+    "title": "Ubisoft: Assassin's Creed Black Flag Resynced launches with day-one paid packs (2026-07-09)",
+    "context": "Assassin's Creed Black Flag Resynced is Ubisoft's remake of the 2013 single-player pirate adventure, on PS5, Xbox Series X|S and PC. The store offer affects players buying the remake.",
+    "date": "2026-07-09",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://www.notebookcheck.net/Mixed-Assassin-s-Creed-Black-Flag-Resynced-Steam-reviews-slam-microtransactions.1338877.0.html",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Ubisoft: Assassin's Creed Black Flag Resynced launches with day-one paid packs (2026-07-09)",
+        "seed_text": "Assassin's Creed Black Flag Resynced, the remake of Black Flag, launches July 9, 2026 on PlayStation 5, Xbox Series X|S and PC. The standard edition is $59.99 and a $70 Deluxe Edition includes two bonus packs. Alongside the game, the store offers a line-up of optional add-on packs from day one: time-saving items such as a map pack (about $5) and a resource pack ($4.99), and several $10 packs with visual and cosmetic overhauls for Edward Kenway's outfits and for the appearance of his ship, the Jackdaw. Bought separately, the add-on packs total roughly $80-85."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "microtransactions in a single-player remake",
+          "paid extras don't belong in a solo game",
+          "monetising a remake"
+        ],
+        [
+          "about $80+ of day-one DLC",
+          "add-ons cost more than the game",
+          "greedy day-one content"
+        ],
+        [
+          "paid time-savers (map/resource packs)",
+          "selling shortcuts implies grind",
+          "pay to skip"
+        ]
+      ],
+      "sources": [
+        "https://www.notebookcheck.net/Mixed-Assassin-s-Creed-Black-Flag-Resynced-Steam-reviews-slam-microtransactions.1338877.0.html",
+        "https://www.dexerto.com/assassins-creed/ubisoft-responds-to-backlash-over-80-assassins-creed-black-flag-resynced-microtransactions-3385040/",
+        "https://mp1st.com/news/ubisoft-reminds-assassins-creed-black-flag-resynced-player-microtransactions-are-entirely-optional-and-never-a-requirement-to-complete-the-game",
+        "https://www.tweaktown.com/news/112573/assassins-creed-black-flag-resynced-has-dollars80-worth-of-cosmetics-and-time-saving-dlc/index.html",
+        "https://tbreak.com/2-assassins-creed-black-flag-resynced/",
+        "https://games.gg/news/black-flag-resynced-mixed-steam-reviews/",
+        "https://multiplayer.it/notizie/le-microtransazioni-di-assassins-creed-black-flag-resynced-hanno-diviso-i-giocatori.html"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-samsung-health-ai-consent",
+    "kind": "policy",
+    "title": "Samsung Health: consent prompt for use of health data in AI training (2026-07-13)",
+    "context": "Samsung Health is Samsung's health and fitness tracking app for Galaxy phones and watches (also available on iPhone), with tens of millions of monthly users. The prompt affects all users who sync health data to a Samsung account.",
+    "date": "2026-07-13",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://www.digitaltrends.com/phones/samsung-health-threatens-to-delete-your-data-if-you-opt-out-of-ai-training/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Samsung Health: consent prompt for use of health data in AI training (2026-07-13)",
+        "seed_text": "Samsung Health now asks users, when they open the app, to respond to a new notice titled \"Consent to the Use of Health Data for AI Training and Modelling\", also available as a toggle in the app's privacy settings. The consent covers health data such as activity, sleep, nutrition, body measurements, medication information, medical records and menstrual-cycle tracking, which Samsung would use to train and improve AI models; the notice says data may also be subject to human review where required. Users who decline, or who later withdraw consent, are shown a warning that syncing of their health data with their Samsung account will stop and that the health data stored in their account will be deleted, unless it must be retained under applicable law."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "coercive consent: agree or lose your data",
+          "not real consent if refusing deletes your data",
+          "data held hostage"
+        ],
+        [
+          "highly sensitive health data used for AI",
+          "medical records and menstrual data for AI training",
+          "privacy of health information"
+        ],
+        [
+          "losing years of health history / sync",
+          "threat to delete stored data",
+          "punished for opting out"
+        ]
+      ],
+      "sources": [
+        "https://www.digitaltrends.com/phones/samsung-health-threatens-to-delete-your-data-if-you-opt-out-of-ai-training/",
+        "https://cybernews.com/news/samsung-health-ai-training-delete-user-data/",
+        "https://9to5google.com/2026/07/13/samsung-health-ai-training-data-consent/",
+        "https://www.androidauthority.com/samsung-health-train-ai-data-3686684/",
+        "https://propakistani.pk/2026/07/13/samsung-will-delete-your-data-unless-you-allow-ai-training/",
+        "https://www.malwarebytes.com/blog/news/2026/07/samsung-backs-down-on-threat-to-delete-health-data",
+        "https://www.channelnews.com.au/samsung-to-watch-owners-hand-over-your-health-data-for-ai-training-or-we-delete-it/"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-google-assistant-shutdown",
+    "kind": "product",
+    "title": "Google: Assistant removed from Android phones, Wear OS and Android Auto, replaced by Gemini (2026-08-04)",
+    "context": "Google Assistant has been the default voice assistant on Android since 2016. The change affects Android phone and tablet users, Wear OS watch owners, users of paired headphones and Android Auto drivers.",
+    "date": "2026-08-04",
+    "split": "eval",
+    "leak_safe": false,
+    "source": "https://9to5google.com/2026/08/04/google-assistant-september-2026-shutdown/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Google: Assistant removed from Android phones, Wear OS and Android Auto, replaced by Gemini (2026-08-04)",
+        "seed_text": "Google is notifying users that starting September 4, 2026 it will begin removing Google Assistant from Android phones and tablets, Wear OS watches, paired headphones and Android Auto, with Gemini taking over as the assistant on those devices. The removal will roll out over a few weeks. Once Assistant is removed, users will no longer be able to use it or switch back to it on their phone, tablet or paired devices. Cars with Google built-in will continue to support Assistant beyond September 4, and Google Home speakers, smart displays and Google TV devices are not part of this phase."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "Gemini is worse at simple tasks",
+          "fails at calls, timers, music",
+          "less reliable than Assistant"
+        ],
+        [
+          "broken or worse in Android Auto / while driving",
+          "can't place calls or navigate reliably in the car",
+          "safety concern while driving"
+        ],
+        [
+          "Gemini is too verbose / talks too much",
+          "explains instead of just doing the command"
+        ],
+        [
+          "no option to keep or switch back to Assistant",
+          "forced migration",
+          "missing Assistant features"
+        ]
+      ],
+      "sources": [
+        "https://www.bgr.com/2253678/android-auto-gemini-switch-reactions/",
+        "https://androidauthority.com/gemini-vs-google-assistant-complaints-3721074",
+        "https://www.autoevolution.com/news/android-auto-users-are-angry-gemini-can-t-call-911-assistant-was-so-much-better-276090.html",
+        "https://www.droid-life.com/2026/08/05/google-assistant-shutting-down-on-android/",
+        "https://www.droid-life.com/2026/09/28/google-assistant-is-gone/",
+        "https://www.techradar.com/phones/android/this-will-be-my-last-pixel-android-fans-are-rebelling-against-the-imminent-demise-of-google-assistant-here-are-5-reasons-why"
+      ]
+    },
+    "note": "complaints about Gemini predate the announcement; may be known to the model"
+  },
+  {
+    "id": "obj-2026-jetstar-overhead-locker-fee",
+    "kind": "pricing",
+    "title": "Jetstar: paid Priority Carry-on for overhead lockers from February 2027 (2026-08-05)",
+    "context": "Jetstar is Qantas' low-cost airline in Australia and New Zealand. The change affects all Jetstar passengers who want to bring a bag larger than an under-seat item.",
+    "date": "2026-08-05",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://www.travelpulse.com/news/airlines-airports/this-aussie-airline-is-now-charging-18-for-carry-on-bags",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Jetstar: paid Priority Carry-on for overhead lockers from February 2027 (2026-08-05)",
+        "seed_text": "Jetstar is changing its carry-on baggage policy from 2 February 2027. Every fare will include one free personal item that fits under the seat in front (a backpack, handbag or laptop bag up to 40 x 30 x 20 cm), and the previous 7kg carry-on weight limit is replaced by a size-based model. Passengers who want to bring a larger bag for the overhead locker (up to 56 x 36 x 23 cm) can buy Priority Carry-on, which also includes priority boarding; prices range from about A$25 to A$52 per flight depending on route (for example A$25 Launceston-Sydney, A$33 Sydney-Melbourne), and availability is limited. Existing bookings for flights after the change get a free Priority Carry-on upgrade. Jetstar CEO Stephanie Tully said customer research found gate bag weigh-ins and competition for overhead locker space were among the most stressful parts of flying, and that the change will improve on-time performance and boarding while keeping fares low."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "cash grab",
+          "just another way to extract fees",
+          "greedy"
+        ],
+        [
+          "advertised fares no longer reflect the real cost",
+          "hidden/drip pricing",
+          "should disclose all charges at booking"
+        ],
+        [
+          "paying to use the overhead locker is absurd",
+          "what's next, paying for the toilet",
+          "charging for basic cabin space"
+        ]
+      ],
+      "sources": [
+        "https://www.omanobserver.om/article/1193995/oman/jetstar-to-charge-for-carry-on-bags-in-overhead-lockers",
+        "https://theedgemalaysia.com/node/813396",
+        "https://www.fox13news.com/news/jetstar-overhead-carry-on-bag-fee-2027",
+        "https://travelradar.aero/jetstar-introduces-controversial-carry-on-charges/",
+        "https://www.travelpulse.com/news/airlines-airports/this-aussie-airline-is-now-charging-18-for-carry-on-bags",
+        "https://www.portnews.com.au/story/9324237/jetstar-adds-new-carry-on-fees-for-overhead-lockers/"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-sharks-rugby-rebrand",
+    "kind": "generic",
+    "title": "The Sharks: renamed Sharks Rugby Club with new logos replacing Sharkie (2026-08-06)",
+    "context": "The Sharks are a Durban-based professional rugby union team playing in the United Rugby Championship. The rebrand affects the club's supporters.",
+    "date": "2026-08-06",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://briefly.co.za/sports/rugby/249142-bring-sharkie-sharks-fans-furious-club-unveils-dramatic-identity/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "The Sharks: renamed Sharks Rugby Club with new logos replacing Sharkie (2026-08-06)",
+        "seed_text": "The Sharks announced the union's biggest rebrand in 30 years. From the 2026/27 United Rugby Championship season the Durban team will operate as Sharks Rugby Club, and it introduces two new logos: a redesigned shark emblem and an \"SRC\" monogram, replacing the long-standing \"Sharkie\" emblem. The club links the move to its history, including the 1996 renaming from Natal Rugby. CEO Shaun Bryans said the change is a continuation of tradition rather than a break from it, that the badge has evolved but the core has not, and that this is \"not change for change's sake\" but a considered, long-term decision serving on-field, commercial and cultural goals."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "losing the beloved Sharkie emblem",
+          "bring back Sharkie",
+          "the old shark was iconic"
+        ],
+        [
+          "loss of club identity and heritage",
+          "don't recognise the club anymore",
+          "uncalled for"
+        ],
+        [
+          "dislike of the SRC monogram / new name",
+          "corporate-sounding branding"
+        ],
+        [
+          "poor timing",
+          "wrong moment for a rebrand"
+        ]
+      ],
+      "sources": [
+        "https://briefly.co.za/sports/rugby/249142-bring-sharkie-sharks-fans-furious-club-unveils-dramatic-identity/",
+        "https://briefly.co.za/sports/rugby/249129-sharks-replace-iconic-logo-club-confirms-change-202627-urc-season/",
+        "https://iol.co.za/sport/rugby/urc/2026-08-06-kings-park-stalwart-welcomes-sharks-rugby-club-makeover/",
+        "https://iol.co.za/sport/rugby/currie-cup/2026-08-06-rebranded-sharks-target-stronger-future-on-and-off-the-field/",
+        "https://1000logos.net/news/sharks-rugby-club-logo-reflects-a-reality-every-professional-team-eventually-faces/",
+        "https://www.rugbypass.com/news/sharks-rugby-club-urc-outfit-reveal-new-logo-and-branding/"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-claude-watermark",
+    "kind": "policy",
+    "title": "Anthropic: invisible watermarks in text generated by Claude (2026-08-11)",
+    "context": "Anthropic makes the Claude AI models and apps. The change affects everyone who uses Claude-generated text, including students, writers, developers and businesses.",
+    "date": "2026-08-11",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://techcrunch.com/2026/08/11/anthropic-says-it-will-watermark-text-generated-by-its-ai-models/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Anthropic: invisible watermarks in text generated by Claude (2026-08-11)",
+        "seed_text": "Anthropic announced that it is embedding invisible, machine-readable watermarks in text generated by its Claude models, as part of complying with Article 50 of the EU AI Act, whose transparency obligations took effect on August 2, 2026. Models launched from August 2 onward carry the watermark from day one, and older models are being brought in during the transition period. Anthropic says the mark is statistical rather than visible, does not change output quality, and can persist through copying and pasting and through some edits such as translation or summarisation, while noting it cannot by itself prove Claude was the original author. Anthropic said it will offer a way for third parties to detect the watermark."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "users will get caught or flagged at work and school",
+          "exposes students and professionals who used Claude",
+          "AI detectors will flag my work"
+        ],
+        [
+          "false flags on human writing lightly edited with Claude",
+          "proofreading, coding or conversion marks my own text",
+          "unfair accusations"
+        ],
+        [
+          "savvy users can strip it by paraphrasing, so only ordinary users are hurt",
+          "easy to bypass, so pointless"
+        ],
+        [
+          "no opt-out, including for paying and enterprise customers",
+          "client contract and liability concerns",
+          "cancelling subscriptions"
+        ]
+      ],
+      "sources": [
+        "https://techcrunch.com/2026/08/12/some-claude-users-are-mad-that-anthropics-new-watermarks-will-catch-them-cheating-at-their-jobs-classes/",
+        "https://propakistani.pk/2026/08/13/users-angry-as-claude-outputs-can-now-be-caught-by-ai-tools/",
+        "https://betanews.com/article/claude-watermark-subscriber-cancellations/",
+        "https://www.greaterbelize.com/?p=110409",
+        "https://english.news18a.com/news/english_286539.html",
+        "https://news.designrush.com/claude-ai-watermark-ai-agency-challenges"
+      ]
+    },
+    "note": "announcement by the maker of the model under test"
+  },
+  {
+    "id": "obj-2026-dawnwalker-console-fps",
+    "kind": "game",
+    "title": "Rebel Wolves: The Blood of Dawnwalker console modes revealed without 60 FPS (2026-08-21)",
+    "context": "The Blood of Dawnwalker is an action RPG from Rebel Wolves, published by Bandai Namco, launching September 3, 2026 on PC, PS5 and Xbox Series X|S. The reveal concerns console players.",
+    "date": "2026-08-21",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://www.tweaktown.com/news/113201/the-blood-of-dawnwalker-wont-hit-60-fps-on-any-console-ps5-pro-tops-out-at-40-fps/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Rebel Wolves: The Blood of Dawnwalker console modes revealed without 60 FPS (2026-08-21)",
+        "seed_text": "Ahead of the September 3 launch, Rebel Wolves detailed The Blood of Dawnwalker's PC requirements and console graphics modes. On PC, the minimum spec is a GTX 1060 or RX 580 with 16GB RAM and the recommended spec an RTX 4060, RX 7600 XT or Arc B580, with upscaling (DLSS, FSR or XeSS) assumed at the Balanced preset; PC can reach 60 FPS. On consoles the game offers a Quality mode at dynamic 4K targeting 30 FPS and a Balanced mode at dynamic 4K targeting 40 FPS, which requires a 120Hz display; on PS5 Pro, Balanced at 40 FPS is the highest frame-rate target. Xbox Series S targets 30 FPS."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "no 60 FPS performance mode on consoles",
+          "30 FPS is unacceptable for an action game in 2026",
+          "want a performance mode"
+        ],
+        [
+          "even PS5 Pro is capped at 40 FPS",
+          "what's the point of the Pro",
+          "premium console not used"
+        ]
+      ],
+      "sources": [
+        "https://videogameschronicle.com/news/we-heard-your-feedback-blood-of-dawnwalker-is-getting-a-60fps-mode-after-backlash",
+        "https://www.tweaktown.com/news/113201/the-blood-of-dawnwalker-wont-hit-60-fps-on-any-console-ps5-pro-tops-out-at-40-fps/",
+        "https://www.thesixthaxis.com/2026/08/24/the-blood-of-dawnwalker-will-get-a-60fps-performance-mode-in-day-one-patch/",
+        "https://www.digitaltrends.com/gaming/blood-of-dawnwalker-pc-specs-console-performance-40fps/",
+        "https://www.digitalcitizen.life/the-blood-of-dawnwalker-targets-40-fps-on-ps5-pro-as-pc-remains-the-only-60-fps-option/",
+        "https://insider-gaming.com/blood-of-dawnwalker-doesnt-feature-a-60-fps-performance-mode-on-consoles/",
+        "https://www.cgmagonline.com/news/relax-the-blood-of-dawnwalker-60-fps-mode/"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-apple-tv-price",
+    "kind": "pricing",
+    "title": "Apple: Apple TV raised to $14.99 a month and Apple One Individual to $21.95 in the US (2026-08-28)",
+    "context": "Apple TV (formerly Apple TV+) is Apple's subscription streaming service; Apple One bundles it with other Apple services. The change affects US subscribers.",
+    "date": "2026-08-28",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://macrumors.com/2026/08/28/apple-tv-price-increase/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Apple: Apple TV raised to $14.99 a month and Apple One Individual to $21.95 in the US (2026-08-28)",
+        "seed_text": "Apple raised the price of its Apple TV streaming service in the United States. The monthly plan goes from $12.99 to $14.99, and the annual plan from $99 to $119. The Apple One Individual bundle, which includes Apple TV, rises from $19.95 to $21.95 a month; the Apple One Family and Premier plans are not changed this time. New subscribers pay the new prices immediately, and existing subscribers will be notified about a month before they are charged the new price."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "yet another hike / fourth increase in four years",
+          "price has tripled since launch",
+          "constant price creep"
+        ],
+        [
+          "will cancel if it goes higher",
+          "threatening to cancel",
+          "not worth it anymore"
+        ],
+        [
+          "content doesn't justify the price",
+          "small catalogue, reruns not worth $15"
+        ],
+        [
+          "Apple raising prices 'reluctantly' while profitable",
+          "corporate greed",
+          "streamflation"
+        ]
+      ],
+      "sources": [
+        "https://www.dexerto.com/entertainment/apple-tv-hikes-prices-again-as-subscribers-threaten-to-cancel-3404037/",
+        "https://www.androidauthority.com/apple-tv-prices-3704392/",
+        "https://www.tweaktown.com/news/113342/apple-tv-just-got-its-fourth-price-hike-in-four-years-tripling-its-cost-since-launch/index.html",
+        "https://www.thewrap.com/media-platforms/streaming/apple-tv-price-increase-per-month/",
+        "https://macworld.com/article/3222857/apple-tv-just-got-another-price-increase.html"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-xbox-cloud-gaming-cap",
+    "kind": "pricing",
+    "title": "Xbox: monthly cloud gaming hour caps for Game Pass from November (2026-09-03)",
+    "context": "Xbox Game Pass is Microsoft's game subscription (Essential, Premium and Ultimate tiers), which includes Xbox Cloud Gaming streaming. The change affects Game Pass subscribers who stream games.",
+    "date": "2026-09-03",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://www.pcgamer.com/gaming-industry/microsoft-announces-cap-on-xbox-cloud-gaming-hours-for-game-pass-subscribers-admits-most-arent-using-it-much-anyway/",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Xbox: monthly cloud gaming hour caps for Game Pass from November (2026-09-03)",
+        "seed_text": "Xbox announced that starting in November 2026, each Game Pass plan will include a fixed allotment of Xbox Cloud Gaming hours per month: 15 hours for Game Pass Ultimate, 10 hours for Game Pass Premium and 5 hours for Game Pass Essential. Members who use up their included hours will be able to buy additional cloud playtime through the Xbox Store. Xbox will share pricing, how to purchase extra hours, eligible games, market availability and how players can check their remaining time in November. Xbox said the change is needed because the cost of providing cloud gaming grows as more people use it and play for longer, and that it expects the change to affect about 4% of Game Pass subscribers."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "too few hours for the price",
+          "15 hours a month is nothing",
+          "paying more for less"
+        ],
+        [
+          "corporate greed / charging extra for playtime",
+          "nickel-and-diming",
+          "betrayal of loyal subscribers"
+        ],
+        [
+          "breaks the promise of cloud gaming flexibility",
+          "hurts people who play without a console or bought cloud devices",
+          "undercuts hardware bought for cloud play"
+        ]
+      ],
+      "sources": [
+        "https://www.pcgamer.com/gaming-industry/microsoft-announces-cap-on-xbox-cloud-gaming-hours-for-game-pass-subscribers-admits-most-arent-using-it-much-anyway/",
+        "https://cybernews.com/tech/microsoft-xbox-game-pass-limitations/",
+        "https://www.change.org/p/stop-xbox-from-limiting-cloud-gaming-hours-on-game-pass-ultimate",
+        "https://www.videogameschronicle.com/news/xbox-is-capping-cloud-gaming-to-15-hours-and-charging-for-extra-playtime",
+        "https://www.thesixthaxis.com/2026/09/03/xbox-limits-game-pass-cloud-gaming-to-just-15-hours-a-month/",
+        "https://hothardware.com/news/game-over-for-unlimited-xbox-cloud-play-as-microsoft-imposes-caps",
+        "https://www.gamedeveloper.com/cloud/xbox-to-cap-cloud-gaming-hours-for-game-pass-subscribers"
+      ]
+    }
+  },
+  {
+    "id": "obj-2026-reddit-rss-old-reddit",
+    "kind": "website",
+    "title": "Reddit: RSS feeds end, Old Reddit restricted and public API closed, citing scraping (2026-09-30)",
+    "context": "Reddit is a large community discussion platform run by volunteer moderators. The changes affect moderators, long-time users of old.reddit.com, RSS users and third-party app and bot developers.",
+    "date": "2026-09-30",
+    "split": "eval",
+    "leak_safe": true,
+    "source": "https://thenextweb.com/news/reddit-rss-feeds-shut-down-old-reddit-ai-scraping",
+    "variants": [
+      {
+        "id": "announcement",
+        "label": "Reddit: RSS feeds end, Old Reddit restricted and public API closed, citing scraping (2026-09-30)",
+        "seed_text": "Reddit announced that it will stop supporting RSS feeds on November 13, 2026, saying RSS has become a common route for large-scale automated scraping. Moderators who use RSS for alerts in communities they moderate are pointed to the Discord Relay app on Reddit's Developer Platform and asked to migrate before the cutoff; for RSS use outside a community you moderate there is no replacement. Reddit will also wind down the public Data API: new access requests stop October 31, 2026, unregistered apps start being cut off January 12, 2027, and remaining public access closes in March 2027, with apps moving to the Developer Platform supported by a $1 million migration fund ($1,000 per eligible app). Old Reddit will be limited to logged-in moderators and users who have used it recently (in the last six months), because logged-out access was the biggest source of abusive scraping on Old Reddit."
+      }
+    ],
+    "outcome": {
+      "metric": "dominant public complaints in coverage",
+      "objections": [
+        [
+          "breaks moderation workflows",
+          "mods rely on RSS to find posts",
+          "will make subreddits unmanageable"
+        ],
+        [
+          "no replacement for RSS",
+          "readers and feed users lose access"
+        ],
+        [
+          "AI scraping is a pretext / it's about selling data",
+          "Reddit licenses data to Google and OpenAI",
+          "RSS is already rate-limited"
+        ],
+        [
+          "restricting Old Reddit",
+          "pushing users to the new interface",
+          "new or logged-out users lose Old Reddit"
+        ]
+      ],
+      "sources": [
+        "https://thenextweb.com/news/reddit-rss-feeds-shut-down-old-reddit-ai-scraping",
+        "https://9to5mac.com/2026/10/01/reddit-is-making-two-changes-some-long-time-users-wont-like/",
+        "https://mjtsai.com/blog/2026/10/06/reddit-to-remove-rss/",
+        "https://decrypt.co/379892/reddit-killing-rss-feeds-public-api-access-ai-scrapers",
+        "https://alternativeto.net/news/2026/10/reddit-is-killing-rss-feeds-and-restricting-access-to-old-reddit-blames-ai-scrapping-bots/",
+        "https://tech.slashdot.org/story/26/09/30/1841213/reddit-is-killing-rss-feeds-ending-public-api-access?sdsrc=next",
+        "https://ppc.land/reddit-to-halt-public-data-api-access-in-march-2027-as-14-000-apps-register/"
+      ]
+    }
+  }
+]
