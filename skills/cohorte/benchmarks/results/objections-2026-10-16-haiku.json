@@ -1,0 +1,854 @@
+{
+  "rows": [
+    {
+      "id": "obj-2026-fpf-logo",
+      "kind": "generic",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 32.2
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          false,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 31.16
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-playstation-discs",
+      "kind": "policy",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 46.5
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 38.18
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-cfb27-microtransactions",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 34.5
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          false
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 36.78
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          false,
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-meta-muse-image",
+      "kind": "product",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 34.6
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          false,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 36.15
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-chatgpt-desktop-app",
+      "kind": "app",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 36.6
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          false,
+          false
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 39.69
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          false,
+          true,
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-ac-black-flag-resynced-dlc",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 43.2
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          false,
+          false,
+          false
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 42.86
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          true
+        ],
+        "objections_found": [
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-samsung-health-ai-consent",
+      "kind": "policy",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 38.1
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 26.36
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          true,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-google-assistant-shutdown",
+      "kind": "product",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": false,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 33.2
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          false,
+          false,
+          false,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 30.39
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          true,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          false,
+          false,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-jetstar-overhead-locker-fee",
+      "kind": "pricing",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 50.0
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          false,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 49.09
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-sharks-rugby-rebrand",
+      "kind": "generic",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 37.1
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true,
+          false
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 32.7
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-claude-watermark",
+      "kind": "policy",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 48.4
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          false,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 44.55
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-dawnwalker-console-fps",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 46.6
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          false
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 50.71
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          true,
+          false
+        ],
+        "objections_found": [
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-apple-tv-price",
+      "kind": "pricing",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 48.3
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          false,
+          true,
+          false
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 48.18
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          false,
+          false,
+          true
+        ],
+        "objections_found": [
+          true,
+          true,
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-xbox-cloud-gaming-cap",
+      "kind": "pricing",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 50.7
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          true,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 49.09
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          true,
+          false,
+          false
+        ],
+        "objections_found": [
+          true,
+          true,
+          false
+        ]
+      }
+    },
+    {
+      "id": "obj-2026-reddit-rss-old-reddit",
+      "kind": "website",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": null,
+      "n_variants": 1,
+      "cohorte": {
+        "potentials": {
+          "announcement": 33.3
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          true,
+          false,
+          true
+        ],
+        "objections_found": [
+          false,
+          true,
+          false,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "announcement": 42.14
+        },
+        "picked": null,
+        "correct": null,
+        "objections_found_kw": [
+          false,
+          true,
+          false,
+          true
+        ],
+        "objections_found": [
+          false,
+          true,
+          false,
+          true
+        ]
+      }
+    }
+  ],
+  "all": {
+    "cases": 15,
+    "winner_cases": 0,
+    "chance_accuracy": null,
+    "cohorte": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.635,
+      "objection_recall_keywords": 0.058,
+      "top_objection_found": 0.733,
+      "objections_total": 52,
+      "spearman": null,
+      "points": 0
+    },
+    "baseline": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.615,
+      "objection_recall_keywords": 0.154,
+      "top_objection_found": 0.733,
+      "objections_total": 52,
+      "spearman": null,
+      "points": 0
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": null,
+    "objection_sign": {
+      "cohorte_more": 4,
+      "baseline_more": 2,
+      "p_value": 0.6875
+    }
+  },
+  "real": {
+    "cases": 15,
+    "winner_cases": 0,
+    "chance_accuracy": null,
+    "cohorte": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.635,
+      "objection_recall_keywords": 0.058,
+      "top_objection_found": 0.733,
+      "objections_total": 52,
+      "spearman": null,
+      "points": 0
+    },
+    "baseline": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.615,
+      "objection_recall_keywords": 0.154,
+      "top_objection_found": 0.733,
+      "objections_total": 52,
+      "spearman": null,
+      "points": 0
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": null,
+    "objection_sign": {
+      "cohorte_more": 4,
+      "baseline_more": 2,
+      "p_value": 0.6875
+    }
+  },
+  "synthetic": null,
+  "leak_safe": {
+    "cases": 14,
+    "winner_cases": 0,
+    "chance_accuracy": null,
+    "cohorte": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.667,
+      "objection_recall_keywords": 0.062,
+      "top_objection_found": 0.786,
+      "objections_total": 48,
+      "spearman": null,
+      "points": 0
+    },
+    "baseline": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.646,
+      "objection_recall_keywords": 0.146,
+      "top_objection_found": 0.786,
+      "objections_total": 48,
+      "spearman": null,
+      "points": 0
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": null,
+    "objection_sign": {
+      "cohorte_more": 4,
+      "baseline_more": 2,
+      "p_value": 0.6875
+    }
+  },
+  "eval": {
+    "cases": 15,
+    "winner_cases": 0,
+    "chance_accuracy": null,
+    "cohorte": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.635,
+      "objection_recall_keywords": 0.058,
+      "top_objection_found": 0.733,
+      "objections_total": 52,
+      "spearman": null,
+      "points": 0
+    },
+    "baseline": {
+      "winner_accuracy": null,
+      "winner_right": 0,
+      "objection_recall": 0.615,
+      "objection_recall_keywords": 0.154,
+      "top_objection_found": 0.733,
+      "objections_total": 52,
+      "spearman": null,
+      "points": 0
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": null,
+    "objection_sign": {
+      "cohorte_more": 4,
+      "baseline_more": 2,
+      "p_value": 0.6875
+    }
+  },
+  "dev": null,
+  "verdict": {
+    "objections": {
+      "status": "equivalent",
+      "text": "objection recall 67% vs 65% on 14 leak-safe cases; per case 4 vs 2, sign test p = 0.6875"
+    }
+  },
+  "judge": "blind LLM judge",
+  "at": "2026-10-16T17:33Z",
+  "runs": 2,
+  "model": "claude-haiku-5-5",
+  "models": [
+    "claude-haiku-5-5"
+  ],
+  "backend": "claude-cli",
+  "cost_usd": 0.8182,
+  "stopped": null
+}

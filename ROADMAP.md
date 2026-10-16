@@ -33,6 +33,11 @@ results include a McNemar test, rank correlation and blind-judged objection reca
 - Cohorte 50%, single prompt 50%, chance 39% at picking the better-rated title;
 - rank correlation +0.04 vs +0.25.
 
+A second pre-registered test looked at 14 real announcements that drew backlash. Cohorte found 67% of the
+documented complaints and the single prompt 65%, which is **equivalent** (p = 0.69). The narrowed claim holds:
+Cohorte finds real objections. But on accuracy alone it doesn't beat one good prompt. What it adds is segments,
+voices, interviews and A/B re-tests.
+
 The kill criterion below applies: the public claim is narrowed to **rehearsal and objection discovery**, which the
 sanity suite does support. Rating prediction gets another attempt only with grounding (V2) and new, unseen cases.
 See `skills/cohorte/benchmarks/PROTOCOL.md`.

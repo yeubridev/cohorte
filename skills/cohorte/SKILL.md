@@ -168,7 +168,10 @@ past launches and A/B tests into cases (`benchmarks/README.md`): those are leak-
 ## Ground rules
 - Measured accuracy: on 12 unseen real films and games, the cohort picked the better-rated title no more often than
   one expert prompt (50% vs 50%, chance 39%; `benchmarks/results/`). Present `assess` scores as a structured
-  reading of reactions and objections, never as a forecast of ratings, sales or box office.
+  reading of reactions and objections, never as a forecast of ratings, sales or box office. On 14 real
+  announcements it found 67% of the complaints the public really made (one expert prompt: 65%), so present
+  objections as likely but incomplete, and point to what the cohort adds: who objects, in their words, and
+  whether a fix works.
 - Confidence is earned, not claimed. If someone asks for ~100% certainty, explain that no simulation of people
   reaches that on open-ended future events, and show how the ceiling rises: full material, several runs and
   models, and above all calibration against real outcomes.

@@ -176,26 +176,37 @@ copy. The next step is to `fork` the run with a rewritten launch post and `compa
 ## Scorecard: is it proven?
 
 `backtest` scores Cohorte against the cheapest alternative: **one expert prompt, using the same model and the same
-material.** Everything below was measured on 16 Oct 2026 with Claude Haiku 5.5, 2 runs per variant, for $2.60 in
-total. The real-case analysis was [pre-registered](skills/cohorte/benchmarks/PROTOCOL.md) and committed before the
-run.
+material.** Everything below was measured on 16 Oct 2026 with Claude Haiku 5.5, 2 runs per variant, for about
+$3.50 in total. Both real-case analyses were pre-registered and committed before their runs
+([ratings](skills/cohorte/benchmarks/PROTOCOL.md), [objections](skills/cohorte/benchmarks/PROTOCOL-objections.md)).
 
-| Test | Cases | Picked the winner (Cohorte / one prompt / chance) | Status |
+| Test | Cases | Result (Cohorte / one prompt) | Status |
 |---|---|---|---|
-| **Sanity:** planted, obvious A/B differences (an unpaid "junior" job needing 10 years of experience, a clickbait article, an 89 €/month meal app) | 8 synthetic | **100% / 100% / 50%** · objections found 92% / 90% | ✅ passed |
-| **Real audience ratings:** films (CinemaScore) and games (Steam reviews) released Jul–Oct 2026, after the model's training cutoff, with pre-release material only | 12 unseen | **50% / 50% / 39%** · rank correlation +0.04 / +0.25 | ❌ **not proven** |
+| **Sanity:** planted, obvious A/B differences (an unpaid "junior" job needing 10 years of experience, a clickbait article, an 89 €/month meal app) | 8 synthetic | winner **100% / 100%** (chance 50%) · objections found 92% / 90% | ✅ passed |
+| **Real complaints:** 14 announcements from Jul–Oct 2026 that drew documented backlash (Xbox cloud-gaming caps, Jetstar locker fee, Sony ending game discs, Samsung Health AI consent…), with the announcement text only | 14 unseen | real complaints found **67% / 65%** · top complaint found **79% / 79%** | 🟰 **equivalent** (p = 0.69) |
+| **Real audience ratings:** films (CinemaScore) and games (Steam reviews) released Jul–Oct 2026, after the model's training cutoff, with pre-release material only | 12 unseen | winner **50% / 50%** (chance 39%) · rank correlation +0.04 / +0.25 | ❌ **not proven** |
 
 **What this means:**
 
 - **Proven:**
-  - Cohorte reliably spots big differences between two versions;
-  - it names the real problems, in the robots' own words, for the planted cases;
-  - it lets you interview, segment and re-test.
+  - Cohorte reliably spots big differences between two versions.
+  - On real announcements it had never seen, it found **two thirds of the complaints the public actually made**.
+    It found the single biggest complaint about 4 times in 5.
+  - It also lets you interview, segment and re-test.
+- **Equivalent to one good prompt:** finding those objections is about as accurate with a single expert prompt.
+  Cohorte's added value is the workflow around them:
+  - who objects (segments);
+  - their own words (voices);
+  - why (interviews);
+  - whether a fix works (A/B re-tests on the same cohort).
+
+  More accurate objections are not part of that added value.
 - **Not proven:** predicting how real audiences will *rate* a film or a game. On 12 unseen real cases, the cohort
   picked the same winners as one prompt, both only modestly above chance, and its ranking was weaker. The model
   recognised none of the 32 titles, so leakage can't explain the result.
 - **What we claim, then:** Cohorte is a **rehearsal and objection-discovery tool**, not an oracle. Use it to find
-  what will annoy people, compare messages and prepare answers. Don't use it to forecast scores or sales.
+  what will annoy people and who it annoys, compare messages and prepare answers. Don't use it to forecast scores
+  or sales.
 
 **How the result could change:** grounding the robots in your own customer data (roadmap V2). Your own launches
 and A/B tests also make the best test cases (see [`benchmarks/`](skills/cohorte/benchmarks/README.md)), and the
@@ -209,6 +220,9 @@ scorecard will publish whatever they show.
   chance 48%. We were predicting appeal to everyone, while CinemaScore and Steam reviews rate satisfaction among
   the people who chose the title. We switched both methods to that "satisfaction" target and then ran 12 new cases
   once. Those 8 films are reported separately as *seen* and never count as proof.
+- **Judge noise:** the objection judge sometimes misses an obvious match. A post-hoc check, with a majority of 3
+  judge votes for both methods, gives 75% / 71% recall and 93% / 86% for the top complaint, p = 0.63. That's the
+  same conclusion: equivalent.
 - **Full scorecards:** in [`benchmarks/results/`](skills/cohorte/benchmarks/results/).
 
 </details>

@@ -365,7 +365,7 @@ def _top(objections: List[str]) -> List[str]:
     return out[:OBJECTIONS_PER_VARIANT]
 
 
-def _judge_requests(cases: List[Dict[str, Any]], preds: Dict[str, Any], methods: Tuple[str, ...]):
+def _judge_requests(cases: List[Dict[str, Any]], preds: Dict[str, Any], methods: Tuple[str, ...], votes: int = 1):
     reqs = {}
     for c in cases:
         objs = c["outcome"]["objections"]
@@ -375,27 +375,30 @@ def _judge_requests(cases: List[Dict[str, Any]], preds: Dict[str, Any], methods:
         for m in methods:
             p = preds[c["id"]].get(m) or {}
             predicted = sum((_top(p[i]["objections"]) for i in ids if i in p), [])
-            q = LLMRequest(
-                id=f"judge:{c['id']}:{m}", kind="judge", system=[JUDGE_SYSTEM], effort="low", max_tokens=800,
-                user=JUDGE_USER.format(
-                    concerns="\n".join(f"{n + 1}. {o[0]}" + (f" (or: {' / '.join(o[1:])})" if o[1:] else "")
-                                       for n, o in enumerate(objs)),
-                    predicted="\n".join(f"- {x}" for x in predicted) or "(none)"),
-                meta={"n": len(objs)})
-            reqs[q.id] = (c["id"], m, len(objs), q)
+            for vote in range(votes):
+                q = LLMRequest(
+                    id=f"judge:{c['id']}:{m}:{vote}", kind="judge", system=[JUDGE_SYSTEM], effort="low", max_tokens=800,
+                    salt=f"vote{vote}" if vote else "",
+                    user=JUDGE_USER.format(
+                        concerns="\n".join(f"{n + 1}. {o[0]}" + (f" (or: {' / '.join(o[1:])})" if o[1:] else "")
+                                           for n, o in enumerate(objs)),
+                        predicted="\n".join(f"- {x}" for x in predicted) or "(none)"),
+                    meta={"n": len(objs)})
+                reqs[q.id] = (c["id"], m, len(objs), q)
     return reqs
 
 
 def judge(cases: List[Dict[str, Any]], preds: Dict[str, Any], out_dir: str, settings: Dict[str, Any],
-          methods: Tuple[str, ...] = ("cohorte", "baseline")) -> Dict[Tuple[str, str], List[bool]]:
-    """Blind LLM judge: same prompt for both methods, never told which method wrote a list."""
-    reqs = _judge_requests(cases, preds, methods)
+          methods: Tuple[str, ...] = ("cohorte", "baseline"), votes: int = 1) -> Dict[Tuple[str, str], List[bool]]:
+    """Blind LLM judge: same prompt for both methods, never told which method wrote a list. With votes > 1, each
+    list is judged independently several times and a concern counts as found on a strict majority."""
+    reqs = _judge_requests(cases, preds, methods, votes)
     if not reqs:
         return {}
     os.makedirs(os.path.join(out_dir, "judge"), exist_ok=True)
     client = LLMClient(os.path.join(out_dir, "judge"), {**settings, "verbose": False})
     answers = client.run_batch([r[3] for r in reqs.values()], label="objection judge")
-    out = {}
+    ballots: Dict[Tuple[str, str], List[List[bool]]] = {}
     for qid, (cid, m, n, _) in reqs.items():
         try:
             data = parse_json_response(answers.get(qid) or "")
@@ -403,8 +406,8 @@ def judge(cases: List[Dict[str, Any]], preds: Dict[str, Any], out_dir: str, sett
         except ValueError:
             found = None
         if isinstance(found, list) and len(found) == n:
-            out[(cid, m)] = [x is True or str(x).lower() == "true" for x in found]
-    return out
+            ballots.setdefault((cid, m), []).append([x is True or str(x).lower() == "true" for x in found])
+    return {k: [sum(col) * 2 > len(b) for col in zip(*b)] for k, b in ballots.items()}
 
 
 def leak_check(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, Any]) -> Dict[str, List[str]]:
@@ -561,7 +564,19 @@ def verdict(result: Dict[str, Any], methods: Tuple[str, ...]) -> Dict[str, Any]:
         out["sanity"] = {"pass": acc is not None and acc >= 0.9, "accuracy": acc,
                          "text": f"planted differences detected in {syn[methods[0]]['winner_right']}/"
                                  f"{syn['winner_cases']} synthetic cases (gate: ≥90%)"}
+    obj_pool = result.get("leak_safe") or {}
+    sign = obj_pool.get("objection_sign")
+    if obj_pool.get(methods[0], {}).get("objections_total"):
+        a_, b_ = methods[0], methods[-1]
+        ra, rb = obj_pool[a_]["objection_recall"], obj_pool[b_]["objection_recall"]
+        p = sign["p_value"] if sign else 1.0
+        status = ("better" if ra > rb and p < 0.05 else "worse" if rb > ra and p < 0.05 else "equivalent")
+        out["objections"] = {"status": status, "text": (
+            f"objection recall {ra:.0%} vs {rb:.0%} on {obj_pool['cases']} leak-safe cases; per case "
+            f"{sign[a_ + '_more']} vs {sign[b_ + '_more']}, sign test p = {p}")}
     real = result.get("real")
+    if real and not real["winner_cases"] and "objections" in out:
+        return out  # an objection-only suite: no winner-picking claim to judge
     if not real:
         out["proof"] = {"status": "no real cases", "text": "No real historical cases yet: nothing is proven about "
                         "real-world prediction. Add cases with known outcomes (see benchmarks/README.md)."}
@@ -629,7 +644,8 @@ def _spent(home: str) -> float:
 
 def run_backtest(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, Any], runs: int = 2,
                  models: Optional[List[str]] = None, budget: Optional[float] = None,
-                 calibrate_home: Optional[str] = None, parallel: int = 4, judge_mode: str = "llm") -> Dict[str, Any]:
+                 calibrate_home: Optional[str] = None, parallel: int = 4, judge_mode: str = "llm",
+                 judge_votes: int = 1) -> Dict[str, Any]:
     home = os.path.join(out_dir, "home")
     os.makedirs(home, exist_ok=True)
     settings = {**settings, "model": resolve_model(settings.get("model"))}
@@ -659,10 +675,11 @@ def run_backtest(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, 
         list(pool.map(work, enumerate(todo)))  # list() re-raises the first error
     spent = _spent(home)
     stopped = (f"budget of ${budget:.2f} reached; {len(skipped)} case(s) not run" if skipped else None)
-    judged = judge(cases, preds, out_dir, settings) if judge_mode == "llm" else {}
+    judged = judge(cases, preds, out_dir, settings, votes=judge_votes) if judge_mode == "llm" else {}
     leaks = leak_check([c for c in cases if c["id"] in preds], out_dir, settings)
     result = score(cases, preds, judged=judged, leaks=leaks)
-    result["judge"] = "blind LLM judge" if judge_mode == "llm" else "keyword match"
+    result["judge"] = (("blind LLM judge" + (f", majority of {judge_votes} votes" if judge_votes > 1 else ""))
+                       if judge_mode == "llm" else "keyword match")
     result.update({"at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "runs": runs,
                    "model": settings["model"], "models": models or [settings["model"]],
                    "backend": settings.get("backend"), "cost_usd": round(spent, 4), "stopped": stopped})
@@ -709,6 +726,8 @@ def render(r: Dict[str, Any], cases: List[Dict[str, Any]]) -> str:
     lines.append("\n## Verdict")
     if v.get("proof"):
         lines.append(f"- **Real-world proof: {v['proof']['status']}**: {v['proof']['text']}")
+    if v.get("objections"):
+        lines.append(f"- **Objection discovery vs one prompt: {v['objections']['status']}**: {v['objections']['text']}")
     if v.get("sanity"):
         lines.append(f"- **Sanity gate: {'pass' if v['sanity']['pass'] else 'fail'}**: {v['sanity']['text']}")
     for label, key in (("Evaluation split (unseen before the run)", "eval"), ("Dev split (seen: never proof)", "dev"),
