@@ -24,6 +24,8 @@ from cohorte_engine.platform import Platform  # noqa: E402
 from cohorte_engine.simulation import parse_decision, select_active  # noqa: E402
 from cohorte_engine.util import CohorteError, parse_json_response, rng_for  # noqa: E402
 from cohorte_engine.world import validate_world  # noqa: E402
+from cohorte_engine.ingest import ingest  # noqa: E402
+from cohorte_engine.subjects import default_probes, get_subject, potential  # noqa: E402
 
 
 def small_world(hours=6):
@@ -262,6 +264,75 @@ class TestPipeline(CliCase):
             else:
                 self.fail(f"{command} never completed")
         self.assertIn("round 2/", self.cli("status", "man"))
+
+
+class TestSubjects(CliCase):
+    def test_profiles(self):
+        self.assertEqual(get_subject("film")["kind"], "movie")
+        self.assertEqual(get_subject("unknown-thing")["kind"], "generic")
+        dims = get_subject("app")["dimensions"]
+        self.assertEqual(potential({d["key"]: d["max"] for d in dims}, dims), 100.0)
+        self.assertEqual(potential({d["key"]: d["min"] for d in dims}, dims), 0.0)
+        self.assertEqual(len(default_probes("movie")), 2)
+
+    def test_ingest_formats(self):
+        import zipfile
+        html = os.path.join(self.tmp, "p.html")
+        with open(html, "w") as f:
+            f.write("<html><head><title>T</title><script>bad()</script></head><body><h1>Big promise</h1>"
+                    "<button>Buy now</button>" + "<p>word </p>" * 200 + "</body></html>")
+        srt = os.path.join(self.tmp, "t.srt")
+        with open(srt, "w") as f:
+            f.write("1\n00:00:01,000 --> 00:02:00,000\nhello there\n")
+        docx = os.path.join(self.tmp, "d.docx")
+        with zipfile.ZipFile(docx, "w") as z:
+            z.writestr("word/document.xml", "<w:document><w:p><w:t>Docx body text</w:t></w:p></w:document>")
+        out = os.path.join(self.tmp, "draft")
+        subject = ingest([html, srt, docx], "film", out, title="X")
+        self.assertEqual(subject["kind"], "movie")
+        self.assertEqual(subject["evidence"], "full")
+        seed = open(os.path.join(out, "seed.md")).read()
+        self.assertIn("Big promise", seed)
+        self.assertIn("Buy now", seed)
+        self.assertNotIn("bad()", seed)
+        self.assertIn("Duration ≈ 2.0 min", seed)
+        self.assertIn("Docx body text", seed)
+
+    def test_assess_confidence_and_calibration(self):
+        out = os.path.join(self.tmp, "draft")
+        page = os.path.join(self.tmp, "p.md")
+        with open(page, "w") as f:
+            f.write("# Tandem\n" + "A meal planner that reads your fridge. " * 40)
+        ingest([page], "website", out)
+        w = small_world()
+        w.pop("probes")
+        with open(self.world_path, "w") as f:
+            json.dump(w, f)
+        self.cli("init", "lp", "--world", self.world_path, "--seed", os.path.join(out, "seed.md"),
+                 "--subject", os.path.join(out, "subject.json"), "--backend", "mock")
+        self.cli("setup", "lp")
+        self.assertIn("click_intent", self.cli("show", "lp"))           # default probes from the subject kind
+        self.assertIn("LLM calls", self.cli("assess", "lp", "--runs", "2", "--dry-run"))
+        text = self.cli("assess", "lp", "--runs", "3", "--models", "opus,haiku")
+        self.assertIn("Confidence index", text)
+        res = json.load(open(os.path.join(self.home, "sims", "lp", "assessment.json")))
+        self.assertLessEqual(res["confidence"]["index"], 60)           # capped until calibrated
+        self.assertIsNotNone(res["confidence"]["components"]["model_agreement"])
+        # five outcomes that track predictions perfectly lift the cap above 60
+        for i in range(5):
+            name = f"lp{i}"
+            self.cli("fork", "lp", name)
+            with open(os.path.join(self.home, "sims", name, "seed.md"), "a") as f:
+                f.write(f"\nvariant {i}")
+            self.cli("assess", name, "--runs", "2")
+            pred = json.load(open(os.path.join(self.home, "sims", name, "assessment.json")))["potential"]["mean"]
+            self.cli("calibrate", "add", "--sim", name, "--actual", str(round(pred / 10 * 0.8 + 1, 3)),
+                     "--scale", "0", "10", "--metric", "conversion %")
+        self.assertIn("r = 1.0", self.cli("calibrate", "fit", "--kind", "website"))
+        self.cli("assess", "lp", "--runs", "2")
+        res = json.load(open(os.path.join(self.home, "sims", "lp", "assessment.json")))
+        self.assertGreater(res["confidence"]["cap"], 60)
+        self.assertIsNotNone(res["calibrated"])
 
 
 def _mock_meta(r):

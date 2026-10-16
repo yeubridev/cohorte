@@ -249,6 +249,11 @@ def validate_world(world: Dict[str, Any]) -> Tuple[Dict[str, Any], List[str]]:
             if key == "scheduled_events" and post.get("at_hour") is None and post.get("at_round") is None:
                 raise CohorteError(f"scheduled_events[{i}] needs 'at_hour' (simulated hours from start) or 'at_round'.")
 
+    if settings.get("subject_kind"):
+        from .subjects import default_probes, get_subject
+        settings["subject_kind"] = get_subject(settings["subject_kind"])["kind"]
+        if not world.get("probes"):
+            world["probes"] = default_probes(settings["subject_kind"])
     probes = world.setdefault("probes", [])
     for i, p in enumerate(probes):
         if not p.get("question"):
@@ -268,6 +273,7 @@ def init_sim(
     llm: Dict[str, Any],
     force: bool = False,
     parent: Optional[str] = None,
+    subject_path: Optional[str] = None,
 ) -> List[str]:
     if sim.exists and not force:
         raise CohorteError(f"Simulation '{sim.name}' already exists ({sim.dir}). Use --force to overwrite.")
@@ -284,6 +290,14 @@ def init_sim(
         f.write("\n\n---\n\n".join(seed_parts))
     if not seed_parts:
         warnings.append("No seed material given: agents will only know what world.json says.")
+    if subject_path:
+        subject = read_json(subject_path)
+        write_json(sim.path("subject.json"), subject)
+        if not world["settings"].get("subject_kind"):
+            from .subjects import default_probes
+            world["settings"]["subject_kind"] = subject.get("kind", "generic")
+            if not world.get("probes"):
+                world["probes"] = default_probes(world["settings"]["subject_kind"])
     write_json(sim.path("world.json"), world)
     backend = llm.get("backend") or "anthropic"
     if backend not in BACKENDS:

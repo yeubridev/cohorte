@@ -112,6 +112,18 @@ def mock_response(req) -> str:
                 "posts": [f"mock {arch} post {j}: {m.get('subject')} looks {rng.choice(MOODS)}" for j in range(2)],
             }
         return json.dumps({"archetypes": out})
+    if kind in ("assess", "assess_group"):
+        dims, lo, hi = m.get("dims", []), m.get("lo", []), m.get("hi", [])
+        base = rng.uniform(0.3, 0.8)
+        scores = {k: round(a + (b - a) * min(1, max(0, base + rng.uniform(-0.15, 0.15))))
+                  for k, a, b in zip(dims, lo, hi)}
+        out = {"scores": scores, "verdict": f"(mock) {m.get('name')} finds it {rng.choice(MOODS)}",
+               "likes": [rng.choice(["the price", "the idea", "the design"])],
+               "dislikes": [rng.choice(["too long", "unclear value", "privacy worries"])],
+               "would_do": "mock next step"}
+        if kind == "assess_group":
+            out["spread"] = {k: 2 for k in dims}
+        return json.dumps(out)
     if kind == "interview":
         return f"(mock answer from {m.get('name')}) I found {m.get('subject')} {rng.choice(MOODS)}."
     return "{}"

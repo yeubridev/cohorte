@@ -46,6 +46,42 @@ change their minds.
 | 🎙️ **Interviews** | Ask any robot, in character, why it did what it did and what would change its mind |
 | 🔁 **A/B re-tests** | Change the copy, price or policy and replay the *same* cohort, then compare |
 
+## Test anything: apps, websites, videos, films, articles…
+
+Cohorte rates **any subject** with a cohort that experiences it the way real people would. It lands on the page,
+reads the article, watches the trailer, looks at the store listing or reads the pitch. You get a **potential score
+(0–100)**, scores per audience segment, what works, what puts people off, verbatim verdicts, and a
+**confidence index**.
+
+```bash
+C="python3 skills/cohorte/scripts/cohorte.py"
+$C ingest https://example.com/landing trailer.srt deck.pdf --kind website --out drafts/x   # pages, PDF, DOCX, subtitles, images, video frames
+$C init x --world world.json --seed drafts/x/seed.md --subject drafts/x/subject.json
+$C setup x && $C assess x --runs 5 --models opus,sonnet
+```
+
+Kinds: `app`, `website`, `video`, `movie`, `series`, `article`, `book`, `music`, `game`, `product`, `pricing`,
+`ad`, `pitch`, `job_offer`, `policy`, `event`, `generic`. Each has its own rating dimensions and the real-world
+outcomes it is usually judged on.
+
+**About the confidence index:** no simulation of people can promise ~100% on future events, and Cohorte doesn't
+pretend to. The index combines four things:
+- how stable the score is across runs and exposure contexts;
+- how complete the material is;
+- whether different models agree;
+- how many people answered.
+
+It is **capped at 60 until the subject kind is calibrated** on real outcomes. Each time you learn what really
+happened (rating, conversion, retention…), run `calibrate add`. After 5 outcomes Cohorte gives calibrated
+estimates in real units with an 80% interval. The cap rises toward 100 only as correlation with reality and the
+number of outcomes grow. Details: [subjects and confidence](skills/cohorte/references/subjects-and-confidence.md).
+
+**Real run:** the MiroFish README, assessed as a `website` by 3,000 developers, researchers and product people
+(Haiku 5.5, 3 runs, $0.12):
+- potential **43.9/100**, stable across runs (42.9–45.4);
+- confidence **60/100 (moderate, capped: uncalibrated)**;
+- top turn-off: "promises to predict anything… no accuracy figures, no backtests".
+
 ## Try it in 60 seconds (free, offline)
 
 The `mock` backend runs the whole pipeline with fake answers, so you can see the mechanics before spending a cent:
@@ -201,6 +237,7 @@ noise). Claude tells you which deltas are large enough to act on.
 | Build | `doctor` · `validate world.json` · `init` · `setup` · `show [--full]` · `estimate [--model haiku]` |
 | Simulate | `run [--max-rounds N]` · `inject --at-hour 30 --content "…"` · `status` |
 | Observe | `stats` · `timeline [--bucket 6]` · `search <words> [--thoughts]` · `thread <post>` · `agent <id or @name>` · `export` |
+| Rate | `ingest <urls/files> --kind K --out DIR` · `kinds` · `assess [--runs 5] [--models a,b]` · `calibrate add\|fit\|show` |
 | Talk | `interview -q "…" (--agents … \| --type T --sample N) [--followup]` |
 | Adapt | `fork` · `compare` · `llm --backend … --model …` |
 

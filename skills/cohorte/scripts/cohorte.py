@@ -10,6 +10,10 @@ Stages
   inject    add a god's-eye event at a given simulated hour/round
   status | stats | timeline | search | agent | thread | export           [stage 4 tools]
   interview ask simulated agents questions in character                  [stage 5]
+  ingest    turn URLs, pages, documents, subtitles, images, videos into seed material
+  assess    panel rating of the subject: potential score + confidence index  [any subject kind]
+  calibrate record real outcomes and fit them (raises the confidence ceiling)
+  kinds     list subject kinds (app, website, video, movie, article, ...)
   fork | compare                                                         [adapt & re-test]
   llm       change backend / model of a simulation
   doctor    check which LLM backends are available
@@ -34,6 +38,10 @@ from cohorte_engine.llm import BACKENDS, DEFAULT_MODEL, AwaitingResponses, LLMCl
 from cohorte_engine.simulation import inject_event, run_simulation  # noqa: E402
 from cohorte_engine.util import CohorteError, read_json, write_json  # noqa: E402
 from cohorte_engine.world import Sim, init_sim, list_sims, validate_world  # noqa: E402
+from cohorte_engine import assess as assess_mod  # noqa: E402
+from cohorte_engine import calibration  # noqa: E402
+from cohorte_engine.ingest import ingest as ingest_sources  # noqa: E402
+from cohorte_engine.subjects import SUBJECTS, get_subject  # noqa: E402
 
 
 def _home(args) -> str:
@@ -93,7 +101,7 @@ def cmd_init(args):
     warnings = init_sim(sim, args.world, args.seed or [], {
         "backend": args.backend, "model": args.model, "concurrency": args.concurrency,
         "fallbacks": not args.no_fallbacks,
-    }, force=args.force)
+    }, force=args.force, subject_path=args.subject)
     for w in warnings:
         print(f"warning: {w}")
     meta = sim.meta()
@@ -204,7 +212,7 @@ def cmd_fork(args):
     if os.path.isdir(dst.dir):
         shutil.rmtree(dst.dir)
     os.makedirs(dst.dir)
-    for f in ("world.json", "seed.md", "agents.json", "config.json"):
+    for f in ("world.json", "seed.md", "agents.json", "config.json", "subject.json"):
         if os.path.exists(src.path(f)):
             shutil.copy(src.path(f), dst.path(f))
     if args.seed:
@@ -230,6 +238,53 @@ def cmd_fork(args):
         write_json(dst.path("config.json"), cfg)
     print(f"forked {src.name} -> {dst.name} (same agents, personas and configs; fresh state)\n"
           f"edit {dst.path('config.json')} (event_config.initial_posts / scheduled_events) if needed, then: run {dst.name}")
+
+
+def cmd_ingest(args):
+    subject = ingest_sources(args.sources, args.kind, args.out, args.title, args.notes)
+    print(f"wrote {os.path.join(args.out, 'seed.md')} and subject.json · kind {subject['kind']} · "
+          f"evidence {subject['evidence']} · {len(subject['sources'])} source(s)")
+    if subject["to_describe"]:
+        print("Claude: open these images/frames, describe what a viewer sees, and replace the DESCRIBE markers "
+              "in seed.md:")
+        for f in subject["to_describe"]:
+            print(f"  - {f}")
+
+
+def cmd_kinds(args):
+    for k in sorted(SUBJECTS):
+        prof = get_subject(k)
+        print(f"- {k}: {', '.join(d['key'] for d in prof['dimensions'])}  (outcomes: {', '.join(prof['outcomes'])})")
+
+
+def cmd_assess(args):
+    sim = _sim(args)
+    models = [m for m in (args.models or "").split(",") if m] or None
+    settings = sim.llm_settings({"backend": args.backend, "model": args.model, "concurrency": args.concurrency})
+    if args.dry_run:
+        plan = assess_mod.run_assessment(sim, settings, args.runs, models, dry_run=True)
+        print(f"{plan['calls']} LLM calls: {plan['respondents']} respondents × {plan['runs']} run(s) "
+              f"over {', '.join(plan['models'])}")
+        return
+    result = assess_mod.run_assessment(sim, settings, args.runs, models)
+    print(assess_mod.render(result))
+    print(f"\n(saved to {sim.path('assessment.md')})")
+
+
+def cmd_calibrate(args):
+    home = _home(args)
+    if args.action == "add":
+        sim = _sim(args, args.sim)
+        res = read_json(sim.path("assessment.json"))
+        data = calibration.add(home, res["kind"], sim.name, res["potential"]["mean"], args.actual,
+                               args.scale[0], args.scale[1], args.metric or "", args.note or "")
+        print(f"recorded {sim.name}: predicted {res['potential']['mean']} vs actual {args.actual} "
+              f"({len(data['pairs'])} pair(s) for '{res['kind']}')")
+    elif args.action == "fit":
+        data = calibration.fit(home, get_subject(args.kind)["kind"])
+        print(calibration.show(home, data["kind"]))
+    else:
+        print(calibration.show(home, get_subject(args.kind)["kind"] if args.kind else None))
 
 
 def cmd_compare(args):
@@ -260,6 +315,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--seed", action="append", help="seed material file (repeatable)")
     llm_flags(p, defaults=True)
     p.add_argument("--no-fallbacks", action="store_true", help="disable server-side refusal fallbacks")
+    p.add_argument("--subject", help="subject.json written by `ingest` (kind, evidence level)")
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_init)
 
@@ -362,6 +418,36 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--title")
     p.add_argument("--force", action="store_true")
     p.set_defaults(func=cmd_fork)
+
+    p = sub.add_parser("ingest", help="turn URLs and files into seed.md + subject.json")
+    p.add_argument("sources", nargs="+", help="URLs or files: html, pdf, docx, srt/vtt, md/txt, csv, images, videos")
+    p.add_argument("--kind", default="generic", help="subject kind (see `kinds`)")
+    p.add_argument("--out", required=True, help="output folder (e.g. .cohorte/drafts/<name>)")
+    p.add_argument("--title")
+    p.add_argument("--notes", help="context: release date, price, channel, audience")
+    p.set_defaults(func=cmd_ingest)
+
+    p = sub.add_parser("kinds", help="list subject kinds and their rating dimensions")
+    p.set_defaults(func=cmd_kinds)
+
+    p = sub.add_parser("assess", help="panel rating: potential score + confidence index")
+    p.add_argument("name")
+    p.add_argument("--runs", type=int, default=3, help="repeat the panel in different exposure contexts (default 3)")
+    p.add_argument("--models", help="comma-separated models to cross-check, e.g. opus,sonnet")
+    p.add_argument("--dry-run", action="store_true", help="only print how many LLM calls it would make")
+    llm_flags(p)
+    p.set_defaults(func=cmd_assess)
+
+    p = sub.add_parser("calibrate", help="record real outcomes and fit them to predictions")
+    p.add_argument("action", choices=["add", "fit", "show"])
+    p.add_argument("--sim", help="(add) simulation whose assessment predicted the outcome")
+    p.add_argument("--actual", type=float, help="(add) the real outcome value")
+    p.add_argument("--scale", type=float, nargs=2, default=[0, 10], metavar=("MIN", "MAX"),
+                   help="(add) scale of the real outcome, e.g. 0 10 for a rating, 0 100 for a percentage")
+    p.add_argument("--metric", help="(add) what was measured, e.g. 'IMDb rating'")
+    p.add_argument("--note")
+    p.add_argument("--kind", help="(fit/show) subject kind")
+    p.set_defaults(func=cmd_calibrate)
 
     p = sub.add_parser("compare", help="compare metrics of two simulations")
     p.add_argument("a")

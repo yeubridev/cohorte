@@ -84,9 +84,12 @@ class LLMRequest:
     effort: str = "low"
     expect_json: bool = True
     meta: Dict[str, Any] = field(default_factory=dict)  # hints for the mock backend only
+    salt: str = ""               # extra cache-key material (e.g. the model, for multi-model ensembles)
 
     @property
     def key(self) -> str:
+        if self.salt:
+            return stable_hash(self.kind, *self.system, self.user, self.salt)
         return stable_hash(self.kind, *self.system, self.user)
 
     def system_text(self) -> str:

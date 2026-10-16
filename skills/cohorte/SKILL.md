@@ -1,6 +1,6 @@
 ---
 name: cohorte
-description: Swarm-intelligence rehearsal of how people will react to a project, product, launch, landing page, pricing change, announcement or policy (a Claude re-implementation of MiroFish). Builds a world from the user's material, generates a cohort of persona "robots" (from a dozen to 10,000+) that post, like, repost, comment and argue on simulated Twitter- and Reddit-like platforms over simulated days, then writes a prediction report, lets the user interview any agent, and A/B-tests changes on the same population. Use when the user wants to test or pressure-test their project against simulated users, customers or public opinion, predict reception, find objections before launch, compare two versions of a message, run a MiroFish/OASIS-style social simulation, or talk to simulated personas.
+description: Swarm-intelligence rehearsal of how people will react to anything - a project, app, website, video, film, article, book, ad, product, pricing change, pitch, job posting, announcement, policy or event (a Claude re-implementation of MiroFish), with a potential score and an honest confidence index. Builds a world from the user's material, generates a cohort of persona "robots" (from a dozen to 10,000+) that post, like, repost, comment and argue on simulated Twitter- and Reddit-like platforms over simulated days, then writes a prediction report, lets the user interview any agent, and A/B-tests changes on the same population. Use when the user wants to test or pressure-test their project against simulated users, customers or public opinion, predict reception, find objections before launch, compare two versions of a message, run a MiroFish/OASIS-style social simulation, or talk to simulated personas.
 ---
 
 # Cohorte — rehearse the future with a cohort of robots
@@ -73,6 +73,16 @@ Turn it into a **prediction question**, MiroFish's "simulation requirement", e.g
 tech media and competitors react in the 72 h after X launches at $9/month, which objections spread, and whether
 the free tier limits become the main controversy."* Ask at most 2-3 questions, only for what you cannot infer.
 
+### 1b. Ingest the subject (any format)
+Pick the subject kind (`$COHORTE kinds`: app, website, video, movie, series, article, book, music, game,
+product, pricing, ad, pitch, job_offer, policy, event, generic) and ingest the real material:
+```bash
+$COHORTE ingest <urls or files> --kind <kind> --out .cohorte/drafts/<name> --title "..." --notes "context"
+```
+It extracts pages, PDF/DOCX/text, subtitles and video key frames. Open every listed image or frame, describe
+it in `seed.md` in place of its `DESCRIBE` marker, and add what the files can't show (synopsis, price, channel).
+Then pass `--seed .../seed.md --subject .../subject.json` to `init`. Read `references/subjects-and-confidence.md`.
+
 ### 2. Seed and world (stage 1, you)
 Read `references/world-building.md`, then write in a working folder (e.g. `.cohorte/drafts/<name>/`):
 - `seed.md`: what the public can see (exact copy, pricing, FAQ, screenshots described in words) plus
@@ -94,6 +104,17 @@ $COHORTE estimate <name>   # exact number of agent turns + cost range
 Show the user a compact cast table and the cost, and check the cast: missing voices? one-sided deck? Edit
 `agents.json` / `config.json` directly for small fixes (they are plain JSON, see `references/engine.md`), or fix
 `world.json` and `init --force` + `setup` again. **Get an explicit go before running on a paid backend.**
+
+### 3b. Assess (rating panel, any subject)
+```bash
+$COHORTE assess <name> --dry-run                     # number of LLM calls
+$COHORTE assess <name> --runs 5 [--models opus,sonnet]
+```
+Every robot and crowd archetype experiences the subject and rates it on its kind's dimensions. You get the
+potential score (0-100), the spread across runs, per-segment scores, what works, what puts people off, voices,
+and the **confidence index**. That index is capped at 60/100 until real outcomes calibrate the kind. Report it
+exactly as the reference explains: never as a probability of being right, and never above what it is. When the
+real outcome is known later, record it with `calibrate add` so the next predictions get better.
 
 ### 4. Simulate (stage 3)
 ```bash
@@ -134,6 +155,9 @@ humility: small differences (< 0.1 sentiment, < 1 point on a 0-10 probe) are noi
 acting on them. Help the user apply the winning change to their actual project.
 
 ## Ground rules
+- Confidence is earned, not claimed. If someone asks for ~100% certainty, explain that no simulation of people
+  reaches that on open-ended future events, and show how the ceiling rises: full material, several runs and
+  models, and above all calibration against real outcomes.
 - Everything in a report must come from the simulation's tools. Never invent quotes, counts or agents; say when
   the data is thin.
 - Present results as a rehearsal, not a measurement: LLM agents are articulate, often more reasonable and more
@@ -149,4 +173,5 @@ acting on them. Help the user apply the winning change to their actual project.
 `run [--max-rounds N | --until-round N]` · `inject` · `status [name]` · `stats [--platform]` ·
 `timeline [--bucket H]` · `search <query> [--thoughts]` · `agent <ref>` · `thread <post_id> --platform` ·
 `export [--out file]` · `interview -q ... (--agents | --type [--sample] | --all) [--followup]` · `fork` · `compare`.
+`ingest` · `kinds` · `assess [--runs N] [--models a,b] [--dry-run]` · `calibrate add|fit|show`.
 `$COHORTE <command> -h` documents every flag. Files and tuning knobs: `references/engine.md`.

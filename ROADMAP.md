@@ -14,6 +14,14 @@ Revenue and valuation figures are targets for planning, not forecasts.
 | Resumable, deterministic, forkable runs | The full skill (Claude writes the world *and* the report) was never run on a real user project |
 | | Claude API backend, long runs (48 h+) and rate limits at scale are untested |
 
+**Since then (v0.3, in progress):**
+- `ingest` and `assess` rate any subject kind (apps, websites, videos, films, articles, products, pitches, events…);
+- a confidence index combines stability across runs, completeness of material, agreement between models and
+  coverage;
+- `calibrate` learns from real outcomes and is the only thing that lifts the 60/100 cap.
+
+Ensembles and calibration exist; what's still missing is the real outcome data.
+
 **The core risk:** if the robots can't beat a cheap baseline at anticipating real reactions, the product is a
 toy. The roadmap therefore puts proof first and polish later.
 
