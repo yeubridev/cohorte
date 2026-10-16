@@ -1,0 +1,754 @@
+{
+  "rows": [
+    {
+      "id": "films-2026-07-03",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "young-washington",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "minions-and-monsters": 51.8,
+          "young-washington": 47.0
+        },
+        "picked": "minions-and-monsters",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "minions-and-monsters": 56.7,
+          "young-washington": 51.7
+        },
+        "picked": "minions-and-monsters",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-07-10",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "moana",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "moana": 52.5,
+          "evil-dead-burn": 47.7
+        },
+        "picked": "moana",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "moana": 51.7,
+          "evil-dead-burn": 56.7
+        },
+        "picked": "evil-dead-burn",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-08-14",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "paw-patrol-dino-movie",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "end-of-oak-street": 49.5,
+          "paw-patrol-dino-movie": 42.5
+        },
+        "picked": "end-of-oak-street",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "end-of-oak-street": 51.7,
+          "paw-patrol-dino-movie": 53.3
+        },
+        "picked": "paw-patrol-dino-movie",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-08-21",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "mutiny",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "insidious-out-of-the-further": 47.3,
+          "mutiny": 47.2
+        },
+        "picked": "insidious-out-of-the-further",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "insidious-out-of-the-further": 51.7,
+          "mutiny": 46.7
+        },
+        "picked": "insidious-out-of-the-further",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-08-28",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "coyote-vs-acme",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "coyote-vs-acme": 45.2,
+          "the-dog-stars": 47.0
+        },
+        "picked": "the-dog-stars",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "coyote-vs-acme": 45.0,
+          "the-dog-stars": 46.7
+        },
+        "picked": "the-dog-stars",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-09-04",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "by-any-means",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "by-any-means": 48.9,
+          "onslaught": 49.5
+        },
+        "picked": "onslaught",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "by-any-means": 50.0,
+          "onslaught": 56.7
+        },
+        "picked": "onslaught",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-09-11",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "runner",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "practical-magic-2": 52.8,
+          "runner": 49.8
+        },
+        "picked": "practical-magic-2",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "practical-magic-2": 51.7,
+          "runner": 53.35
+        },
+        "picked": "runner",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-09-25",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "dev",
+      "leak_safe": false,
+      "winner": "forgotten-island",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "heart-of-the-beast": 50.7,
+          "primetime": 45.1,
+          "forgotten-island": 54.9
+        },
+        "picked": "forgotten-island",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "heart-of-the-beast": 51.7,
+          "primetime": 50.0,
+          "forgotten-island": 56.7
+        },
+        "picked": "forgotten-island",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-extra-the-odyssey-vs-resident-evil-2026",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "the-odyssey",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "the-odyssey": 57.8,
+          "resident-evil-2026": 50.2
+        },
+        "picked": "the-odyssey",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "the-odyssey": 66.7,
+          "resident-evil-2026": 56.7
+        },
+        "picked": "the-odyssey",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-extra-spider-man-brand-new-day-vs-verity",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "spider-man-brand-new-day",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "spider-man-brand-new-day": 56.8,
+          "verity": 43.4
+        },
+        "picked": "spider-man-brand-new-day",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "spider-man-brand-new-day": 63.35,
+          "verity": 46.7
+        },
+        "picked": "spider-man-brand-new-day",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "films-2026-extra-digger-vs-other-mommy-vs-the-social-reckoning",
+      "kind": "movie",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "the-social-reckoning",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "digger": 49.5,
+          "other-mommy": 49.0,
+          "the-social-reckoning": 49.0
+        },
+        "picked": "digger",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "digger": 53.35,
+          "other-mommy": 56.7,
+          "the-social-reckoning": 55.0
+        },
+        "picked": "other-mommy",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-07-wk2",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "denshattack",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "moonlight-peaks": 41.8,
+          "backyard-baseball": 40.5,
+          "denshattack": 39.1
+        },
+        "picked": "moonlight-peaks",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "moonlight-peaks": 50.0,
+          "backyard-baseball": 51.65,
+          "denshattack": 46.7
+        },
+        "picked": "backyard-baseball",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-07-wk5",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "halo-campaign-evolved",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "halo-campaign-evolved": 48.0,
+          "mistfall-hunter": 42.9
+        },
+        "picked": "halo-campaign-evolved",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "halo-campaign-evolved": 50.0,
+          "mistfall-hunter": 41.7
+        },
+        "picked": "halo-campaign-evolved",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-08-wk1",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "big-walk",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "big-walk": 39.2,
+          "beast-of-reincarnation": 44.2,
+          "marvel-tokon": 44.4
+        },
+        "picked": "marvel-tokon",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "big-walk": 50.0,
+          "beast-of-reincarnation": 51.65,
+          "marvel-tokon": 50.0
+        },
+        "picked": "beast-of-reincarnation",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-08-wk3",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "sinking-city-2",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "hell-let-loose-vietnam": 42.9,
+          "sinking-city-2": 41.7,
+          "mortal-shell-2": 43.2
+        },
+        "picked": "mortal-shell-2",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "hell-let-loose-vietnam": 50.0,
+          "sinking-city-2": 48.3,
+          "mortal-shell-2": 48.35
+        },
+        "picked": "hell-let-loose-vietnam",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-08-wk5",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "star-wars-zero-company",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "star-wars-zero-company": 47.2,
+          "captain-tsubasa-2": 43.1,
+          "serious-sam-shatterverse": 44.6
+        },
+        "picked": "star-wars-zero-company",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "star-wars-zero-company": 53.3,
+          "captain-tsubasa-2": 40.0,
+          "serious-sam-shatterverse": 46.7
+        },
+        "picked": "star-wars-zero-company",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-09-wk1",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "onimusha-way-of-the-sword",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "blood-of-dawnwalker": 48.8,
+          "onimusha-way-of-the-sword": 46.9,
+          "nba-2k27": 38.0
+        },
+        "picked": "blood-of-dawnwalker",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "blood-of-dawnwalker": 58.3,
+          "onimusha-way-of-the-sword": 53.3,
+          "nba-2k27": 50.0
+        },
+        "picked": "blood-of-dawnwalker",
+        "correct": false,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-09-wk2",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "trails-in-the-sky-2nd",
+      "n_variants": 2,
+      "cohorte": {
+        "potentials": {
+          "halloween-the-game": 38.5,
+          "trails-in-the-sky-2nd": 47.0
+        },
+        "picked": "trails-in-the-sky-2nd",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "halloween-the-game": 43.35,
+          "trails-in-the-sky-2nd": 56.65
+        },
+        "picked": "trails-in-the-sky-2nd",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-09-wk4",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "control-resonant",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "control-resonant": 45.0,
+          "silent-hill-townfall": 43.0,
+          "minecraft-dungeons-2": 42.2
+        },
+        "picked": "control-resonant",
+        "correct": true,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "control-resonant": 53.3,
+          "silent-hill-townfall": 51.65,
+          "minecraft-dungeons-2": 50.0
+        },
+        "picked": "control-resonant",
+        "correct": true,
+        "objections_found": []
+      }
+    },
+    {
+      "id": "games-2026-10-wk1",
+      "kind": "game",
+      "synthetic": false,
+      "recognised": [],
+      "split": "eval",
+      "leak_safe": true,
+      "winner": "retrospace",
+      "n_variants": 3,
+      "cohorte": {
+        "potentials": {
+          "ace-combat-8": 45.8,
+          "retrospace": 43.4,
+          "mxgp-26": 38.5
+        },
+        "picked": "ace-combat-8",
+        "correct": false,
+        "objections_found": []
+      },
+      "baseline": {
+        "potentials": {
+          "ace-combat-8": 46.7,
+          "retrospace": 48.35,
+          "mxgp-26": 50.0
+        },
+        "picked": "mxgp-26",
+        "correct": false,
+        "objections_found": []
+      }
+    }
+  ],
+  "all": {
+    "cases": 20,
+    "winner_cases": 20,
+    "chance_accuracy": 0.425,
+    "cohorte": {
+      "winner_accuracy": 0.4,
+      "winner_right": 8,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.083,
+      "points": 49
+    },
+    "baseline": {
+      "winner_accuracy": 0.45,
+      "winner_right": 9,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.217,
+      "points": 49
+    },
+    "paired": {
+      "only_cohorte": 1,
+      "only_baseline": 2,
+      "p_value": 1.0
+    },
+    "spearman_gap": {
+      "mean": -0.128,
+      "low90": -0.33,
+      "high90": 0.076
+    }
+  },
+  "real": {
+    "cases": 20,
+    "winner_cases": 20,
+    "chance_accuracy": 0.425,
+    "cohorte": {
+      "winner_accuracy": 0.4,
+      "winner_right": 8,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.083,
+      "points": 49
+    },
+    "baseline": {
+      "winner_accuracy": 0.45,
+      "winner_right": 9,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.217,
+      "points": 49
+    },
+    "paired": {
+      "only_cohorte": 1,
+      "only_baseline": 2,
+      "p_value": 1.0
+    },
+    "spearman_gap": {
+      "mean": -0.128,
+      "low90": -0.33,
+      "high90": 0.076
+    }
+  },
+  "synthetic": null,
+  "leak_safe": {
+    "cases": 12,
+    "winner_cases": 12,
+    "chance_accuracy": 0.389,
+    "cohorte": {
+      "winner_accuracy": 0.5,
+      "winner_right": 6,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.036,
+      "points": 32
+    },
+    "baseline": {
+      "winner_accuracy": 0.5,
+      "winner_right": 6,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.247,
+      "points": 32
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": {
+      "mean": -0.213,
+      "low90": -0.454,
+      "high90": 0.022
+    }
+  },
+  "eval": {
+    "cases": 12,
+    "winner_cases": 12,
+    "chance_accuracy": 0.389,
+    "cohorte": {
+      "winner_accuracy": 0.5,
+      "winner_right": 6,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.036,
+      "points": 32
+    },
+    "baseline": {
+      "winner_accuracy": 0.5,
+      "winner_right": 6,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.247,
+      "points": 32
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": {
+      "mean": -0.213,
+      "low90": -0.454,
+      "high90": 0.022
+    }
+  },
+  "dev": {
+    "cases": 8,
+    "winner_cases": 8,
+    "chance_accuracy": 0.479,
+    "cohorte": {
+      "winner_accuracy": 0.25,
+      "winner_right": 2,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.072,
+      "points": 17
+    },
+    "baseline": {
+      "winner_accuracy": 0.375,
+      "winner_right": 3,
+      "objection_recall": null,
+      "objections_total": 0,
+      "spearman": 0.075,
+      "points": 17
+    },
+    "paired": {
+      "only_cohorte": 1,
+      "only_baseline": 2,
+      "p_value": 1.0
+    },
+    "spearman_gap": {
+      "mean": -0.008,
+      "low90": -0.528,
+      "high90": 0.47
+    }
+  },
+  "verdict": {
+    "proof": {
+      "status": "not proven",
+      "text": "12 leak-safe real case(s) with a known winner (gate needs ≥20; 20 real in total)"
+    }
+  },
+  "judge": "blind LLM judge",
+  "at": "2026-10-16T15:06Z",
+  "runs": 2,
+  "model": "claude-haiku-5-5",
+  "models": [
+    "claude-haiku-5-5"
+  ],
+  "backend": "claude-cli",
+  "cost_usd": 1.9603,
+  "stopped": null
+}

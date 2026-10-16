@@ -41,7 +41,7 @@ change their minds.
 
 | You get | What it looks like |
 |---|---|
-| 🔮 **A prediction report** | What happened, which group reacted how and why, quoted word for word from the robots, plus a *What to change* table |
+| 🔮 **A rehearsal report** | What happened, which group reacted how and why, quoted word for word from the robots, plus a *What to change* table |
 | 📊 **Metrics per segment** | Sentiment over time, your own probes ("how likely are you to try it this week? 0–10"), top posts, opinion shifts |
 | 🎙️ **Interviews** | Ask any robot, in character, why it did what it did and what would change its mind |
 | 🔁 **A/B re-tests** | Change the copy, price or policy and replay the *same* cohort, then compare |
@@ -94,7 +94,7 @@ $C setup demo && $C run demo
 $C stats demo && $C timeline demo
 ```
 
-For real predictions, install the skill (below) and ask Claude in plain words. Claude frames the question, builds
+For a real rehearsal, install the skill (below) and ask Claude in plain words. Claude frames the question, builds
 the world from your repo, shows you the cast and the **cost estimate before anything runs**, simulates, writes the
 report and helps you adapt.
 
@@ -175,28 +175,43 @@ copy. The next step is to `fork` the run with a rewritten launch post and `compa
 
 ## Scorecard: is it proven?
 
-`backtest` replays cases whose outcome is known and scores Cohorte against the cheapest alternative: **one expert
-prompt, using the same model and the same material.** Published as measured on 16 Oct 2026 (Claude Haiku 5.5,
-2 runs per variant, $0.64 in total):
+`backtest` scores Cohorte against the cheapest alternative: **one expert prompt, using the same model and the same
+material.** Everything below was measured on 16 Oct 2026 with Claude Haiku 5.5, 2 runs per variant, for $2.60 in
+total. The real-case analysis was [pre-registered](skills/cohorte/benchmarks/PROTOCOL.md) and committed before the
+run.
 
-| Suite | Cases | Winner accuracy (Cohorte / one prompt) | Objection recall (Cohorte / one prompt) | Status |
-|---|---|---|---|---|
-| Sanity: planted, obvious A/B differences (an unpaid "junior" job ad needing 10 years of experience, a clickbait article, an 89 €/month meal app) | 8 synthetic | **100% / 100%** | **92% / 90%** | ✅ sanity gate passed (≥ 90%) |
-| Real launches, A/B tests and releases with documented outcomes | 0 / 20 | – | – | ⏳ **not proven** |
+| Test | Cases | Picked the winner (Cohorte / one prompt / chance) | Status |
+|---|---|---|---|
+| **Sanity:** planted, obvious A/B differences (an unpaid "junior" job needing 10 years of experience, a clickbait article, an 89 €/month meal app) | 8 synthetic | **100% / 100% / 50%** · objections found 92% / 90% | ✅ passed |
+| **Real audience ratings:** films (CinemaScore) and games (Steam reviews) released Jul–Oct 2026, after the model's training cutoff, with pre-release material only | 12 unseen | **50% / 50% / 39%** · rank correlation +0.04 / +0.25 | ❌ **not proven** |
 
-**What this says:**
+**What this means:**
 
-- The engine reliably detects big differences and names the real problems in the robots' own words.
-- On obvious cases, one prompt does about as well. Cohorte has to earn its keep on subtle, real cases, through
-  segment splits (who loves it, who leaves) and how reactions spread. Only real outcomes can show that it does.
-- The next milestone is 20+ real, leak-safe cases (see [`benchmarks/`](skills/cohorte/benchmarks/README.md)).
-  Your own past launches and A/B tests are the best evidence, because the model can't have memorised them.
+- **Proven:**
+  - Cohorte reliably spots big differences between two versions;
+  - it names the real problems, in the robots' own words, for the planted cases;
+  - it lets you interview, segment and re-test.
+- **Not proven:** predicting how real audiences will *rate* a film or a game. On 12 unseen real cases, the cohort
+  picked the same winners as one prompt, both only modestly above chance, and its ranking was weaker. The model
+  recognised none of the 32 titles, so leakage can't explain the result.
+- **What we claim, then:** Cohorte is a **rehearsal and objection-discovery tool**, not an oracle. Use it to find
+  what will annoy people, compare messages and prepare answers. Don't use it to forecast scores or sales.
 
-Objection recall is scored by a blind LLM judge (the same prompt for both methods, and it is never told which method
-wrote which list), on the top 8 objections per variant for each. With exact keyword matching instead, the scores
-are 65% / 82%. Keyword matching favours generic wording like "too expensive" over specific, in-character
-objections like "89 € a month is far above what a meal planner should cost". So we report the judge's score and
-publish both.
+**How the result could change:** grounding the robots in your own customer data (roadmap V2). Your own launches
+and A/B tests also make the best test cases (see [`benchmarks/`](skills/cohorte/benchmarks/README.md)), and the
+scorecard will publish whatever they show.
+
+<details><summary>Method notes</summary>
+
+- **Objection recall** is scored by a blind LLM judge, on the top 8 objections per variant for both methods. With
+  exact keywords instead, the scores are 65% / 82%; keywords favour generic wording.
+- **Changing the target:** our first 8 real films put both methods *below* chance: Cohorte 25%, one prompt 38%,
+  chance 48%. We were predicting appeal to everyone, while CinemaScore and Steam reviews rate satisfaction among
+  the people who chose the title. We switched both methods to that "satisfaction" target and then ran 12 new cases
+  once. Those 8 films are reported separately as *seen* and never count as proof.
+- **Full scorecards:** in [`benchmarks/results/`](skills/cohorte/benchmarks/results/).
+
+</details>
 
 ## How it works
 
@@ -269,7 +284,8 @@ noise). Claude tells you which deltas are large enough to act on.
 
 ## FAQ
 
-**Are the predictions accurate?** They're a rehearsal, not a measurement. LLM robots are articulate, more
+**Are the predictions accurate?** Not as forecasts: on real films and games, Cohorte did no better than one prompt
+(see the [scorecard](#scorecard-is-it-proven)). It's a rehearsal, not a measurement. LLM robots are articulate, more
 reasonable and more alike than real crowds, and they only know what the seed says. They're good at surfacing
 objections, comparing variants and preparing answers before real users and press do it for you. For big decisions,
 validate with real people. `backtest` measures it: see the [scorecard](#scorecard-is-it-proven) for what is proven

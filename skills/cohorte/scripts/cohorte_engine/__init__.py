@@ -6,4 +6,4 @@ round-based social simulation (Twitter-like and Reddit-like) -> analysis
 tools, agent interviews and a prediction report written by Claude.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"

@@ -102,6 +102,13 @@ Grades: low < 45 ≤ moderate < 70 ≤ good < 85 ≤ high. **Uncalibrated result
 "moderate".** To approach 100 you need near-perfect correlation (r → 1) over 30+ recorded real outcomes of the
 same kind.
 
+### What has been measured
+
+- For **movie** and **game** audience ratings, predicted scores showed no useful correlation with real outcomes on
+  12 unseen cases: Spearman +0.04 for Cohorte, +0.25 for one prompt (`benchmarks/results/`).
+- Until a kind is calibrated with real outcomes of your own, treat its potential and satisfaction scores as a
+  *relative reading of the cohort's reactions*, not as a forecast.
+
 ### Rules when you report it
 - Say what the index measures: *how consistent and well-founded* the prediction is, and *how proven* this kind of
   prediction is. It is **not** the probability that the prediction is right, unless the kind is calibrated. Then

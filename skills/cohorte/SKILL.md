@@ -1,6 +1,6 @@
 ---
 name: cohorte
-description: Swarm-intelligence rehearsal of how people will react to anything - a project, app, website, video, film, article, book, ad, product, pricing change, pitch, job posting, announcement, policy or event (a Claude re-implementation of MiroFish), with a potential score and an honest confidence index. Builds a world from the user's material, generates a cohort of persona "robots" (from a dozen to 10,000+) that post, like, repost, comment and argue on simulated Twitter- and Reddit-like platforms over simulated days, then writes a prediction report, lets the user interview any agent, and A/B-tests changes on the same population. Use when the user wants to test or pressure-test their project against simulated users, customers or public opinion, predict reception, find objections before launch, compare two versions of a message, run a MiroFish/OASIS-style social simulation, or talk to simulated personas.
+description: Swarm-intelligence rehearsal of how people will react to anything - a project, app, website, video, film, article, book, ad, product, pricing change, pitch, job posting, announcement, policy or event (a Claude re-implementation of MiroFish), with a potential score and an honest confidence index. Builds a world from the user's material, generates a cohort of persona "robots" (from a dozen to 10,000+) that post, like, repost, comment and argue on simulated Twitter- and Reddit-like platforms over simulated days, then writes a prediction report, lets the user interview any agent, and A/B-tests changes on the same population. Use when the user wants to test or pressure-test their project against simulated users, customers or public opinion, rehearse reception, find objections before launch, compare two versions of a message, run a MiroFish/OASIS-style social simulation, or talk to simulated personas.
 ---
 
 # Cohorte — rehearse the future with a cohort of robots
@@ -166,6 +166,9 @@ claim of accuracy, run it and quote the scorecard as it is, including "not prove
 past launches and A/B tests into cases (`benchmarks/README.md`): those are leak-safe and the best evidence.
 
 ## Ground rules
+- Measured accuracy: on 12 unseen real films and games, the cohort picked the better-rated title no more often than
+  one expert prompt (50% vs 50%, chance 39%; `benchmarks/results/`). Present `assess` scores as a structured
+  reading of reactions and objections, never as a forecast of ratings, sales or box office.
 - Confidence is earned, not claimed. If someone asks for ~100% certainty, explain that no simulation of people
   reaches that on open-ended future events, and show how the ceiling rises: full material, several runs and
   models, and above all calibration against real outcomes.

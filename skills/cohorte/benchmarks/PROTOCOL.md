@@ -45,3 +45,24 @@ Nothing else changes: same model (Haiku 5.5), 2 runs per variant, default audien
 - **Proof gate:** at least 20 leak-safe cases. The eval split has only 12, so **this run cannot prove V1**, whatever
   the result. It tells us whether the method is worth collecting the next 20+ unseen cases for.
 - **Leak check:** cases the model says it recognises are excluded from the leak-safe subset.
+
+## Result (appended after the run, protocol unchanged)
+
+The run was 2026-10-16, on Claude Haiku 5.5 through `claude -p`, and cost $1.96, including the dev reruns. The full
+scorecard is [`results/v1-eval-2026-10-16-haiku.md`](results/v1-eval-2026-10-16-haiku.md).
+
+| Eval split (12 unseen cases) | Cohorte | Single prompt | Chance |
+|---|---|---|---|
+| Winner accuracy | 50% (6/12) | 50% (6/12) | 39% |
+| Paired test | no discordant case: the two methods picked the same winner every time | | p = 1.0 |
+| Spearman with the real value (32 titles) | +0.04 | +0.25 | 0 |
+| Gap in Spearman (Cohorte − prompt) | −0.21, 90% bootstrap interval −0.45 to +0.02 | | |
+
+- **Leak check:** the model recognised 0 of the 32 titles.
+- **Dev split, re-scored with the satisfaction target:** Cohorte 25%, single prompt 38%, chance 48%.
+
+**Conclusion:**
+- **V1 is not proven.** On real audience ratings, Cohorte doesn't beat a single prompt, and its ranking is, if
+  anything, weaker.
+- Per the roadmap's kill criterion, the claim is narrowed to rehearsal and objection discovery.
+- Rating prediction gets another attempt only with grounding (V2) and new, unseen cases.

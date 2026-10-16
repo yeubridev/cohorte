@@ -28,6 +28,15 @@ results include a McNemar test, rank correlation and blind-judged objection reca
 - **Honest caveat:** the single prompt also scored 8/8, with 90% recall. On obvious cases, the cohort is not better
   than one prompt. Its value has to be shown on real, subtle cases.
 
+**v0.5 (16 Oct 2026): first real proof attempt, failed.** The run followed a protocol committed in advance:
+- 12 unseen films and games released after the model's training cutoff;
+- Cohorte 50%, single prompt 50%, chance 39% at picking the better-rated title;
+- rank correlation +0.04 vs +0.25.
+
+The kill criterion below applies: the public claim is narrowed to **rehearsal and objection discovery**, which the
+sanity suite does support. Rating prediction gets another attempt only with grounding (V2) and new, unseen cases.
+See `skills/cohorte/benchmarks/PROTOCOL.md`.
+
 **The core risk:** if the robots can't beat a cheap baseline at anticipating real reactions, the product is a
 toy. The roadmap therefore puts proof first and polish later.
 
@@ -209,8 +218,12 @@ large customers who commit decisions to it.
 
 ## Immediate next steps (v0.3, in order)
 
-0. ~~Backtest harness, sanity suite and scorecard~~ (v0.4). **Next: 20+ real, leak-safe cases.** This is now the
-   critical path, ahead of everything below.
+0. ~~Backtest harness, sanity suite and scorecard~~ (v0.4).
+   ~~First pre-registered real evaluation~~ (v0.5: not proven, claim narrowed).
+   **Next:**
+   - test what the cohort should add over one prompt: *segment splits* (who loves it, who leaves) and objection
+     discovery on real launches with documented complaints;
+   - ground the panels in real reviews and survey data (V2), then rerun on fresh, unseen cases.
 1. Ensembles with intervals and a noise floor (`--seeds`).
 2. An end-to-end skill run on a real project, with `report.md` and `verify-report`.
 3. Tune crowd opinion dynamics and add the "obvious scenario" tests.
