@@ -1,0 +1,38 @@
+{
+  "id": "sanity-product-backpack",
+  "kind": "product",
+  "title": "Commuter backpack product page",
+  "context": "An online shop sells a 20-litre commuter backpack for city cyclists.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# Commuter backpack 20 L\nPrice 349 €. Photos: one dark, low-resolution picture. Description: 'Bag. Good.' Material not stated. No size or weight. Shipping: 6-8 weeks. Returns: not accepted. Reviews: 2.1/5 (3 reviews: 'zip broke after a week', 'not waterproof', 'never arrived')."
+    },
+    {
+      "id": "B",
+      "seed_text": "# Commuter backpack 20 L\nPrice 89 €. Waterproof recycled fabric, padded laptop sleeve (16''), reflective strips, rear light loop. 920 g. Photos on a cyclist, in the rain, and inside the bag. Shipping in 48 h, free returns for 30 days, 2-year warranty. Reviews: 4.6/5 (812 reviews)."
+    }
+  ],
+  "outcome": {
+    "winner": "B",
+    "objections": [
+      [
+        "expensive"
+      ],
+      [
+        "reviews"
+      ],
+      [
+        "returns"
+      ],
+      [
+        "shipping"
+      ],
+      [
+        "description"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}

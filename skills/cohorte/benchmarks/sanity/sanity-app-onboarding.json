@@ -1,0 +1,38 @@
+{
+  "id": "sanity-app-onboarding",
+  "kind": "app",
+  "title": "Habit-tracking app first launch",
+  "context": "A free habit-tracking mobile app, competing with many similar apps in the stores.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# First launch\nScreen 1: pick a habit (drink water, read, walk) or type your own. Screen 2: choose a reminder time. Done: you're on the home screen with your first habit. Account optional (to sync later). No ads; a 3.99 € one-time upgrade unlocks unlimited habits and stats."
+    },
+    {
+      "id": "B",
+      "seed_text": "# First launch\nThe app asks for access to contacts, location, microphone, photos and calendar before showing anything. Then a mandatory account (phone number and email verification), a 12-question survey, and a full-screen video ad. Then a paywall: 'Start your 3-day free trial, then 59.99 €/week'. Closing the paywall shows another ad."
+    }
+  ],
+  "outcome": {
+    "winner": "A",
+    "objections": [
+      [
+        "permissions"
+      ],
+      [
+        "ads"
+      ],
+      [
+        "paywall"
+      ],
+      [
+        "account"
+      ],
+      [
+        "expensive"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "sanity-article-quality",
+  "kind": "article",
+  "title": "Blog post about sleep",
+  "context": "A health and wellness blog publishes a post about improving sleep, for adults who sleep badly.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# 5 changes that measurably improved my sleep (and 2 that didn't)\nI tracked my sleep for 90 days while testing one change at a time. What worked: a fixed wake-up time (even on weekends), no caffeine after 1 pm, a cooler bedroom (18 °C), 20 minutes of morning daylight, and putting the phone in another room. What didn't: melatonin gummies and a 'sleep tea'. Each section explains what I did, what changed in my numbers, and what the research says, with links to the studies."
+    },
+    {
+      "id": "B",
+      "seed_text": "# DOCTORS HATE THIS 1 WEIRD TRICK FOR SLEEP!!!\nYou won't BELIEVE what happens next. Click to see the shocking secret Big Pharma doesn't want you to know... [the page then shows 6 pop-up ads, an autoplay video, and finally recommends buying 'DreamMax' supplements for 79 € with an affiliate link. No sources.]"
+    }
+  ],
+  "outcome": {
+    "winner": "A",
+    "objections": [
+      [
+        "clickbait"
+      ],
+      [
+        "ads"
+      ],
+      [
+        "sources"
+      ],
+      [
+        "scam"
+      ],
+      [
+        "supplement"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}

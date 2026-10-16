@@ -1,0 +1,38 @@
+{
+  "id": "sanity-ad-gym",
+  "kind": "ad",
+  "title": "Neighbourhood gym social ad",
+  "context": "A neighbourhood gym advertises on Instagram to people living within 3 km.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# Ad\nImage: real members of all ages training in the gym, smiling. Text: 'First week free, no commitment. Open 6 am to 11 pm, 5 minutes from you.' Button: 'Book a free visit'."
+    },
+    {
+      "id": "B",
+      "seed_text": "# Ad\nImage: a photoshopped body with the caption 'Too fat for summer? Stop being lazy.' Text in tiny font: 'Membership 24-month contract required. Terms apply.' Button: 'Shame-free? Not here.'"
+    }
+  ],
+  "outcome": {
+    "winner": "A",
+    "objections": [
+      [
+        "shaming"
+      ],
+      [
+        "offensive"
+      ],
+      [
+        "contract"
+      ],
+      [
+        "body"
+      ],
+      [
+        "insulting"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}

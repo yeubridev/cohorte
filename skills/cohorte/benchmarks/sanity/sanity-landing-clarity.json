@@ -1,0 +1,38 @@
+{
+  "id": "sanity-landing-clarity",
+  "kind": "website",
+  "title": "Invoicing tool landing page",
+  "context": "A web tool that lets freelancers create and send invoices, aimed at freelancers who hate admin work.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# Leverage synergistic fiscal paradigms\nOur best-of-breed omnichannel ledger orchestration platform empowers stakeholders to operationalise next-generation receivable workflows at scale.\n\n[Request a demo] (form: company name, company size, annual revenue, phone number, job title)\n\nNo pricing on the page. No screenshot. Footer: (c) 2019."
+    },
+    {
+      "id": "B",
+      "seed_text": "# Send your invoice in 2 minutes\nCreate a clean invoice, send it by email, get paid by card. Automatic reminders when a client pays late.\n\nScreenshot: a simple invoice form with a 'Send' button.\n\nFree for 5 invoices a month, then 9 €/month. [Start free, no card]\n\n'I spend 10 minutes a month on invoices now instead of a whole afternoon.' (Julie, freelance designer)"
+    }
+  ],
+  "outcome": {
+    "winner": "B",
+    "objections": [
+      [
+        "jargon"
+      ],
+      [
+        "buzzwords"
+      ],
+      [
+        "unclear"
+      ],
+      [
+        "pricing"
+      ],
+      [
+        "demo"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}

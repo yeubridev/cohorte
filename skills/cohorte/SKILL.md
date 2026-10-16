@@ -154,6 +154,17 @@ $COHORTE compare <name> <name>-v2
 humility: small differences (< 0.1 sentiment, < 1 point on a 0-10 probe) are noise; repeat or lengthen runs before
 acting on them. Help the user apply the winning change to their actual project.
 
+### 8. Prove it (backtest)
+```bash
+$COHORTE backtest ${CLAUDE_SKILL_DIR}/benchmarks/sanity --dry-run       # planted A/B cases: call count
+$COHORTE backtest <cases folder> --model haiku --budget 5 [--calibrate]
+```
+Cohorte and a single-prompt baseline (same model, same material) rate every variant of cases whose outcome is
+known. The scorecard reports winner accuracy with an exact McNemar test, rank correlation and objection recall,
+and keeps synthetic, real and leak-safe cases apart. When the user asks "does this actually work?" or wants a
+claim of accuracy, run it and quote the scorecard as it is, including "not proven". Help the user turn their own
+past launches and A/B tests into cases (`benchmarks/README.md`): those are leak-safe and the best evidence.
+
 ## Ground rules
 - Confidence is earned, not claimed. If someone asks for ~100% certainty, explain that no simulation of people
   reaches that on open-ended future events, and show how the ceiling rises: full material, several runs and
@@ -173,5 +184,6 @@ acting on them. Help the user apply the winning change to their actual project.
 `run [--max-rounds N | --until-round N]` · `inject` · `status [name]` · `stats [--platform]` ·
 `timeline [--bucket H]` · `search <query> [--thoughts]` · `agent <ref>` · `thread <post_id> --platform` ·
 `export [--out file]` · `interview -q ... (--agents | --type [--sample] | --all) [--followup]` · `fork` · `compare`.
-`ingest` · `kinds` · `assess [--runs N] [--models a,b] [--dry-run]` · `calibrate add|fit|show`.
+`ingest` · `kinds` · `assess [--runs N] [--models a,b] [--dry-run]` · `calibrate add|fit|show` ·
+`backtest <cases> [--runs N] [--budget USD] [--calibrate] [--dry-run]`.
 `$COHORTE <command> -h` documents every flag. Files and tuning knobs: `references/engine.md`.

@@ -124,6 +124,11 @@ def mock_response(req) -> str:
         if kind == "assess_group":
             out["spread"] = {k: 2 for k in dims}
         return json.dumps(out)
+    if kind == "baseline":
+        dims, lo, hi = m.get("dims", []), m.get("lo", []), m.get("hi", [])
+        base = rng.uniform(0.3, 0.8)
+        return json.dumps({"scores": {k: round(a + (b - a) * base) for k, a, b in zip(dims, lo, hi)},
+                           "objections": [rng.choice(["too expensive", "unclear value", "privacy worries"])]})
     if kind == "interview":
         return f"(mock answer from {m.get('name')}) I found {m.get('subject')} {rng.choice(MOODS)}."
     return "{}"

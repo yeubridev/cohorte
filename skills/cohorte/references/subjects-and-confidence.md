@@ -113,3 +113,5 @@ $COHORTE calibrate show
   typical error.
 - **Avoid leakage:** famous past subjects may be known to the model. Prefer outcomes the model can't have seen
   (after its training cutoff, private launches, your own A/B tests).
+- **In bulk:** `backtest <cases> --calibrate` records every real (non-synthetic) case with known values as a
+  calibration pair, and also scores Cohorte against a single-prompt baseline (see `benchmarks/README.md`).

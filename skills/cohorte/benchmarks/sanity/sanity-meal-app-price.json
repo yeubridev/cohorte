@@ -1,0 +1,38 @@
+{
+  "id": "sanity-meal-app-price",
+  "kind": "pricing",
+  "title": "Tandem meal planner: monthly price",
+  "context": "Tandem is a meal-planning app for busy families in France: weekly menus, a shared shopping list and 20-minute recipes. Comparable apps cost 5-10 euros a month.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# Tandem Premium\nPlan a week of family dinners in 5 minutes. Weekly menus adapted to your kids' tastes, one shared shopping list, 20-minute recipes.\n\n**7.99 € / month**, cancel anytime, 14-day free trial, no card needed."
+    },
+    {
+      "id": "B",
+      "seed_text": "# Tandem Premium\nPlan a week of family dinners in 5 minutes. Weekly menus adapted to your kids' tastes, one shared shopping list, 20-minute recipes.\n\n**89 € / month**, 12-month minimum commitment, billed annually upfront (1,068 €). No free trial. Cancellation fee: 150 €."
+    }
+  ],
+  "outcome": {
+    "winner": "A",
+    "objections": [
+      [
+        "expensive"
+      ],
+      [
+        "price"
+      ],
+      [
+        "commitment"
+      ],
+      [
+        "cancellation"
+      ],
+      [
+        "trial"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}

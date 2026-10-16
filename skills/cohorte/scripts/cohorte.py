@@ -13,6 +13,7 @@ Stages
   ingest    turn URLs, pages, documents, subtitles, images, videos into seed material
   assess    panel rating of the subject: potential score + confidence index  [any subject kind]
   calibrate record real outcomes and fit them (raises the confidence ceiling)
+  backtest  score Cohorte vs a single-prompt baseline on cases with known outcomes (the proof gate)
   kinds     list subject kinds (app, website, video, movie, article, ...)
   fork | compare                                                         [adapt & re-test]
   llm       change backend / model of a simulation
@@ -39,6 +40,7 @@ from cohorte_engine.simulation import inject_event, run_simulation  # noqa: E402
 from cohorte_engine.util import CohorteError, read_json, write_json  # noqa: E402
 from cohorte_engine.world import Sim, init_sim, list_sims, validate_world  # noqa: E402
 from cohorte_engine import assess as assess_mod  # noqa: E402
+from cohorte_engine import backtest as backtest_mod  # noqa: E402
 from cohorte_engine import calibration  # noqa: E402
 from cohorte_engine.ingest import ingest as ingest_sources  # noqa: E402
 from cohorte_engine.subjects import SUBJECTS, get_subject  # noqa: E402
@@ -287,6 +289,30 @@ def cmd_calibrate(args):
         print(calibration.show(home, get_subject(args.kind)["kind"] if args.kind else None))
 
 
+def cmd_backtest(args):
+    cases = backtest_mod.load_cases(args.cases)
+    if args.only:
+        wanted = set(args.only.split(","))
+        cases = [c for c in cases if c["id"] in wanted]
+    if args.max_cases:
+        cases = cases[: args.max_cases]
+    if not cases:
+        raise CohorteError("No case selected.")
+    plan = backtest_mod.plan(cases, args.runs)
+    print(f"{plan['cases']} case(s), {plan['variants']} variant(s): ≈{plan['total_calls']} LLM calls "
+          f"(setup {plan['setup_calls']}, cohort ratings {plan['assess_calls']}, baseline {plan['baseline_calls']})")
+    if args.dry_run:
+        return
+    name = os.path.basename(os.path.normpath(args.cases)).rsplit(".", 1)[0]
+    out = os.path.abspath(args.out or os.path.join(_home(args), "backtests", name))
+    settings = {"backend": args.backend, "model": args.model, "concurrency": args.concurrency}
+    models = [m for m in (args.models or "").split(",") if m] or None
+    result = backtest_mod.run_backtest(cases, out, settings, args.runs, models, args.budget,
+                                       _home(args) if args.calibrate else None)
+    print(backtest_mod.render(result, cases))
+    print(f"\n(saved to {os.path.join(out, 'scorecard.md')})")
+
+
 def cmd_compare(args):
     print(analysis.compare(_sim(args, args.a), _sim(args, args.b)))
 
@@ -448,6 +474,20 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--note")
     p.add_argument("--kind", help="(fit/show) subject kind")
     p.set_defaults(func=cmd_calibrate)
+
+    p = sub.add_parser("backtest", help="score Cohorte against a single-prompt baseline on known outcomes")
+    p.add_argument("cases", help="folder of case files, a .json or a .jsonl (see benchmarks/README.md)")
+    p.add_argument("--out", help="output folder (default <home>/backtests/<cases name>); re-running resumes")
+    p.add_argument("--runs", type=int, default=2, help="assessment runs per variant, for both methods (default 2)")
+    p.add_argument("--models", help="comma-separated models for the cohort ensemble")
+    p.add_argument("--only", help="comma-separated case ids")
+    p.add_argument("--max-cases", type=int)
+    p.add_argument("--budget", type=float, help="stop before starting a new case once this many USD are spent")
+    p.add_argument("--calibrate", action="store_true",
+                   help="record real (non-synthetic) outcomes as calibration pairs in --home")
+    p.add_argument("--dry-run", action="store_true", help="only print the number of LLM calls")
+    llm_flags(p, defaults=True)
+    p.set_defaults(func=cmd_backtest)
 
     p = sub.add_parser("compare", help="compare metrics of two simulations")
     p.add_argument("a")

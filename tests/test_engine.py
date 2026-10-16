@@ -335,6 +335,59 @@ class TestSubjects(CliCase):
         self.assertIsNotNone(res["calibrated"])
 
 
+class TestBacktest(CliCase):
+    SANITY = os.path.join(ROOT, "skills", "cohorte", "benchmarks", "sanity")
+
+    def test_metrics(self):
+        from cohorte_engine.backtest import mcnemar_exact, objection_hit, spearman
+        self.assertEqual(spearman([1, 2, 3, 4], [10, 20, 30, 40]), 1.0)
+        self.assertEqual(spearman([1, 2, 3, 4], [4, 3, 2, 1]), -1.0)
+        self.assertIsNone(spearman([1, 2], [1, 2]))
+        self.assertEqual(mcnemar_exact(0, 0), 1.0)
+        self.assertLess(mcnemar_exact(10, 0), 0.01)
+        self.assertEqual(mcnemar_exact(3, 3), 1.0)
+        self.assertTrue(objection_hit(["too expensive", "price"], ["The price is way too high"]))
+        self.assertTrue(objection_hit(["permissions"], ["asks for too many permissions"]))
+        self.assertFalse(objection_hit(["privacy"], ["too expensive", "boring"]))
+
+    def test_cases_validation(self):
+        from cohorte_engine.backtest import normalize_case
+        c = normalize_case({"id": "x", "kind": "movie", "variants": [{"id": "A", "seed_text": "a"},
+                                                                     {"id": "B", "seed_text": "b"}],
+                            "outcome": {"values": {"A": 6.1, "B": 7.9}, "scale": [0, 10]}}, self.tmp)
+        self.assertEqual(c["outcome"]["winner"], "B")  # derived from values
+        self.assertEqual(len(c["audience"]), 4)  # default panel
+        with self.assertRaises(CohorteError):
+            normalize_case({"id": "y", "seed_text": "a", "outcome": {}}, self.tmp)
+        with self.assertRaises(CohorteError):
+            normalize_case({"id": "z", "seed_text": "a", "outcome": {"winner": "Q"}}, self.tmp)
+
+    def test_sanity_suite_mock(self):
+        out = self.cli("backtest", self.SANITY, "--dry-run")
+        self.assertIn("8 case(s), 16 variant(s)", out)
+        cases = os.path.join(self.tmp, "cases")
+        os.makedirs(cases)
+        shutil.copy(os.path.join(self.SANITY, "sanity-meal-app-price.json"), cases)
+        real = {"id": "real-1", "kind": "movie", "context": "A film", "leak_safe": True,
+                "variants": [{"id": "A", "seed_text": "film A"}, {"id": "B", "seed_text": "film B"}],
+                "outcome": {"values": {"A": 5.5, "B": 7.2}, "scale": [0, 10], "metric": "rating",
+                            "objections": [["slow"]]}}
+        with open(os.path.join(cases, "real-1.json"), "w") as f:
+            json.dump(real, f)
+        out = self.cli("backtest", cases, "--backend", "mock", "--calibrate")
+        self.assertIn("mean nothing", out)
+        self.assertIn("Real-world proof: not proven", out)
+        card = json.load(open(os.path.join(self.home, "backtests", "cases", "scorecard.json")))
+        self.assertEqual(card["all"]["cases"], 2)
+        self.assertEqual(card["real"]["winner_cases"], 1)
+        self.assertEqual(card["calibrated_pairs"], 2)  # only the real case's two variants
+        # resumable: a second run reuses predictions and makes no new calls
+        sim_usage = os.path.join(self.home, "backtests", "cases", "home", "sims", "bt-real-1", "usage.json")
+        calls = json.load(open(sim_usage))["calls"]
+        self.cli("backtest", cases, "--backend", "mock")
+        self.assertEqual(json.load(open(sim_usage))["calls"], calls)
+
+
 def _mock_meta(r):
     """Minimal hints so the mock can answer manual-backend requests."""
     meta = {"name": "Someone", "subject": "Tandem", "kind": "individual", "type": "Person"}

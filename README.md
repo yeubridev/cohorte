@@ -240,13 +240,15 @@ noise). Claude tells you which deltas are large enough to act on.
 | Rate | `ingest <urls/files> --kind K --out DIR` · `kinds` · `assess [--runs 5] [--models a,b]` · `calibrate add\|fit\|show` |
 | Talk | `interview -q "…" (--agents … \| --type T --sample N) [--followup]` |
 | Adapt | `fork` · `compare` · `llm --backend … --model …` |
+| Prove | `backtest <cases> [--dry-run] [--budget 5] [--calibrate]` |
 
 ## FAQ
 
 **Are the predictions accurate?** They're a rehearsal, not a measurement. LLM robots are articulate, more
 reasonable and more alike than real crowds, and they only know what the seed says. They're good at surfacing
 objections, comparing variants and preparing answers before real users and press do it for you. For big decisions,
-validate with real people.
+validate with real people. `backtest` measures it: see the [scorecard](#scorecard-is-it-proven) for what is proven
+today, and what isn't.
 
 **Which model should I use?** The engine defaults to Claude Opus 5.5. Claude Haiku 5.5 is around 40× cheaper and
 works well for crowds. The skill shows both estimates and lets you choose.
@@ -266,7 +268,8 @@ skills/cohorte/
 ├── SKILL.md                 # what Claude follows: frame → world → setup → run → report → interview → adapt
 ├── scripts/cohorte.py       # CLI engine (stdlib only)
 ├── scripts/cohorte_engine/  # world, personas, platforms, crowd tier, simulation, analysis, LLM backends
-├── references/              # world-building guide, report method, engine reference
+├── references/              # world-building guide, report method, engine reference, subjects and confidence
+├── benchmarks/              # backtest cases (sanity suite) and how to collect real ones
 └── assets/world.example.json
 assets/brand/                # logo, banners, social preview (+ generator)
 tests/                       # offline tests (mock and manual backends, 6,000-agent crowd test)

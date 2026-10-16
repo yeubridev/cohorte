@@ -1,0 +1,38 @@
+{
+  "id": "sanity-job-offer",
+  "kind": "job_offer",
+  "title": "Junior developer job posting",
+  "context": "A 40-person software company in Lyon is hiring a junior web developer.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# Junior rockstar ninja developer (unpaid trial period)\nWe're a family! Expect 60-hour weeks during crunch (which is most of the year). The first 3 months are an unpaid trial; after that, salary 'competitive' (not disclosed). You must know React, Vue, Angular, Rust, Kubernetes, AWS, iOS and Android. 10+ years of experience preferred for this junior role."
+    },
+    {
+      "id": "B",
+      "seed_text": "# Junior web developer (React / Node), Lyon\nSalary: 38-42 k€ + meal vouchers. 37-hour weeks, 2 remote days. You'll ship features with a mentor in a team of 6 and get a training budget of 1,500 € a year. We expect: basics of JavaScript and a project you can show us. Process: one 30-min call, one 2-hour pair-programming session, answer within 10 days."
+    }
+  ],
+  "outcome": {
+    "winner": "B",
+    "objections": [
+      [
+        "unpaid"
+      ],
+      [
+        "hours"
+      ],
+      [
+        "salary"
+      ],
+      [
+        "unrealistic"
+      ],
+      [
+        "experience"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}

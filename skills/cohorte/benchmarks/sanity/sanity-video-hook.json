@@ -1,0 +1,38 @@
+{
+  "id": "sanity-video-hook",
+  "kind": "video",
+  "title": "Cooking video on YouTube",
+  "context": "A YouTube channel about quick weeknight cooking posts a recipe video.",
+  "variants": [
+    {
+      "id": "A",
+      "seed_text": "# Video: 'Creamy lemon pasta in 12 minutes'\nThumbnail: the finished dish, close-up. 0:00 the finished plate and 'one pan, 5 ingredients'. 0:10 cooking starts right away, upbeat pace, every step on screen with quantities. 6:40 tasting and a variation tip. Length 7 min."
+    },
+    {
+      "id": "B",
+      "seed_text": "# Video: 'Pasta'\nThumbnail: blurry kitchen. 0:00-4:30 the host talks about their week, their trip and their sponsor (a VPN), with no cooking. 4:30 first ingredient appears; quantities are not given ('some cream, enough lemon'). The sound is muffled and the camera often points at the ceiling. Length 19 min."
+    }
+  ],
+  "outcome": {
+    "winner": "A",
+    "objections": [
+      [
+        "intro"
+      ],
+      [
+        "long"
+      ],
+      [
+        "sponsor"
+      ],
+      [
+        "quantities"
+      ],
+      [
+        "sound"
+      ]
+    ]
+  },
+  "synthetic": true,
+  "source": "synthetic sanity case: the difference is planted and obvious by design"
+}
