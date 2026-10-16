@@ -347,8 +347,11 @@ def _agent_configs(llm, world, profiles, timezone) -> List[Dict[str, Any]]:
                 requirement=world["simulation_requirement"], timezone=timezone, agents_json=agents_json),
             effort="low", max_tokens=8000, meta={"agent_ids": [p["agent_id"] for p in batch]},
         ))
-    _progress(f"generating activity configs ({len(reqs)} batch(es))")
-    results = llm.run_batch(reqs, label="agent configs")
+    if llm is None:
+        results: Dict[str, Optional[str]] = {}
+    else:
+        _progress(f"generating activity configs ({len(reqs)} batch(es))")
+        results = llm.run_batch(reqs, label="agent configs")
     llm_cfgs: Dict[int, Dict[str, Any]] = {}
     for text in results.values():
         if not text:
@@ -546,7 +549,9 @@ PLATFORM_DEFAULTS = {
 }
 
 
-def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
+def run_setup(sim: Sim, llm: LLMClient, panel_only: bool = False) -> Dict[str, Any]:
+    """panel_only: personas and crowds only, with rule-based time/activity/event configs. Enough for `assess`
+    and `backtest` (3 sequential LLM calls fewer); a social `run` works but follows default rhythms."""
     sim.require("world.json")
     world = sim.world()
     seed = sim.seed_text()
@@ -558,7 +563,8 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
         p["tier"] = "llm"
     n = len(profiles)  # LLM agents: they bound how many agents are activated per round
 
-    _progress("generating time configuration")
+    if not panel_only:
+        _progress("generating time configuration")
     time_req = LLMRequest(
         id="time_config", kind="time_config",
         system=[P.TIME_CONFIG_SYSTEM + "\n\n" + P.language_rule(settings["language"])],
@@ -570,7 +576,7 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
         effort="low", max_tokens=3000, meta={"n": n},
     )
     raw_time: Dict[str, Any] = {}
-    text = llm.run_batch([time_req], label="time config").get("time_config")
+    text = None if panel_only else llm.run_batch([time_req], label="time config").get("time_config")
     if text:
         try:
             parsed = parse_json_response(text)
@@ -579,7 +585,7 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
             raw_time = {}
     time_config = _parse_time_config(raw_time, n, settings)
 
-    agent_cfgs = _agent_configs(llm, world, profiles, time_config["timezone"])
+    agent_cfgs = _agent_configs(None if panel_only else llm, world, profiles, time_config["timezone"])
     for c in agent_cfgs:
         c["tier"] = "llm"
 
@@ -604,7 +610,8 @@ def run_setup(sim: Sim, llm: LLMClient) -> Dict[str, Any]:
                 p["archetype"], p["archetype_label"] = f"{ent['id']}:{best['id']}", best["label"]
         _progress(f"crowd '{ent['name']}': {n_crowd} members in {len(ent['_archetypes'])} archetypes "
                   f"+ {ent['llm_members']} LLM delegates")
-    event_config = _event_config(llm, world, seed, profiles, agent_cfgs)
+    event_config = ({"hot_topics": [], "narrative_direction": "", "initial_posts": [], "scheduled_events": [],
+                     "reasoning": "panel only"} if panel_only else _event_config(llm, world, seed, profiles, agent_cfgs))
 
     follows = _follow_graph(world, profiles, agent_cfgs, settings["seed"])
     for p, c in zip(profiles, agent_cfgs):

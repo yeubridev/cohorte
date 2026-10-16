@@ -23,6 +23,8 @@ import os
 import random
 import re
 import shutil
+import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -245,7 +247,7 @@ def _cohorte(case: Dict[str, Any], sim: Sim, settings: Dict[str, Any], runs: int
         if not sim.exists:  # keep the LLM cache of a setup that was interrupted
             init_sim(sim, os.path.join(drafts, "world.json"), [os.path.join(drafts, "context.md")], settings,
                      subject_path=os.path.join(drafts, "subject.json"))
-        run_setup(sim, LLMClient(sim.dir, settings))
+        run_setup(sim, LLMClient(sim.dir, settings), panel_only=True)
     out = {}
     for v in case["variants"]:
         with open(sim.path("seed.md"), "w", encoding="utf-8") as f:
@@ -448,7 +450,7 @@ def _panel(case: Dict[str, Any]) -> Tuple[int, int]:
             respondents += cnt
             personas += cnt
             sketches += 1 if cnt > 1 else 0
-    return respondents, sketches + personas + 2 + math.ceil(personas / 15)
+    return respondents, sketches + personas
 
 
 def plan(cases: List[Dict[str, Any]], runs: int) -> Dict[str, Any]:
@@ -462,32 +464,45 @@ def plan(cases: List[Dict[str, Any]], runs: int) -> Dict[str, Any]:
             "assess_calls": assess, "baseline_calls": baseline, "total_calls": setup + assess + baseline}
 
 
-def _usage(sim: Sim) -> float:
-    return float(read_json(sim.path("usage.json"), default={}).get("cost_usd", 0.0))
+def _spent(home: str) -> float:
+    total = 0.0
+    for f in glob.glob(os.path.join(home, "sims", "*", "usage.json")):
+        total += float(read_json(f, default={}).get("cost_usd", 0.0))
+    return total
 
 
 def run_backtest(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, Any], runs: int = 2,
                  models: Optional[List[str]] = None, budget: Optional[float] = None,
-                 calibrate_home: Optional[str] = None) -> Dict[str, Any]:
+                 calibrate_home: Optional[str] = None, parallel: int = 4) -> Dict[str, Any]:
     home = os.path.join(out_dir, "home")
     os.makedirs(home, exist_ok=True)
     settings = {**settings, "model": resolve_model(settings.get("model"))}
     preds_path = os.path.join(out_dir, "predictions.json")
     preds: Dict[str, Any] = read_json(preds_path, default={})
-    spent, stopped = 0.0, None
-    for i, case in enumerate(cases):
+    lock = threading.Lock()
+    skipped: List[str] = []
+    todo = [c for c in cases if c["id"] not in preds]
+
+    def work(i_case: Tuple[int, Dict[str, Any]]) -> None:
+        i, case = i_case
+        if budget is not None and _spent(home) >= budget:
+            with lock:
+                skipped.append(case["id"])
+            return
+        print(f"[backtest] start {case['id']} ({i + 1}/{len(todo)}, {case['kind']}, "
+              f"{len(case['variants'])} variant(s))", flush=True)
         sim = Sim(home, f"bt-{case['slug']}"[:64])
-        if case["id"] not in preds:
-            if budget is not None and spent >= budget:
-                stopped = f"budget of ${budget:.2f} reached after {i} case(s)"
-                break
-            print(f"[backtest] case {i + 1}/{len(cases)}: {case['id']} ({case['kind']}, "
-                  f"{len(case['variants'])} variant(s))", flush=True)
-            preds[case["id"]] = {"cohorte": _cohorte(case, sim, settings, runs, models),
-                                 "baseline": _baseline(case, sim, settings, runs)}
+        pred = {"cohorte": _cohorte(case, sim, settings, runs, models),
+                "baseline": _baseline(case, sim, settings, runs)}
+        with lock:
+            preds[case["id"]] = pred
             write_json(preds_path, preds)
-        if sim.exists:
-            spent += _usage(sim)
+        print(f"[backtest] done {case['id']}", flush=True)
+
+    with ThreadPoolExecutor(max_workers=max(1, parallel)) as pool:
+        list(pool.map(work, enumerate(todo)))  # list() re-raises the first error
+    spent = _spent(home)
+    stopped = (f"budget of ${budget:.2f} reached; {len(skipped)} case(s) not run" if skipped else None)
     result = score(cases, preds)
     result.update({"at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "runs": runs,
                    "model": settings["model"], "models": models or [settings["model"]],

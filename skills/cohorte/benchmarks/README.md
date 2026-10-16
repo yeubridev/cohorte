@@ -13,6 +13,11 @@ python3 scripts/cohorte.py backtest my-cases/ --runs 3 --calibrate              
 The output is `scorecard.md` and `scorecard.json` in `.cohorte/backtests/<suite>/`. Re-running the command
 resumes where it stopped, and finished cases cost nothing again.
 
+**Speed:**
+- `--parallel N` runs N cases at a time (default 4).
+- Each case builds a *panel-only* cohort: personas and crowd archetypes, with no LLM-made time, activity or event
+  configs. Those are only needed for a social `run`.
+
 ## Suites
 
 | Suite | What it proves | Status |

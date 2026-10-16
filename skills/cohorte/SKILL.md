@@ -185,5 +185,5 @@ past launches and A/B tests into cases (`benchmarks/README.md`): those are leak-
 `timeline [--bucket H]` · `search <query> [--thoughts]` · `agent <ref>` · `thread <post_id> --platform` ·
 `export [--out file]` · `interview -q ... (--agents | --type [--sample] | --all) [--followup]` · `fork` · `compare`.
 `ingest` · `kinds` · `assess [--runs N] [--models a,b] [--dry-run]` · `calibrate add|fit|show` ·
-`backtest <cases> [--runs N] [--budget USD] [--calibrate] [--dry-run]`.
+`backtest <cases> [--runs N] [--parallel N] [--budget USD] [--calibrate] [--dry-run]`.
 `$COHORTE <command> -h` documents every flag. Files and tuning knobs: `references/engine.md`.
