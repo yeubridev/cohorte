@@ -22,6 +22,12 @@ Revenue and valuation figures are targets for planning, not forecasts.
 
 Ensembles and calibration exist; what's still missing is the real outcome data.
 
+**v0.4 (16 Oct 2026):** `backtest` scores Cohorte against a single-prompt baseline. Same model, same material;
+results include a McNemar test, rank correlation and blind-judged objection recall.
+- **Sanity gate passed:** 8/8 planted A/B differences detected, with 92% objection recall, for $0.64 on Haiku 5.5.
+- **Honest caveat:** the single prompt also scored 8/8, with 90% recall. On obvious cases, the cohort is not better
+  than one prompt. Its value has to be shown on real, subtle cases.
+
 **The core risk:** if the robots can't beat a cheap baseline at anticipating real reactions, the product is a
 toy. The roadmap therefore puts proof first and polish later.
 
@@ -203,6 +209,8 @@ large customers who commit decisions to it.
 
 ## Immediate next steps (v0.3, in order)
 
+0. ~~Backtest harness, sanity suite and scorecard~~ (v0.4). **Next: 20+ real, leak-safe cases.** This is now the
+   critical path, ahead of everything below.
 1. Ensembles with intervals and a noise floor (`--seeds`).
 2. An end-to-end skill run on a real project, with `report.md` and `verify-report`.
 3. Tune crowd opinion dynamics and add the "obvious scenario" tests.

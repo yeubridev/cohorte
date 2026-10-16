@@ -173,6 +173,31 @@ opt-in for partner data sharing, a stated retention period, a working deletion p
 the hidden auto-renewal and the undefined "partners" clause are the real blockers, and both can be fixed in the
 copy. The next step is to `fork` the run with a rewritten launch post and `compare`.
 
+## Scorecard: is it proven?
+
+`backtest` replays cases whose outcome is known and scores Cohorte against the cheapest alternative: **one expert
+prompt, using the same model and the same material.** Published as measured on 16 Oct 2026 (Claude Haiku 5.5,
+2 runs per variant, $0.64 in total):
+
+| Suite | Cases | Winner accuracy (Cohorte / one prompt) | Objection recall (Cohorte / one prompt) | Status |
+|---|---|---|---|---|
+| Sanity: planted, obvious A/B differences (an unpaid "junior" job ad needing 10 years of experience, a clickbait article, an 89 €/month meal app) | 8 synthetic | **100% / 100%** | **92% / 90%** | ✅ sanity gate passed (≥ 90%) |
+| Real launches, A/B tests and releases with documented outcomes | 0 / 20 | – | – | ⏳ **not proven** |
+
+**What this says:**
+
+- The engine reliably detects big differences and names the real problems in the robots' own words.
+- On obvious cases, one prompt does about as well. Cohorte has to earn its keep on subtle, real cases, through
+  segment splits (who loves it, who leaves) and how reactions spread. Only real outcomes can show that it does.
+- The next milestone is 20+ real, leak-safe cases (see [`benchmarks/`](skills/cohorte/benchmarks/README.md)).
+  Your own past launches and A/B tests are the best evidence, because the model can't have memorised them.
+
+Objection recall is scored by a blind LLM judge (the same prompt for both methods, and it is never told which method
+wrote which list), on the top 8 objections per variant for each. With exact keyword matching instead, the scores
+are 65% / 82%. Keyword matching favours generic wording like "too expensive" over specific, in-character
+objections like "89 € a month is far above what a meal planner should cost". So we report the judge's score and
+publish both.
+
 ## How it works
 
 ```mermaid

@@ -38,6 +38,7 @@ from .util import CohorteError, coerce_str_list, parse_json_response, read_json,
 from .world import Sim, init_sim
 
 GATE_MIN_CASES = 20
+OBJECTIONS_PER_VARIANT = 8  # same budget for both methods, so recall compares like with like
 DEFAULT_AUDIENCE = [
     {"name": "Target audience", "type": "Person", "count": 300,
      "summary": "The people this {noun} is meant for: interested, but busy and comparing alternatives."},
@@ -69,6 +70,20 @@ BASELINE_USER = """## Audience
 Return JSON:
 {{"scores": {{{score_keys}}},
   "objections": ["the main reasons people will reject or criticise it (short)"]}}"""
+
+JUDGE_SYSTEM = """You check whether predicted objections cover the concerns that really dominated. A concern counts as
+covered when at least one prediction expresses the same concern, even in other or more specific words ("89 € a
+month is far above what it should cost" covers "price"; "asks for contacts, mic and photos first" covers
+"permissions"). A merely related topic does not count. Judge each concern independently.
+Return one valid JSON object only."""
+
+JUDGE_USER = """## Concerns that really dominated
+{concerns}
+
+## Predicted objections
+{predicted}
+
+Return JSON: {{"found": [one true/false per numbered concern, in order]}}"""
 
 STOP = set("""the a an and or of to in on for with without is are be it its this that too not no very more less
 than from as at by into their they them you your our we can will would should could just only also any some
@@ -228,9 +243,11 @@ def _baseline(case: Dict[str, Any], sim: Sim, settings: Dict[str, Any], runs: in
             continue
         slot = out.setdefault(vid, {"potentials": [], "objections": []})
         slot["potentials"].append(potential(parsed["scores"], dims))
-        slot["objections"].extend(coerce_str_list(data.get("objections"))[:6])
+        slot.setdefault("by_run", []).append(coerce_str_list(data.get("objections"))[:6])
     for slot in out.values():
         slot["potential"] = round(sum(slot["potentials"]) / len(slot["potentials"]), 2)
+        runs_obj = slot.pop("by_run", [])
+        slot["objections"] = [r[i] for i in range(6) for r in runs_obj if i < len(r)]  # rank 1 of each run first
     return out
 
 
@@ -313,6 +330,58 @@ def objection_hit(alternatives: List[str], predicted: List[str]) -> bool:
     return False
 
 
+def _top(objections: List[str]) -> List[str]:
+    seen, out = set(), []
+    for o in objections:
+        k = " ".join(_keywords(o))
+        if k and k not in seen:
+            seen.add(k)
+            out.append(o)
+    return out[:OBJECTIONS_PER_VARIANT]
+
+
+def _judge_requests(cases: List[Dict[str, Any]], preds: Dict[str, Any], methods: Tuple[str, ...]):
+    reqs = {}
+    for c in cases:
+        objs = c["outcome"]["objections"]
+        if not objs or c["id"] not in preds:
+            continue
+        ids = [v["id"] for v in c["variants"]]
+        for m in methods:
+            p = preds[c["id"]].get(m) or {}
+            predicted = sum((_top(p[i]["objections"]) for i in ids if i in p), [])
+            q = LLMRequest(
+                id=f"judge:{c['id']}:{m}", kind="judge", system=[JUDGE_SYSTEM], effort="low", max_tokens=800,
+                user=JUDGE_USER.format(
+                    concerns="\n".join(f"{n + 1}. {o[0]}" + (f" (or: {' / '.join(o[1:])})" if o[1:] else "")
+                                       for n, o in enumerate(objs)),
+                    predicted="\n".join(f"- {x}" for x in predicted) or "(none)"),
+                meta={"n": len(objs)})
+            reqs[q.id] = (c["id"], m, len(objs), q)
+    return reqs
+
+
+def judge(cases: List[Dict[str, Any]], preds: Dict[str, Any], out_dir: str, settings: Dict[str, Any],
+          methods: Tuple[str, ...] = ("cohorte", "baseline")) -> Dict[Tuple[str, str], List[bool]]:
+    """Blind LLM judge: same prompt for both methods, never told which method wrote a list."""
+    reqs = _judge_requests(cases, preds, methods)
+    if not reqs:
+        return {}
+    os.makedirs(os.path.join(out_dir, "judge"), exist_ok=True)
+    client = LLMClient(os.path.join(out_dir, "judge"), {**settings, "verbose": False})
+    answers = client.run_batch([r[3] for r in reqs.values()], label="objection judge")
+    out = {}
+    for qid, (cid, m, n, _) in reqs.items():
+        try:
+            data = parse_json_response(answers.get(qid) or "")
+            found = data.get("found") if isinstance(data, dict) else None
+        except ValueError:
+            found = None
+        if isinstance(found, list) and len(found) == n:
+            out[(cid, m)] = [x is True or str(x).lower() == "true" for x in found]
+    return out
+
+
 def _winner(pred: Dict[str, Dict[str, Any]], ids: List[str], higher_is_better: bool) -> Optional[str]:
     scores = {i: pred[i]["potential"] for i in ids if i in pred}
     if len(scores) < 2:
@@ -323,7 +392,8 @@ def _winner(pred: Dict[str, Dict[str, Any]], ids: List[str], higher_is_better: b
 
 
 def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict[str, Any]]]],
-          methods: Tuple[str, ...] = ("cohorte", "baseline")) -> Dict[str, Any]:
+          methods: Tuple[str, ...] = ("cohorte", "baseline"),
+          judged: Optional[Dict[Tuple[str, str], List[bool]]] = None) -> Dict[str, Any]:
     rows = []
     for c in cases:
         if c["id"] not in preds:
@@ -338,8 +408,9 @@ def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict
                 "potentials": {i: p[i]["potential"] for i in ids if i in p},
                 "picked": pw,
                 "correct": None if c["outcome"]["winner"] is None else pw == c["outcome"]["winner"],
-                "objections_found": [objection_hit(o, sum((p[i]["objections"] for i in ids if i in p), []))
-                                     for o in c["outcome"]["objections"]],
+                "objections_found": (judged or {}).get((c["id"], m)) or [
+                    objection_hit(o, sum((_top(p[i]["objections"]) for i in ids if i in p), []))
+                    for o in c["outcome"]["objections"]],
             }
         rows.append(row)
 
@@ -466,14 +537,14 @@ def plan(cases: List[Dict[str, Any]], runs: int) -> Dict[str, Any]:
 
 def _spent(home: str) -> float:
     total = 0.0
-    for f in glob.glob(os.path.join(home, "sims", "*", "usage.json")):
+    for f in glob.glob(os.path.join(home, "sims", "*", "usage.json")) + [os.path.join(home, "..", "judge", "usage.json")]:
         total += float(read_json(f, default={}).get("cost_usd", 0.0))
     return total
 
 
 def run_backtest(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, Any], runs: int = 2,
                  models: Optional[List[str]] = None, budget: Optional[float] = None,
-                 calibrate_home: Optional[str] = None, parallel: int = 4) -> Dict[str, Any]:
+                 calibrate_home: Optional[str] = None, parallel: int = 4, judge_mode: str = "llm") -> Dict[str, Any]:
     home = os.path.join(out_dir, "home")
     os.makedirs(home, exist_ok=True)
     settings = {**settings, "model": resolve_model(settings.get("model"))}
@@ -503,7 +574,9 @@ def run_backtest(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, 
         list(pool.map(work, enumerate(todo)))  # list() re-raises the first error
     spent = _spent(home)
     stopped = (f"budget of ${budget:.2f} reached; {len(skipped)} case(s) not run" if skipped else None)
-    result = score(cases, preds)
+    judged = judge(cases, preds, out_dir, settings) if judge_mode == "llm" else {}
+    result = score(cases, preds, judged=judged)
+    result["judge"] = "blind LLM judge" if judge_mode == "llm" else "keyword match"
     result.update({"at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "runs": runs,
                    "model": settings["model"], "models": models or [settings["model"]],
                    "backend": settings.get("backend"), "cost_usd": round(spent, 4), "stopped": stopped})
@@ -541,7 +614,8 @@ def render(r: Dict[str, Any], cases: List[Dict[str, Any]]) -> str:
     v = r["verdict"]
     lines = [f"# Cohorte scorecard · {r['at']}",
              f"Model {', '.join(r['models'])} ({r['backend']}) · {r['runs']} run(s) per variant · "
-             f"{r['all']['cases']} case(s) · cost ${r['cost_usd']:.2f}"]
+             f"{r['all']['cases']} case(s) · objections scored by {r.get('judge', 'keyword match')} "
+             f"(top {OBJECTIONS_PER_VARIANT} per variant for both methods) · cost ${r['cost_usd']:.2f}"]
     if v.get("mock"):
         lines.append(f"\n> **{v['mock']}**")
     if r.get("stopped"):

@@ -124,6 +124,8 @@ def mock_response(req) -> str:
         if kind == "assess_group":
             out["spread"] = {k: 2 for k in dims}
         return json.dumps(out)
+    if kind == "judge":
+        return json.dumps({"found": [rng.random() < 0.5 for _ in range(m.get("n", 1))]})
     if kind == "baseline":
         dims, lo, hi = m.get("dims", []), m.get("lo", []), m.get("hi", [])
         base = rng.uniform(0.3, 0.8)

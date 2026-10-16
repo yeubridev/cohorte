@@ -1,0 +1,375 @@
+{
+  "rows": [
+    {
+      "id": "sanity-ad-gym",
+      "kind": "ad",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "A",
+      "cohorte": {
+        "potentials": {
+          "A": 37.9,
+          "B": 28.6
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          false,
+          true,
+          true,
+          false
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 40.91,
+          "B": 29.55
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "sanity-app-onboarding",
+      "kind": "app",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "A",
+      "cohorte": {
+        "potentials": {
+          "A": 37.0,
+          "B": 21.2
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 37.5,
+          "B": 20.31
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "sanity-article-quality",
+      "kind": "article",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "A",
+      "cohorte": {
+        "potentials": {
+          "A": 40.4,
+          "B": 13.8
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          false,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 49.23,
+          "B": 13.46
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          false,
+          true,
+          true,
+          false,
+          true
+        ]
+      }
+    },
+    {
+      "id": "sanity-job-offer",
+      "kind": "job_offer",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "B",
+      "cohorte": {
+        "potentials": {
+          "A": 15.6,
+          "B": 46.6
+        },
+        "picked": "B",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 12.0,
+          "B": 47.0
+        },
+        "picked": "B",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "sanity-landing-clarity",
+      "kind": "website",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "B",
+      "cohorte": {
+        "potentials": {
+          "A": 20.9,
+          "B": 47.1
+        },
+        "picked": "B",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 17.14,
+          "B": 49.28
+        },
+        "picked": "B",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "sanity-meal-app-price",
+      "kind": "pricing",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "A",
+      "cohorte": {
+        "potentials": {
+          "A": 46.1,
+          "B": 24.0
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 54.55,
+          "B": 20.91
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "sanity-product-backpack",
+      "kind": "product",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "B",
+      "cohorte": {
+        "potentials": {
+          "A": 17.4,
+          "B": 42.3
+        },
+        "picked": "B",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 15.77,
+          "B": 53.85
+        },
+        "picked": "B",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          false,
+          true,
+          true
+        ]
+      }
+    },
+    {
+      "id": "sanity-video-hook",
+      "kind": "video",
+      "synthetic": true,
+      "leak_safe": false,
+      "winner": "A",
+      "cohorte": {
+        "potentials": {
+          "A": 38.1,
+          "B": 15.2
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          true,
+          true,
+          true,
+          true
+        ]
+      },
+      "baseline": {
+        "potentials": {
+          "A": 41.43,
+          "B": 19.64
+        },
+        "picked": "A",
+        "correct": true,
+        "objections_found": [
+          true,
+          false,
+          true,
+          true,
+          true
+        ]
+      }
+    }
+  ],
+  "all": {
+    "cases": 8,
+    "winner_cases": 8,
+    "cohorte": {
+      "winner_accuracy": 1.0,
+      "winner_right": 8,
+      "objection_recall": 0.925,
+      "objections_total": 40,
+      "spearman": null,
+      "points": 0
+    },
+    "baseline": {
+      "winner_accuracy": 1.0,
+      "winner_right": 8,
+      "objection_recall": 0.9,
+      "objections_total": 40,
+      "spearman": null,
+      "points": 0
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": null
+  },
+  "real": null,
+  "synthetic": {
+    "cases": 8,
+    "winner_cases": 8,
+    "cohorte": {
+      "winner_accuracy": 1.0,
+      "winner_right": 8,
+      "objection_recall": 0.925,
+      "objections_total": 40,
+      "spearman": null,
+      "points": 0
+    },
+    "baseline": {
+      "winner_accuracy": 1.0,
+      "winner_right": 8,
+      "objection_recall": 0.9,
+      "objections_total": 40,
+      "spearman": null,
+      "points": 0
+    },
+    "paired": {
+      "only_cohorte": 0,
+      "only_baseline": 0,
+      "p_value": 1.0
+    },
+    "spearman_gap": null
+  },
+  "leak_safe": null,
+  "verdict": {
+    "sanity": {
+      "pass": true,
+      "accuracy": 1.0,
+      "text": "planted differences detected in 8/8 synthetic cases (gate: ≥90%)"
+    },
+    "proof": {
+      "status": "no real cases",
+      "text": "No real historical cases yet: nothing is proven about real-world prediction. Add cases with known outcomes (see benchmarks/README.md)."
+    }
+  },
+  "judge": "blind LLM judge",
+  "at": "2026-10-16T13:19Z",
+  "runs": 2,
+  "model": "claude-haiku-5-5",
+  "models": [
+    "claude-haiku-5-5"
+  ],
+  "backend": "claude-cli",
+  "cost_usd": 0.63,
+  "stopped": null
+}

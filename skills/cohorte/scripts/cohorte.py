@@ -308,7 +308,7 @@ def cmd_backtest(args):
     settings = {"backend": args.backend, "model": args.model, "concurrency": args.concurrency}
     models = [m for m in (args.models or "").split(",") if m] or None
     result = backtest_mod.run_backtest(cases, out, settings, args.runs, models, args.budget,
-                                       _home(args) if args.calibrate else None, args.parallel)
+                                       _home(args) if args.calibrate else None, args.parallel, args.judge)
     print(backtest_mod.render(result, cases))
     print(f"\n(saved to {os.path.join(out, 'scorecard.md')})")
 
@@ -484,6 +484,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--max-cases", type=int)
     p.add_argument("--budget", type=float, help="stop before starting a new case once this many USD are spent")
     p.add_argument("--parallel", type=int, default=4, help="cases run at the same time (default 4)")
+    p.add_argument("--judge", choices=["llm", "keyword"], default="llm",
+                   help="how objection recall is scored: blind LLM judge (default) or exact keywords")
     p.add_argument("--calibrate", action="store_true",
                    help="record real (non-synthetic) outcomes as calibration pairs in --home")
     p.add_argument("--dry-run", action="store_true", help="only print the number of LLM calls")

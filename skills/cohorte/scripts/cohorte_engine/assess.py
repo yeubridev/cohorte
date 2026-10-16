@@ -191,6 +191,33 @@ def _norm(text: str) -> str:
     return re.sub(r"[^\w\s]", "", text.lower()).strip()
 
 
+STOPWORDS = set("""the a an and or of to in on for with without is are be it its this that too not no very more less
+than from as at by into their they them you your our we can will would should could just only also any some
+about over under there here what which who when how why all much many even feels like""".split())
+
+
+def keywords(text: str) -> set:
+    return {w[:5] for w in re.findall(r"[^\W_]+", text.lower()) if len(w) >= 3 and w not in STOPWORDS}
+
+
+def merge_similar(counts: Counter, label_of: Dict[str, str], limit: int = 8) -> List[Dict[str, Any]]:
+    """Group near-duplicate phrasings ("mandatory account" said four ways) so each slot is a distinct point.
+    Two phrasings merge when ≥60% of the shorter one's keywords appear in the other."""
+    clusters: List[Dict[str, Any]] = []
+    for key, weight in counts.most_common():
+        kw = keywords(label_of[key])
+        for c in clusters:
+            small = min(len(kw), len(c["kw"]))
+            if small >= 2 and len(kw & c["kw"]) / small >= 0.6:
+                c["weight"] += weight
+                c["variants"] += 1
+                break
+        else:
+            clusters.append({"text": label_of[key], "kw": kw, "weight": weight, "variants": 1})
+    clusters.sort(key=lambda c: -c["weight"])
+    return [{"text": c["text"], "weight": round(c["weight"], 1), "phrasings": c["variants"]} for c in clusters[:limit]]
+
+
 def run_assessment(sim: Sim, llm_settings: Dict[str, Any], runs: int = 3, models: Optional[List[str]] = None,
                    dry_run: bool = False) -> Dict[str, Any]:
     sim.require("agents.json", "config.json")
@@ -282,8 +309,8 @@ def run_assessment(sim: Sim, llm_settings: Dict[str, Any], runs: int = 3, models
         "calibrated": calibrated,
         "dimensions": [{**d, "mean": dim_means.get(d["key"])} for d in dims],
         "segments": segments,
-        "likes": [{"text": label_of[k], "weight": round(v, 1)} for k, v in likes.most_common(8)],
-        "dislikes": [{"text": label_of[k], "weight": round(v, 1)} for k, v in dislikes.most_common(8)],
+        "likes": merge_similar(likes, label_of),
+        "dislikes": merge_similar(dislikes, label_of),
         "quotes": quotes,
         "stakeholders": [q for q in quotes if q["type"] == "stakeholder"],
         "confidence": {

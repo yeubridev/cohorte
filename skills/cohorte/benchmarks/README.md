@@ -22,7 +22,7 @@ resumes where it stopped, and finished cases cost nothing again.
 
 | Suite | What it proves | Status |
 |---|---|---|
-| `sanity/` | The engine detects planted, obvious differences: an outrageous price, a clickbait article, an unpaid job ad. | 8 synthetic cases; gate ≥ 90% |
+| `sanity/` | The engine detects planted, obvious differences: an outrageous price, a clickbait article, an unpaid job ad. | 8 synthetic cases; **passed** 8/8 on 16 Oct 2026 ([scorecard](results/sanity-2026-10-16-haiku.md)) |
 | *real cases (to collect)* | Cohorte anticipates real reactions better than one prompt does. **This is the V1 proof gate.** | 0 / 20 needed |
 
 Synthetic cases never count as proof and never feed calibration.

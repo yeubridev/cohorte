@@ -349,6 +349,13 @@ class TestBacktest(CliCase):
         self.assertTrue(objection_hit(["too expensive", "price"], ["The price is way too high"]))
         self.assertTrue(objection_hit(["permissions"], ["asks for too many permissions"]))
         self.assertFalse(objection_hit(["privacy"], ["too expensive", "boring"]))
+        from collections import Counter
+        from cohorte_engine.assess import merge_similar
+        texts = ["Mandatory account with phone and email verification",
+                 "mandatory phone and email verification just to look around", "no pricing anywhere"]
+        merged = merge_similar(Counter({t: 3 - i for i, t in enumerate(texts)}), {t: t for t in texts})
+        self.assertEqual([m["phrasings"] for m in merged], [2, 1])
+        self.assertEqual(merged[0]["weight"], 5)
 
     def test_cases_validation(self):
         from cohorte_engine.backtest import normalize_case
@@ -376,6 +383,7 @@ class TestBacktest(CliCase):
             json.dump(real, f)
         out = self.cli("backtest", cases, "--backend", "mock", "--calibrate")
         self.assertIn("mean nothing", out)
+        self.assertIn("blind LLM judge", out)
         self.assertIn("Real-world proof: not proven", out)
         card = json.load(open(os.path.join(self.home, "backtests", "cases", "scorecard.json")))
         self.assertEqual(card["all"]["cases"], 2)
