@@ -1,0 +1,297 @@
+[
+ {
+  "id": "films-2026-07-03",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-07-03",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-07-03",
+  "leak_safe": true,
+  "source": "https://thewrap.com/creative-content/movies/minions-and-monsters-weekend-box-office",
+  "variants": [
+   {
+    "id": "minions-and-monsters",
+    "label": "Minions & Monsters",
+    "seed_text": "Minions & Monsters. Animated family comedy from Universal, rated PG, about 90 minutes. Directed by Pierre Coffin, who also voices the Minions. Voice cast includes Jeff Bridges, Jesse Eisenberg, Allison Janney, Bobby Moynihan, Christoph Waltz, Trey Parker and Zoey Deutch. Franchise status: new Minions film in the Despicable Me franchise (spin-off/prequel series). Opened Wednesday July 1 for the Fourth of July holiday. Synopsis: in 1920s Hollywood, the Minions set out to find genuinely frightening creatures for their own monster movie. Teaming up with a green creature, they end up unleashing real monsters and must then save the planet from the chaos they caused."
+   },
+   {
+    "id": "young-washington",
+    "label": "Young Washington",
+    "seed_text": "Young Washington. Historical war drama / biopic from Angel Studios, rated PG-13 for sequences of strong war violence and some bloody images, about 121-125 minutes. Directed by Jon Erwin (screenplay by Diederik Hoogstraten, Tom Provost and Erwin). Cast: newcomer William Franklyn-Miller as George Washington, with Mary-Louise Parker as his mother, Kelsey Grammer as Lord Fairfax, Ben Kingsley as Governor Robert Dinwiddie and Andy Serkis as General Edward Braddock. Franchise status: original film. Released July 3, timed to the 250th anniversary of US independence. Synopsis: before he became the father of a nation, young George Washington was a soldier fighting to survive. Set during the French and Indian War, a single misstep thrusts the ambitious young surveyor-turned-officer into the center of a global conflict that tests his honor, loyalty and courage."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "minions-and-monsters": 10,
+    "young-washington": 11
+   },
+   "sources": {
+    "minions-and-monsters": "https://thewrap.com/creative-content/movies/minions-and-monsters-weekend-box-office (read 2026-10-16)",
+    "young-washington": "https://www.comicbasics.com/young-washington-earns-an-impressive-cinemascore-on-july-4-weekend-and-angel-studios-has-another-hit-on-its-hands/ (read 2026-10-16)"
+   }
+  }
+ },
+ {
+  "id": "films-2026-07-10",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-07-10",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-07-10",
+  "leak_safe": true,
+  "source": "https://www.joblo.com/moana-box-office-flop/",
+  "variants": [
+   {
+    "id": "moana",
+    "label": "Moana",
+    "seed_text": "Moana. Live-action musical adventure from Disney, rated PG for action/peril, some scary images, rude humor and brief thematic elements; runtime reported between 111 and 120 minutes. Directed by Thomas Kail. Cast: Catherine Laga'aia (film debut) as Moana, Dwayne Johnson reprising his voice role as the demigod Maui in live action, with John Tui, Frankie Adams and Rena Owen. Franchise status: live-action remake of Disney's 2016 animated film Moana. Synopsis: Moana, a young woman from a Pacific island, leaves her island's reef for the first time and sets out across the ocean with the demigod Maui on a perilous voyage to help her people."
+   },
+   {
+    "id": "evil-dead-burn",
+    "label": "Evil Dead Burn",
+    "seed_text": "Evil Dead Burn. Supernatural horror from Warner Bros. and Sam Raimi and Robert Tapert's Ghost House Pictures, rated R for strong bloody horror violence and gore, and language; about 110 minutes. Directed by Sebastien Vanicek, written by Florent Bernard and Vanicek. Cast: Souheila Yacoub, Hunter Doohan, Luciane Buchanan and Tandi Wright. Franchise status: sixth entry in the Evil Dead franchise, following Evil Dead Rise (2023). Synopsis: after losing her husband, a grieving woman turns to her in-laws for comfort. The family gathering at their isolated home becomes a nightmare as members turn into Deadites, and she discovers that the vows she took in life live on even in death."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "moana": 10,
+    "evil-dead-burn": 8
+   },
+   "sources": {
+    "moana": "https://www.joblo.com/moana-box-office-flop/ (read 2026-10-16)",
+    "evil-dead-burn": "https://www.joblo.com/moana-box-office-flop/ (read 2026-10-16)"
+   }
+  }
+ },
+ {
+  "id": "films-2026-08-14",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-08-14",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-08-14",
+  "leak_safe": true,
+  "source": "https://www.joblo.com/box-office-the-end-of-oak-street-may-lose-to-paw-patrol/",
+  "variants": [
+   {
+    "id": "end-of-oak-street",
+    "label": "The End of Oak Street",
+    "seed_text": "The End of Oak Street. Science-fiction survival thriller from Warner Bros., rated PG-13 for strong violent content, bloody images, some strong language and suggestive material; about 99 minutes. Written and directed by David Robert Mitchell. Cast: Anne Hathaway and Ewan McGregor, with Maisy Stella, Christian Convery, P.J. Byrne and Jordan Alexa Davis. Franchise status: original screenplay. Synopsis: in the 1980s, a mysterious cosmic event rips an entire suburban street out of its neighborhood and pulls it into an unknown place. The Platt family must stick together and survive in these hostile, unfamiliar surroundings while trying to understand what happened."
+   },
+   {
+    "id": "paw-patrol-dino-movie",
+    "label": "PAW Patrol: The Dino Movie",
+    "seed_text": "PAW Patrol: The Dino Movie. Animated family adventure from Paramount, Nickelodeon and Spin Master, rated PG, about 88 minutes. Directed by Cal Brunker (written by Bob Barlen and Brunker). Voice cast includes Mckenna Grace, Jennifer Hudson, Fortune Feimster, Terry Crews, Paris Hilton, Snoop Dogg and Bill Nye, plus the series' young voice cast. Franchise status: third theatrical film based on the PAW Patrol preschool TV series. Synopsis: a storm strands the PAW Patrol pups on an island full of dinosaurs, where they meet a stranded pup named Rex. When Mayor Humdinger's mining sets off a volcano, the team faces its biggest rescue mission yet to save the island and its dinosaurs."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "end-of-oak-street": 8,
+    "paw-patrol-dino-movie": 11
+   },
+   "sources": {
+    "end-of-oak-street": "https://www.joblo.com/box-office-the-end-of-oak-street-may-lose-to-paw-patrol/ (read 2026-10-16)",
+    "paw-patrol-dino-movie": "https://www.comingsoon.net/?p=2177121 (read 2026-10-16)"
+   }
+  }
+ },
+ {
+  "id": "films-2026-08-21",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-08-21",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-08-21",
+  "leak_safe": true,
+  "source": "https://cosmicbook.news/insidious-out-of-the-further-opening-weekend-box-office",
+  "variants": [
+   {
+    "id": "insidious-out-of-the-further",
+    "label": "Insidious: Out of the Further",
+    "seed_text": "Insidious: Out of the Further. Supernatural horror from Sony Pictures, rated PG-13 for strong violent content, some strong language, bloody images and terror; about 106 minutes. Directed by Jacob Chase, written by Chase and David Leslie Johnson-McGoldrick, based on characters by Leigh Whannell. Cast: Amelia Eve, Island Austin, Lin Shaye (returning as psychic Elise Rainier), Sam Spruell as the demon Cyrus, and Brandon Perea. Franchise status: sixth film in the Insidious franchise. Synopsis: Gemma, a single mother raising her daughter in the house where she grew up, discovers she can travel into The Further, the realm of lost souls. Her ability turns dangerous when the evil entities she encounters there follow her back into the real world."
+   },
+   {
+    "id": "mutiny",
+    "label": "Mutiny",
+    "seed_text": "Mutiny. Action thriller from Lionsgate, rated R for strong/bloody violence and language; about 95 minutes. Directed by Jean-Francois Richet (Plane, Blood Father), written by Lindsay Michel and J.P. Davis. Cast: Jason Statham, Annabelle Wallis, Roland Moller, Adrian Lester, Jason Wong and Arnas Fedaravicius. Franchise status: original film. Synopsis: Cole Reed (Statham) witnesses the murder of his billionaire employer and is framed for the killing. On the run, he boards a cargo ship on a one-man crusade to avenge his boss's death, only to uncover an international conspiracy."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "insidious-out-of-the-further": 6,
+    "mutiny": 9
+   },
+   "sources": {
+    "insidious-out-of-the-further": "https://cosmicbook.news/insidious-out-of-the-further-opening-weekend-box-office (read 2026-10-16)",
+    "mutiny": "https://www.comicbasics.com/jason-stathams-mutiny-proves-audiences-dont-care-what-critics-think-as-cinemascore-is-revealed/ (read 2026-10-16)"
+   }
+  }
+ },
+ {
+  "id": "films-2026-08-28",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-08-28",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-08-28",
+  "leak_safe": true,
+  "source": "https://www.joblo.com/box-office-update-coyote-vs-acme/",
+  "variants": [
+   {
+    "id": "coyote-vs-acme",
+    "label": "Coyote vs. Acme",
+    "seed_text": "Coyote vs. Acme. Live-action/animated hybrid legal comedy based on the Looney Tunes characters, distributed by Ketchup Entertainment, rated PG for cartoon violence and some language; about 100 minutes. Directed by Dave Green. Cast: Will Forte, John Cena, Lana Condor and P.J. Byrne, with Eric Bauza voicing Looney Tunes characters. Franchise status: new standalone story built on the Looney Tunes characters (Wile E. Coyote, with appearances by Bugs Bunny, Daffy Duck and others). Synopsis: Wile E. Coyote hires small-time billboard accident lawyer Kevin Avery (Forte) to sue the Acme Corporation, which is defended by its slick corporate counsel Buddy Crane (Cena)."
+   },
+   {
+    "id": "the-dog-stars",
+    "label": "The Dog Stars",
+    "seed_text": "The Dog Stars. Post-apocalyptic drama/thriller from 20th Century Studios, rated R for strong violence and language; 118 minutes. Directed by Ridley Scott, screenplay by Mark L. Smith, adapted from Peter Heller's 2012 novel. Cast: Jacob Elordi, Josh Brolin, Margaret Qualley, Guy Pearce, Allison Janney and Benedict Wong. Franchise status: original film (novel adaptation). Synopsis: years after a pandemic wiped out most of humanity, Hig, a young pilot, lives with a military survivalist, Bangley, on an isolated homestead. When Hig picks up a mysterious radio transmission, he is pulled toward the unknown in search of hope and other people."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "coyote-vs-acme": 11,
+    "the-dog-stars": 6
+   },
+   "sources": {
+    "coyote-vs-acme": "https://www.joblo.com/box-office-update-coyote-vs-acme/ (read 2026-10-16)",
+    "the-dog-stars": "https://www.joblo.com/box-office-update-coyote-vs-acme/ (read 2026-10-16)"
+   }
+  }
+ },
+ {
+  "id": "films-2026-09-04",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-09-04",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-09-04",
+  "leak_safe": true,
+  "source": "https://www.comicbasics.com/?p=187268",
+  "variants": [
+   {
+    "id": "by-any-means",
+    "label": "By Any Means",
+    "seed_text": "By Any Means. Historical crime thriller from Paramount, rated R; 107 minutes. Directed by Elegance Bratton (The Inspection), written by Sascha Penn. Cast: Yahya Abdul-Mateen II, Mark Wahlberg as mafia hitman Greg Scarpa, Nicole Beharie, Josh Lucas, David Strathairn and Giancarlo Esposito. Franchise status: original film, loosely based on real events. Synopsis: in 1966 Mississippi, a young Black FBI agent is forced into a volatile, uneasy alliance with a mafia hitman. Together they hunt for the people responsible for the killing of civil rights leaders, and their investigation uncovers a wider conspiracy."
+   },
+   {
+    "id": "onslaught",
+    "label": "Onslaught",
+    "seed_text": "Onslaught. Action-horror thriller from A24, rated R for strong bloody violence, some gore, sexual material/nudity and language; 92 minutes. Directed by Adam Wingard, co-written with Simon Barrett. Cast: Adria Arjona, Dan Stevens, Drew Starkey, Michael Biehn, Reginald VelJohnson, Eric Wareheim, Rebecca Hall and UFC fighter Alex Pereira. Franchise status: original film, set in the same town as Wingard's The Guest. Synopsis: a former Army sniper is forced back into action when a squad of genetically engineered super soldiers escapes from a secret military facility in the desert and threatens her family."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "by-any-means": 9,
+    "onslaught": 5
+   },
+   "sources": {
+    "by-any-means": "https://www.comicbasics.com/?p=187268 (read 2026-10-16)",
+    "onslaught": "https://www.comicbasics.com/?p=187120 (read 2026-10-16)"
+   }
+  }
+ },
+ {
+  "id": "films-2026-09-11",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-09-11",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-09-11",
+  "leak_safe": true,
+  "source": "https://www.thewrap.com/creative-content/movies/practical-magic-2-30-million-box-office/",
+  "variants": [
+   {
+    "id": "practical-magic-2",
+    "label": "Practical Magic 2",
+    "seed_text": "Practical Magic 2. Fantasy romantic comedy-drama from Warner Bros., rated PG-13 for some violent content, suggestive material and brief strong language; about 130 minutes. Directed by Susanne Bier, screenplay by Akiva Goldsman, Georgia Pritchett and Kelly Marcel, drawing on Alice Hoffman's novel The Book of Magic. Cast: Sandra Bullock and Nicole Kidman returning as the Owens sisters, with Joey King, Maisie Williams, Lee Pace, Xolo Mariduena, Dianne Wiest and Stockard Channing. Franchise status: sequel to Practical Magic (1998). Synopsis: Sally and Gillian Owens and the next generation of Owens witches become entangled in the family's long-standing romantic curse. When Sally's daughter Kylie's boyfriend falls into a coma, the women must confront the magical legacy Sally had tried to keep hidden."
+   },
+   {
+    "id": "runner",
+    "label": "Runner",
+    "seed_text": "Runner. Buddy action comedy-thriller from Angel Studios, rated PG-13 for strong violence, bloody images and some language; about 97 minutes. Directed by Scott Waugh (Need for Speed, Expend4bles). Cast: Alan Ritchson and Owen Wilson. Franchise status: original film. Synopsis: Hank Malone, a former US military veteran working in Queensland, Australia as a 'runner', is thrown into a brutal race against time when a critical medical delivery makes him the target of a ruthless cartel. Paired with an anxious organ courier (Wilson), he must get a donated liver to a sick girl before time runs out."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "practical-magic-2": 9,
+    "runner": 10
+   },
+   "sources": {
+    "practical-magic-2": "https://www.thewrap.com/creative-content/movies/practical-magic-2-30-million-box-office/ (read 2026-10-16)",
+    "runner": "https://www.thewrap.com/creative-content/movies/practical-magic-2-30-million-box-office/ (read 2026-10-16)"
+   }
+  }
+ },
+ {
+  "id": "films-2026-09-25",
+  "kind": "movie",
+  "title": "US wide releases, weekend of 2026-09-25",
+  "context": "Wide theatrical releases in the US on the same weekend; a general cinema-going audience chooses what to see.",
+  "date": "2026-09-25",
+  "leak_safe": true,
+  "source": "https://variety.com/2026/film/box-office/primetime-box-office-robert-pattinson-star-power-1236876947/",
+  "variants": [
+   {
+    "id": "heart-of-the-beast",
+    "label": "Heart of the Beast",
+    "seed_text": "Heart of the Beast. Survival thriller from Paramount, rated PG-13 (violence, peril, bloody and injury images, some language); about 101 minutes. Directed by David Ayer, written by Cameron Alexander, produced by Brad Pitt's Plan B. Cast: Brad Pitt as James Belmont, with J.K. Simmons and Anna Lambe. Franchise status: original film. Synopsis: a retired special forces veteran and his combat dog are stranded in the Alaskan wilderness after a plane crash. Man and dog must rely on each other on a grueling 58-mile trek to safety."
+   },
+   {
+    "id": "primetime",
+    "label": "Primetime",
+    "seed_text": "Primetime. Dark comedy-drama based on real events, from A24, rated R for disturbing sexual material, graphic nudity, some violence and language; about 110 minutes. Directed by Lance Oppenheim (narrative feature debut), written by Ajon Singh. Cast: Robert Pattinson as TV journalist Chris Hansen, with Merritt Wever, Skyler Gisondo, Phoebe Bridgers, Bokeem Woodbine, Matthew Maher and Anna Faris. Franchise status: original film (premiered at the Venice Film Festival). Synopsis: in 2006, TV host Chris Hansen sets out to make television history with To Catch a Predator, teaming with internet vigilantes to stage stings on suspected online predators. As the show becomes a ratings phenomenon, the pressure for bigger numbers leads to public humiliation and difficult moral choices."
+   },
+   {
+    "id": "forgotten-island",
+    "label": "Forgotten Island",
+    "seed_text": "Forgotten Island. Animated fantasy adventure from DreamWorks Animation and Universal, rated PG for animated scary action, language, rude humor, thematic elements, some violence and brief tobacco imagery; about 109 minutes. Written and directed by Joel Crawford and Januel Mercado. Voice cast: H.E.R. and Liza Soberano as two best friends, with Dave Franco, Lea Salonga, Manny Jacinto, Jenny Slate, Dolly de Leon and Jo Koy. Franchise status: original film inspired by Filipino folklore. Synopsis: two best friends are pulled through a mysterious portal to the island of Nakali, home to mythical creatures from Filipino folklore, including the dreaded Manananggal. They must find their way home before the island makes them forget each other."
+   }
+  ],
+  "outcome": {
+   "metric": "CinemaScore (A+=12 ... F=0)",
+   "scale": [
+    0,
+    12
+   ],
+   "values": {
+    "heart-of-the-beast": 10,
+    "primetime": 8,
+    "forgotten-island": 11
+   },
+   "sources": {
+    "heart-of-the-beast": "https://fictionhorizon.com/?p=386928 (read 2026-10-16)",
+    "primetime": "https://variety.com/2026/film/box-office/primetime-box-office-robert-pattinson-star-power-1236876947/ (read 2026-10-16)",
+    "forgotten-island": "https://pixeltwelve.com/articles/forgotten-island-opening-box-office-a-cinemascore (read 2026-10-16)"
+   }
+  }
+ }
+]
