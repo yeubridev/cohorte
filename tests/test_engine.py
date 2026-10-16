@@ -369,6 +369,19 @@ class TestBacktest(CliCase):
         with self.assertRaises(CohorteError):
             normalize_case({"id": "z", "seed_text": "a", "outcome": {"winner": "Q"}}, self.tmp)
 
+    def test_leaks_leave_leak_safe_subset(self):
+        from cohorte_engine.backtest import normalize_case, score
+        cases = [normalize_case({"id": f"c{i}", "kind": "movie", "leak_safe": True,
+                                 "variants": [{"id": "A", "seed_text": "a"}, {"id": "B", "seed_text": "b"}],
+                                 "outcome": {"winner": "B"}}, self.tmp) for i in range(3)]
+        pred = {m: {"A": {"potential": 40, "objections": []}, "B": {"potential": 60, "objections": []}}
+                for m in ("cohorte", "baseline")}
+        r = score(cases, {c["id"]: pred for c in cases}, leaks={"c1": ["A"]})
+        self.assertEqual(r["real"]["winner_cases"], 3)
+        self.assertEqual(r["leak_safe"]["winner_cases"], 2)
+        self.assertEqual(r["leak_safe"]["chance_accuracy"], 0.5)
+        self.assertEqual(r["verdict"]["proof"]["status"], "not proven")
+
     def test_sanity_suite_mock(self):
         out = self.cli("backtest", self.SANITY, "--dry-run")
         self.assertIn("8 case(s), 16 variant(s)", out)

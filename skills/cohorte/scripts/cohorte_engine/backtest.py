@@ -85,6 +85,16 @@ JUDGE_USER = """## Concerns that really dominated
 
 Return JSON: {{"found": [one true/false per numbered concern, in order]}}"""
 
+LEAK_SYSTEM = """You answer only from knowledge you actually have. Never guess. Return one valid JSON object only."""
+
+LEAK_USER = """Here is a {noun}:
+{label}
+{excerpt}
+
+Do you have specific knowledge of how the public received it after release (audience or user ratings, review
+scores, box office or sales)? If you are not sure, answer false.
+Return JSON: {{"knows": true/false, "what_you_know": "one line, empty if false"}}"""
+
 STOP = set("""the a an and or of to in on for with without is are be it its this that too not no very more less
 than from as at by into their they them you your our we can will would should could just only also any some
 about over under there here what which who when how why all much many""".split())
@@ -382,6 +392,36 @@ def judge(cases: List[Dict[str, Any]], preds: Dict[str, Any], out_dir: str, sett
     return out
 
 
+def leak_check(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, Any]) -> Dict[str, List[str]]:
+    """Ask the model whether it already knows how each real variant was received. Cases it recognises can't prove
+    prediction (the model may be remembering, not predicting) and are left out of the leak-safe subset."""
+    reqs = {}
+    for c in cases:
+        if c["synthetic"]:
+            continue
+        noun = get_subject(c["kind"])["noun"]
+        for v in c["variants"]:
+            q = LLMRequest(id=f"leak:{c['id']}:{v['id']}", kind="leak_check", system=[LEAK_SYSTEM], effort="low",
+                           max_tokens=400, user=LEAK_USER.format(noun=noun, label=v["label"],
+                                                                excerpt=v["seed_text"][:400]),
+                           meta={"name": v["label"]})
+            reqs[q.id] = (c["id"], v["id"], q)
+    if not reqs:
+        return {}
+    os.makedirs(os.path.join(out_dir, "judge"), exist_ok=True)
+    client = LLMClient(os.path.join(out_dir, "judge"), {**settings, "verbose": False})
+    answers = client.run_batch([r[2] for r in reqs.values()], label="leak check")
+    out: Dict[str, List[str]] = {}
+    for qid, (cid, vid, _) in reqs.items():
+        try:
+            data = parse_json_response(answers.get(qid) or "")
+        except ValueError:
+            continue
+        if isinstance(data, dict) and (data.get("knows") is True or str(data.get("knows")).lower() == "true"):
+            out.setdefault(cid, []).append(vid)
+    return out
+
+
 def _winner(pred: Dict[str, Dict[str, Any]], ids: List[str], higher_is_better: bool) -> Optional[str]:
     scores = {i: pred[i]["potential"] for i in ids if i in pred}
     if len(scores) < 2:
@@ -393,14 +433,17 @@ def _winner(pred: Dict[str, Dict[str, Any]], ids: List[str], higher_is_better: b
 
 def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict[str, Any]]]],
           methods: Tuple[str, ...] = ("cohorte", "baseline"),
-          judged: Optional[Dict[Tuple[str, str], List[bool]]] = None) -> Dict[str, Any]:
+          judged: Optional[Dict[Tuple[str, str], List[bool]]] = None,
+          leaks: Optional[Dict[str, List[str]]] = None) -> Dict[str, Any]:
     rows = []
     for c in cases:
         if c["id"] not in preds:
             continue
         ids = [v["id"] for v in c["variants"]]
-        row = {"id": c["id"], "kind": c["kind"], "synthetic": c["synthetic"], "leak_safe": c["leak_safe"],
-               "winner": c["outcome"]["winner"]}
+        recognised = (leaks or {}).get(c["id"], [])
+        row = {"id": c["id"], "kind": c["kind"], "synthetic": c["synthetic"], "recognised": recognised,
+               "leak_safe": c["leak_safe"] and not recognised, "winner": c["outcome"]["winner"],
+               "n_variants": len(ids)}
         for m in methods:
             p = preds[c["id"]].get(m) or {}
             pw = _winner(p, ids, c["outcome"]["higher_is_better"])
@@ -418,6 +461,7 @@ def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict
         out: Dict[str, Any] = {"cases": len(subset)}
         wins = [r for r in subset if r["winner"] is not None]
         out["winner_cases"] = len(wins)
+        out["chance_accuracy"] = round(sum(1 / r["n_variants"] for r in wins) / len(wins), 3) if wins else None
         for m in methods:
             right = sum(1 for r in wins if r[m]["correct"])
             found = [x for r in subset for x in r[m]["objections_found"]]
@@ -488,18 +532,25 @@ def verdict(result: Dict[str, Any], methods: Tuple[str, ...]) -> Dict[str, Any]:
         out["proof"] = {"status": "no real cases", "text": "No real historical cases yet: nothing is proven about "
                         "real-world prediction. Add cases with known outcomes (see benchmarks/README.md)."}
         return out
+    # proof is judged on leak-safe cases only: the model may remember, not predict, the others
+    pool = result.get("leak_safe") or {"winner_cases": 0}
     a, b = methods[0], methods[-1]
-    n = real["winner_cases"]
-    acc_a, acc_b = real[a]["winner_accuracy"], real[b]["winner_accuracy"]
-    p = real.get("paired", {}).get("p_value", 1.0)
+    n = pool["winner_cases"]
     if n < GATE_MIN_CASES:
-        status, text = "not proven", f"only {n} real case(s) with a known winner (gate needs ≥{GATE_MIN_CASES})"
-    elif acc_a is not None and acc_b is not None and acc_a > acc_b and p < 0.05:
-        status, text = "proven", f"{a} beats {b} on {n} real cases ({acc_a:.0%} vs {acc_b:.0%}, p = {p})"
-    elif acc_a is not None and acc_b is not None and acc_a > acc_b:
-        status, text = "not proven", f"{a} is ahead ({acc_a:.0%} vs {acc_b:.0%}) but not significantly (p = {p})"
+        out["proof"] = {"status": "not proven", "text": f"{n} leak-safe real case(s) with a known winner "
+                        f"(gate needs ≥{GATE_MIN_CASES}; {real['winner_cases']} real in total)"}
+        return out
+    acc_a, acc_b = pool[a]["winner_accuracy"], pool[b]["winner_accuracy"]
+    p = pool["paired"]["p_value"]
+    chance = pool["chance_accuracy"]
+    if acc_a > acc_b and p < 0.05:
+        status, text = "proven", f"{a} beats {b} on {n} leak-safe cases ({acc_a:.0%} vs {acc_b:.0%}, p = {p})"
+    elif acc_a > acc_b:
+        status, text = "not proven", (f"{a} is ahead on {n} leak-safe cases ({acc_a:.0%} vs {acc_b:.0%}) but not "
+                                      f"significantly (p = {p})")
     else:
-        status, text = "failed", f"{a} does not beat {b} on real cases ({acc_a} vs {acc_b}); narrow the claim"
+        status, text = "failed", (f"{a} does not beat {b} on {n} leak-safe cases ({acc_a:.0%} vs {acc_b:.0%}, "
+                                  f"chance {chance:.0%}): narrow the claim")
     out["proof"] = {"status": status, "text": text}
     return out
 
@@ -575,7 +626,8 @@ def run_backtest(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, 
     spent = _spent(home)
     stopped = (f"budget of ${budget:.2f} reached; {len(skipped)} case(s) not run" if skipped else None)
     judged = judge(cases, preds, out_dir, settings) if judge_mode == "llm" else {}
-    result = score(cases, preds, judged=judged)
+    leaks = leak_check([c for c in cases if c["id"] in preds], out_dir, settings)
+    result = score(cases, preds, judged=judged, leaks=leaks)
     result["judge"] = "blind LLM judge" if judge_mode == "llm" else "keyword match"
     result.update({"at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "runs": runs,
                    "model": settings["model"], "models": models or [settings["model"]],
@@ -631,8 +683,8 @@ def render(r: Dict[str, Any], cases: List[Dict[str, Any]]) -> str:
             continue
         lines.append(f"\n## {label} ({s['cases']})\n| metric | Cohorte | single-prompt baseline |\n|---|---|---|")
         c, b = s["cohorte"], s["baseline"]
-        lines.append(f"| winner accuracy ({s['winner_cases']} cases) | {_pct(c['winner_accuracy'])} | "
-                     f"{_pct(b['winner_accuracy'])} |")
+        lines.append(f"| winner accuracy ({s['winner_cases']} cases, chance {_pct(s['chance_accuracy'])}) | "
+                     f"{_pct(c['winner_accuracy'])} | {_pct(b['winner_accuracy'])} |")
         lines.append(f"| objection recall ({c['objections_total']} objections) | {_pct(c['objection_recall'])} | "
                      f"{_pct(b['objection_recall'])} |")
         lines.append(f"| rank correlation with real metric ({c['points']} points) | "
@@ -656,7 +708,9 @@ def render(r: Dict[str, Any], cases: List[Dict[str, Any]]) -> str:
         found_c = sum(row["cohorte"]["objections_found"])
         found_b = sum(row["baseline"]["objections_found"])
         total = len(row["cohorte"]["objections_found"])
-        lines.append(f"| {row['id']} | {row['kind']} | {'synthetic' if row['synthetic'] else 'real'} | "
+        kind_label = "synthetic" if row["synthetic"] else ("real, leak-safe" if row["leak_safe"] else
+                                                            "real, known to model" if row["recognised"] else "real")
+        lines.append(f"| {row['id']} | {row['kind']} | {kind_label} | "
                      f"{row['winner'] or '–'} | {cell('cohorte')} | {cell('baseline')} | "
                      f"{f'{found_c} / {found_b} of {total}' if total else '–'} |")
     lines.append("\n## How to read this\n"

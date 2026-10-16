@@ -124,6 +124,8 @@ def mock_response(req) -> str:
         if kind == "assess_group":
             out["spread"] = {k: 2 for k in dims}
         return json.dumps(out)
+    if kind == "leak_check":
+        return json.dumps({"knows": False, "what_you_know": ""})
     if kind == "judge":
         return json.dumps({"found": [rng.random() < 0.5 for _ in range(m.get("n", 1))]})
     if kind == "baseline":

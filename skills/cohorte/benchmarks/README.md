@@ -85,6 +85,8 @@ Good cases have **two or more variants shown to comparable audiences** and a **d
 **Leakage:** the model may already know famous outcomes. Use these rules:
 
 - mark `leak_safe: true` only for outcomes after the model's training cutoff, or for private data;
+- `backtest` also asks the model whether it already knows how each variant was received. Any case it recognises
+  is labelled "known to model" and left out of the leak-safe subset;
 - anonymise the brand names in `seed_text` when you can;
 - the scorecard reports leak-safe cases separately, and only those really prove prediction.
 
@@ -99,7 +101,7 @@ Good cases have **two or more variants shown to comparable audiences** and a **d
 | Gate | Condition |
 |---|---|
 | Sanity (v0.3) | Winner accuracy ≥ 90% on the synthetic suite. |
-| Proof (V1) | On ≥ 20 real cases with a known winner, Cohorte's winner accuracy beats the baseline's with exact McNemar p < 0.05. Rank correlation and objection recall are reported alongside. |
+| Proof (V1) | On ≥ 20 leak-safe real cases with a known winner, Cohorte's winner accuracy beats the baseline's with exact McNemar p < 0.05. Rank correlation and objection recall are reported alongside. |
 
 If the proof gate fails, narrow the claim to what does work (for example objection discovery) before building
 further. That is the roadmap's kill criterion.
