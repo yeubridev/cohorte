@@ -472,10 +472,11 @@ def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict
                 "potentials": {i: _value(p[i], c["target"]) for i in ids if i in p},
                 "picked": pw,
                 "correct": None if c["outcome"]["winner"] is None else pw == c["outcome"]["winner"],
-                "objections_found": (judged or {}).get((c["id"], m)) or [
+                "objections_found_kw": [
                     objection_hit(o, sum((_top(p[i]["objections"]) for i in ids if i in p), []))
                     for o in c["outcome"]["objections"]],
             }
+            row[m]["objections_found"] = (judged or {}).get((c["id"], m)) or row[m]["objections_found_kw"]
         rows.append(row)
 
     def summary(subset: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -495,8 +496,13 @@ def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict
                         xs.append(r[m]["potentials"][vid])
                         norm = (val - lo) / (hi - lo) * 100
                         ys.append(norm if case["outcome"]["higher_is_better"] else 100 - norm)
+            found_kw = [x for r in subset for x in r[m]["objections_found_kw"]]
+            with_obj = [r for r in subset if r[m]["objections_found"]]
             out[m] = {"winner_accuracy": round(right / len(wins), 3) if wins else None, "winner_right": right,
                       "objection_recall": round(sum(found) / len(found), 3) if found else None,
+                      "objection_recall_keywords": round(sum(found_kw) / len(found_kw), 3) if found_kw else None,
+                      "top_objection_found": (round(sum(1 for r in with_obj if r[m]["objections_found"][0])
+                                                    / len(with_obj), 3) if with_obj else None),
                       "objections_total": len(found), "spearman": spearman(xs, ys), "points": len(xs)}
         if len(methods) == 2:
             a, b = methods
@@ -504,6 +510,10 @@ def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict
             only_b = sum(1 for r in wins if r[b]["correct"] and not r[a]["correct"])
             out["paired"] = {f"only_{a}": only_a, f"only_{b}": only_b, "p_value": mcnemar_exact(only_a, only_b)}
             out["spearman_gap"] = _bootstrap_gap(subset, cases, a, b)
+            more_a = sum(1 for r in subset if sum(r[a]["objections_found"]) > sum(r[b]["objections_found"]))
+            more_b = sum(1 for r in subset if sum(r[b]["objections_found"]) > sum(r[a]["objections_found"]))
+            out["objection_sign"] = {f"{a}_more": more_a, f"{b}_more": more_b,
+                                     "p_value": mcnemar_exact(more_a, more_b)}
         return out
 
     real = [r for r in rows if not r["synthetic"]]
@@ -709,13 +719,24 @@ def render(r: Dict[str, Any], cases: List[Dict[str, Any]]) -> str:
             continue
         lines.append(f"\n## {label} ({s['cases']})\n| metric | Cohorte | single-prompt baseline |\n|---|---|---|")
         c, b = s["cohorte"], s["baseline"]
-        lines.append(f"| winner accuracy ({s['winner_cases']} cases, chance {_pct(s['chance_accuracy'])}) | "
-                     f"{_pct(c['winner_accuracy'])} | {_pct(b['winner_accuracy'])} |")
-        lines.append(f"| objection recall ({c['objections_total']} objections) | {_pct(c['objection_recall'])} | "
-                     f"{_pct(b['objection_recall'])} |")
-        lines.append(f"| rank correlation with real metric ({c['points']} points) | "
-                     f"{'–' if c['spearman'] is None else c['spearman']} | "
-                     f"{'–' if b['spearman'] is None else b['spearman']} |")
+        if s["winner_cases"]:
+            lines.append(f"| winner accuracy ({s['winner_cases']} cases, chance {_pct(s['chance_accuracy'])}) | "
+                         f"{_pct(c['winner_accuracy'])} | {_pct(b['winner_accuracy'])} |")
+        if c["objections_total"]:
+            lines.append(f"| objection recall ({c['objections_total']} objections) | {_pct(c['objection_recall'])} | "
+                         f"{_pct(b['objection_recall'])} |")
+        if c["points"]:
+            lines.append(f"| rank correlation with real metric ({c['points']} points) | "
+                         f"{'–' if c['spearman'] is None else c['spearman']} | "
+                         f"{'–' if b['spearman'] is None else b['spearman']} |")
+        if c["objections_total"]:
+            lines.append(f"| top complaint found | {_pct(c['top_objection_found'])} | {_pct(b['top_objection_found'])} |")
+            lines.append(f"| objection recall, exact keywords | {_pct(c['objection_recall_keywords'])} | "
+                         f"{_pct(b['objection_recall_keywords'])} |")
+            sg = s.get("objection_sign")
+            if sg:
+                lines.append(f"\nPer case: Cohorte found more complaints in {sg['cohorte_more']} case(s), the "
+                             f"baseline in {sg['baseline_more']} · sign test p = {sg['p_value']}")
         pr = s.get("paired")
         if pr and s["winner_cases"]:
             lines.append(f"\nPaired test on winners: Cohorte alone right {pr['only_cohorte']}×, baseline alone right "
