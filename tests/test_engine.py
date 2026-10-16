@@ -369,6 +369,17 @@ class TestBacktest(CliCase):
         with self.assertRaises(CohorteError):
             normalize_case({"id": "z", "seed_text": "a", "outcome": {"winner": "Q"}}, self.tmp)
 
+    def test_satisfaction_weights_choosers(self):
+        from cohorte_engine.subjects import satisfaction
+        dims = get_subject("movie")["dimensions"]
+        fans = {"watch_intent": 10, "pay_cinema": 8, "enjoyment": 9, "recommend": 9, "rating": 9}
+        others = {"watch_intent": 0, "pay_cinema": 0, "enjoyment": 2, "recommend": 1, "rating": 2}
+        # a niche film: few fans love it, the majority would never go -> high satisfaction among choosers
+        sat = satisfaction([{"weight": 1, "scores": fans}, {"weight": 9, "scores": others}], dims, "movie")
+        self.assertGreater(sat, 60)
+        self.assertGreater(sat, potential(others, dims))
+        self.assertIsNone(satisfaction([], dims, "pricing"))
+
     def test_leaks_leave_leak_safe_subset(self):
         from cohorte_engine.backtest import normalize_case, score
         cases = [normalize_case({"id": f"c{i}", "kind": "movie", "leak_safe": True,

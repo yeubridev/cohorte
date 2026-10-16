@@ -33,7 +33,7 @@ from . import calibration
 from . import prompts as P
 from .environment import run_setup
 from .llm import LLMClient, LLMRequest, resolve_model
-from .subjects import get_subject, potential
+from .subjects import SATISFACTION, get_subject, potential, satisfaction
 from .util import CohorteError, coerce_str_list, parse_json_response, read_json, slugify, write_json
 from .world import Sim, init_sim
 
@@ -64,7 +64,7 @@ BASELINE_USER = """## Audience
 ## How people encounter it
 {experience}
 
-## Predict the audience's average answer to each question (integers)
+## {predict_who}
 {questions}
 
 Return JSON:
@@ -151,6 +151,11 @@ def normalize_case(raw: Dict[str, Any], case_dir: str) -> Dict[str, Any]:
             objections.append(alts)
     if winner is None and not values and not objections:
         raise CohorteError(f"Case '{cid}': outcome needs 'winner', 'values' or 'objections'.")
+    target = outcome.get("target", "potential")
+    if target not in ("potential", "satisfaction"):
+        raise CohorteError(f"Case '{cid}': outcome.target must be 'potential' or 'satisfaction'.")
+    if target == "satisfaction" and profile["kind"] not in SATISFACTION:
+        raise CohorteError(f"Case '{cid}': kind '{profile['kind']}' has no satisfaction dimensions.")
     audience = raw.get("audience") or [dict(a, summary=a["summary"].format(noun=profile["noun"]))
                                        for a in DEFAULT_AUDIENCE]
     return {
@@ -160,6 +165,7 @@ def normalize_case(raw: Dict[str, Any], case_dir: str) -> Dict[str, Any]:
         "synthetic": bool(raw.get("synthetic", False)), "leak_safe": bool(raw.get("leak_safe", False)),
         "evidence": raw.get("evidence", "full"), "language": raw.get("language", "English"),
         "audience": audience, "variants": out_vars,
+        "target": target, "split": raw.get("split", ""),
         "outcome": {"metric": outcome.get("metric", ""), "scale": [float(scale[0]), float(scale[1])],
                     "values": values, "winner": None if winner is None else str(winner),
                     "objections": objections, "higher_is_better": outcome.get("higher_is_better", True)},
@@ -221,6 +227,9 @@ def _baseline_request(case: Dict[str, Any], seed: str, run: int, model: str) -> 
         system=[BASELINE_SYSTEM.format(noun=subj["noun"], language_rule=P.language_rule(case["language"]))],
         user=BASELINE_USER.format(
             audience=_audience_text(case), noun=subj["noun"], seed=seed[:assess_mod.SEED_CHARS],
+            predict_who=("Predict the average answers of the people who actually choose it (those who go to see it, "
+                         "buy it or install it), not of everyone (integers)" if case["target"] == "satisfaction"
+                         else "Predict the audience's average answer to each question (integers)"),
             experience=subj["experience"], questions=assess_mod._questions(dims),
             score_keys=", ".join(f'"{d["key"]}": <{d["min"]}-{d["max"]}>' for d in dims)),
         effort="low", max_tokens=2000,
@@ -251,11 +260,16 @@ def _baseline(case: Dict[str, Any], sim: Sim, settings: Dict[str, Any], runs: in
         parsed = assess_mod._parse(json.dumps({"scores": data.get("scores") or {}}), dims)
         if not parsed:
             continue
-        slot = out.setdefault(vid, {"potentials": [], "objections": []})
+        slot = out.setdefault(vid, {"potentials": [], "objections": [], "sats": []})
         slot["potentials"].append(potential(parsed["scores"], dims))
+        sat = satisfaction([{"weight": 1.0, "scores": parsed["scores"]}], dims, case["kind"])
+        if sat is not None:
+            slot["sats"].append(sat)
         slot.setdefault("by_run", []).append(coerce_str_list(data.get("objections"))[:6])
     for slot in out.values():
         slot["potential"] = round(sum(slot["potentials"]) / len(slot["potentials"]), 2)
+        sats = slot.pop("sats")
+        slot["satisfaction"] = round(sum(sats) / len(sats), 2) if sats else None
         runs_obj = slot.pop("by_run", [])
         slot["objections"] = [r[i] for i in range(6) for r in runs_obj if i < len(r)]  # rank 1 of each run first
     return out
@@ -282,6 +296,7 @@ def _cohorte(case: Dict[str, Any], sim: Sim, settings: Dict[str, Any], runs: int
         res = assess_mod.run_assessment(sim, settings, runs, models)
         shutil.copyfile(sim.path("assessment.json"), sim.path(f"assessment-{slugify(v['id'], 24)}.json"))
         out[v["id"]] = {"potential": res["potential"]["mean"], "sd": res["potential"]["sd_between_runs"],
+                        "satisfaction": (res.get("satisfaction") or {}).get("mean"),
                         "objections": [d["text"] for d in res["dislikes"]],
                         "confidence": res["confidence"]["index"]}
     return out
@@ -422,8 +437,13 @@ def leak_check(cases: List[Dict[str, Any]], out_dir: str, settings: Dict[str, An
     return out
 
 
-def _winner(pred: Dict[str, Dict[str, Any]], ids: List[str], higher_is_better: bool) -> Optional[str]:
-    scores = {i: pred[i]["potential"] for i in ids if i in pred}
+def _value(p: Dict[str, Any], target: str) -> float:
+    v = p.get("satisfaction") if target == "satisfaction" else None
+    return p["potential"] if v is None else v
+
+
+def _winner(pred: Dict[str, Dict[str, Any]], ids: List[str], target: str) -> Optional[str]:
+    scores = {i: _value(pred[i], target) for i in ids if i in pred}
     if len(scores) < 2:
         return None
     best = max(scores.values())
@@ -442,13 +462,14 @@ def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict
         ids = [v["id"] for v in c["variants"]]
         recognised = (leaks or {}).get(c["id"], [])
         row = {"id": c["id"], "kind": c["kind"], "synthetic": c["synthetic"], "recognised": recognised,
-               "leak_safe": c["leak_safe"] and not recognised, "winner": c["outcome"]["winner"],
+               "split": c["split"], "leak_safe": c["leak_safe"] and not recognised and c["split"] != "dev",
+               "winner": c["outcome"]["winner"],
                "n_variants": len(ids)}
         for m in methods:
             p = preds[c["id"]].get(m) or {}
-            pw = _winner(p, ids, c["outcome"]["higher_is_better"])
+            pw = _winner(p, ids, c["target"])
             row[m] = {
-                "potentials": {i: p[i]["potential"] for i in ids if i in p},
+                "potentials": {i: _value(p[i], c["target"]) for i in ids if i in p},
                 "picked": pw,
                 "correct": None if c["outcome"]["winner"] is None else pw == c["outcome"]["winner"],
                 "objections_found": (judged or {}).get((c["id"], m)) or [
@@ -489,6 +510,9 @@ def score(cases: List[Dict[str, Any]], preds: Dict[str, Dict[str, Dict[str, Dict
     result = {"rows": rows, "all": summary(rows), "real": summary(real) if real else None,
               "synthetic": summary([r for r in rows if r["synthetic"]]) if any(r["synthetic"] for r in rows) else None,
               "leak_safe": summary([r for r in real if r["leak_safe"]]) if any(r["leak_safe"] for r in real) else None}
+    for split in ("eval", "dev"):
+        subset = [r for r in real if r["split"] == split]
+        result[split] = summary(subset) if subset else None
     result["verdict"] = verdict(result, methods)
     return result
 
@@ -677,7 +701,9 @@ def render(r: Dict[str, Any], cases: List[Dict[str, Any]]) -> str:
         lines.append(f"- **Real-world proof: {v['proof']['status']}**: {v['proof']['text']}")
     if v.get("sanity"):
         lines.append(f"- **Sanity gate: {'pass' if v['sanity']['pass'] else 'fail'}**: {v['sanity']['text']}")
-    for label, key in (("Real cases", "real"), ("Leak-safe real cases", "leak_safe"), ("Synthetic sanity cases", "synthetic")):
+    for label, key in (("Evaluation split (unseen before the run)", "eval"), ("Dev split (seen: never proof)", "dev"),
+                       ("All real cases", "real"), ("Leak-safe real cases (counted for proof)", "leak_safe"),
+                       ("Synthetic sanity cases", "synthetic")):
         s = r.get(key)
         if not s:
             continue

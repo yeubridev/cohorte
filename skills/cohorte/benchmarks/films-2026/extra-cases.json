@@ -33,8 +33,10 @@
       "sources": {
         "the-odyssey": "https://www.hollywoodreporter.com/movies/movie-news/the-odyssey-box-office-christopher-nolan-opening-success-1236651646/ ; https://neoskosmos.com/en/2026/07/20/life/the-odyssey-makes-a378-million-in-global-ticket-sales/ ; https://www.thestar.com.my/news/world/2026/07/20/the-odyssey-tops-north-american-box-office-in-opening-weekend",
         "resident-evil-2026": "https://www.wect.com/2026/09/21/box-office-resident-evil-tops-box-office-with-franchise-best-debut-60-million/ ; https://fictionhorizon.com/zach-creggers-resident-evil-earns-a-franchise-best-b-from-cinemascore-audiences/"
-      }
-    }
+      },
+      "target": "satisfaction"
+    },
+    "split": "eval"
   },
   {
     "id": "films-2026-extra-spider-man-brand-new-day-vs-verity",
@@ -70,8 +72,10 @@
       "sources": {
         "spider-man-brand-new-day": "https://www.comingsoon.net/?p=2169844 ; https://cosmicbook.news/spider-man-brand-new-day-cinemascore ; https://comicbookmovie.com/spider_man/spider_man-brand-new-day/spider-man-brand-new-days-cinemascore-revealed-as-thursday-previews-look-set-to-beat-no-way-homes-50m-a229130 ; https://www.thestar.com.my/news/world/2026/08/03/spider-man-brand-new-day-tops-north-american-box-office-in-opening-weekend",
         "verity": "https://www.comicbasics.com/?p=193901 ; https://www.thewrap.com/industry-news/business/verity-digger-box-office-saturday/ ; https://www.darkhorizons.com/?p=194917"
-      }
-    }
+      },
+      "target": "satisfaction"
+    },
+    "split": "eval"
   },
   {
     "id": "films-2026-extra-digger-vs-other-mommy-vs-the-social-reckoning",
@@ -114,7 +118,9 @@
         "digger": "https://ny1.com/nyc/all-boroughs/ap-top-news/2026/10/04/on-cusp-of-merger-digger-bombs-for-warner-bros-verity-takes-no-1-at-box-office ; https://www.darkhorizons.com/?p=194917 ; https://www.comicbasics.com/?p=193945",
         "other-mommy": "https://abcnews.com/Entertainment/wireStory/mommy-tops-box-office-275m-social-reckoning-opens-137178115 ; https://thewrap.com/culture-lifestyle/culture/other-mommy-social-reckoning-box-office ; https://fandomwire.com/jessica-chastain-other-mommy-ties-score-hereditary/ ; https://www.dreadcentral.com/box-office/593056/other-mommy-box-office-cinemascore/",
         "the-social-reckoning": "https://au.variety.com/?p=41204 ; https://thewrap.com/culture-lifestyle/culture/other-mommy-social-reckoning-box-office ; https://www.news4jax.com/entertainment/2026/10/11/other-mommy-tops-the-box-office-with-275m-the-social-reckoning-opens-to-55m/"
-      }
-    }
+      },
+      "target": "satisfaction"
+    },
+    "split": "eval"
   }
 ]

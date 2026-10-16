@@ -8,7 +8,7 @@ Each kind defines
 
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 
 def _d(key: str, question: str, weight: float = 1.0, lo: int = 0, hi: int = 10) -> Dict[str, Any]:
@@ -231,6 +231,43 @@ def get_subject(kind: str) -> Dict[str, Any]:
     profile = dict(SUBJECTS.get(kind, SUBJECTS["generic"]))
     profile["kind"] = kind if kind in SUBJECTS else "generic"
     return profile
+
+
+# For outcomes rated by the people who chose the subject (CinemaScore, Steam or app-store reviews, Goodreads),
+# appeal to everyone is the wrong target: predict how satisfied the choosers are. (selection dims, satisfaction dims)
+SATISFACTION = {
+    "movie": (["watch_intent"], ["enjoyment", "recommend", "rating"]),
+    "series": (["start_intent"], ["enjoyment", "continue_intent", "recommend"]),
+    "game": (["buy_intent", "try_intent"], ["fun", "retention", "recommend"]),
+    "book": (["buy_intent"], ["enjoyment", "finish_intent", "recommend"]),
+    "video": (["click_intent"], ["retention", "enjoyment"]),
+    "app": (["install_intent"], ["usefulness", "ease", "retention", "recommend"]),
+    "product": (["buy_intent"], ["need_fit", "trust", "recommend"]),
+}
+
+
+def _norm01(value: float, d: Dict[str, Any]) -> float:
+    return (value - d["min"]) / (d["max"] - d["min"]) if d["max"] > d["min"] else 0.0
+
+
+def satisfaction(rows: List[Dict[str, Any]], dims: List[Dict[str, Any]], kind: str) -> Optional[float]:
+    """Satisfaction of those who would choose it (0-100): each respondent's satisfaction dimensions, weighted by the
+    people it stands for times its selection intent. rows: [{"weight": w, "scores": {key: value}}]."""
+    if kind not in SATISFACTION:
+        return None
+    sel_keys, sat_keys = SATISFACTION[kind]
+    by_key = {d["key"]: d for d in dims}
+    num = den = 0.0
+    for r in rows:
+        sc = r["scores"]
+        sats = [_norm01(sc[k], by_key[k]) for k in sat_keys if k in sc and k in by_key]
+        sels = [_norm01(sc[k], by_key[k]) for k in sel_keys if k in sc and k in by_key]
+        if not sats or r["weight"] <= 0:
+            continue
+        w = r["weight"] * max(0.05, sum(sels) / len(sels) if sels else 0.5)
+        num += w * sum(sats) / len(sats)
+        den += w
+    return round(100 * num / den, 1) if den else None
 
 
 def kinds() -> List[str]:

@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional
 from . import calibration
 from . import prompts as P
 from .llm import LLMClient, LLMRequest, resolve_model
-from .subjects import get_subject, potential
+from .subjects import get_subject, potential, satisfaction
 from .util import CohorteError, clamp, coerce_str, coerce_str_list, parse_json_response, read_json, truncate, write_json
 from .world import Sim
 
@@ -255,6 +255,9 @@ def run_assessment(sim: Sim, llm_settings: Dict[str, Any], runs: int = 3, models
         if any(x["weight"] > 0 for x in rr):
             per_run[run] = potential(_weighted(rr, dims), dims)
     pots = list(per_run.values())
+    sat_runs = [v for v in (satisfaction([{"weight": x["weight"], "scores": x["answer"]["scores"]}
+                                          for x in rows if x["run"] == run], dims, subj["kind"])
+                            for run, _ in plan) if v is not None]
     mean_pot = round(sum(pots) / len(pots), 1)
     sd = round(math.sqrt(sum((p - mean_pot) ** 2 for p in pots) / (len(pots) - 1)), 2) if len(pots) > 1 else None
     by_model = {m: round(sum(per_run[r] for r, mm in plan if mm == m and r in per_run) /
@@ -306,6 +309,8 @@ def run_assessment(sim: Sim, llm_settings: Dict[str, Any], runs: int = 3, models
         "runs": runs, "models": models, "respondents": n_resp,
         "potential": {"mean": mean_pot, "sd_between_runs": sd, "per_run": pots, "by_model": by_model,
                       "low": round(min(pots), 1), "high": round(max(pots), 1)},
+        "satisfaction": ({"mean": round(sum(sat_runs) / len(sat_runs), 1), "per_run": sat_runs}
+                         if sat_runs else None),
         "calibrated": calibrated,
         "dimensions": [{**d, "mean": dim_means.get(d["key"])} for d in dims],
         "segments": segments,
@@ -338,6 +343,8 @@ def render(r: Dict[str, Any]) -> str:
     lines = [f"# Assessment — {r['title'] or r['kind']} ({r['kind']})",
              f"**Potential: {pot['mean']}/100** (runs ranged {pot['low']}–{pot['high']}) · "
              f"**Confidence index: {c['index']}/100 ({_grade(c['index'])})**",
+             *([f"Satisfaction of those who would choose it: {r['satisfaction']['mean']}/100 (what buyer or viewer "
+                "ratings such as CinemaScore or Steam reviews measure)"] if r.get("satisfaction") else []),
              f"{r['respondents']} respondents standing for the whole cohort · {r['runs']} run(s) · "
              f"model(s): {', '.join(r['models'])}"]
     if r["calibrated"]:
